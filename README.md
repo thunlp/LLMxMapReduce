@@ -67,9 +67,6 @@ Where:
 
 The `worker_num` is automatically calculated based on the formula `len(cuda-visible-devices) / per-proc-gpus`. While you don’t need to set it directly, you should ensure that `worker_num` is consistent with the `max_work_count` value set in your configuration when modifying the config later. A higher `worker_num` allows for more parallel processing, which can improve performance by enabling multiple tasks to be processed concurrently. However, ensure that you have sufficient GPU resources to support the number of workers.
 
-Here’s the corrected version with Hugging Face model links included as URLs:
-
----
 
 We also provide example scripts located in `URLs/scripts`, which include the following models:
 
