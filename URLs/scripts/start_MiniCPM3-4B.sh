@@ -1,0 +1,1 @@
+bash URLs/start_gunicorn.sh --hf-model-name your/model/path --cuda-visible-devices 0 --quantization None

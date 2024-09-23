@@ -1,0 +1,14 @@
+evaluate
+Flask
+gevent
+jieba
+openai
+PyYAML
+Requests
+tenacity
+tiktoken
+torch
+tqdm
+gunicorn
+transformers
+vllm>=0.4.1

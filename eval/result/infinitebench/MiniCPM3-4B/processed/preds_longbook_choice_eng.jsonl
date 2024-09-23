@@ -1,0 +1,229 @@
+{"id": 0, "prediction": "answer: A.", "ground_truth": ["Walking Georgie", "A"]}
+{"id": 1, "prediction": "answer: C. Snowfield", "ground_truth": ["Snowfield", "C"]}
+{"id": 2, "prediction": "Rationale:\nAfter analyzing the information from each chunk, it's clear that none of the chunks provide a direct answer to the question. However, we can make some inferences based on the provided information.\n\nChunk 0 provides the most relevant information, as it mentions that Sheridan Cecelia met Basiljy Maura at the Mauras, which could be related to where Alain might meet her. However, it's not a direct answer to the question.\n\nChunk 1 suggests that Alain and Sheridan Cecelia might meet at the dairy, but this is a very weak inference.\n\nChunk 2 infers that Alain and Sheridan Cecelia might meet at the Harvest Supper, which is a social event, but this is also a weak inference.\n\nChunk 3 provides no information about Alain meeting Sheridan Cecelia for the first time.\n\nConsidering the confidence scores, Chunk 0 has the highest score (4), followed by Chunk 2 (3), and Chunk 1 (2). Chunk 3 has a confidence score of 5, but it does not provide any relevant information.\n\nBased on the information and confidence scores, I would conclude that the most likely answer is:\n\nD. At the Mauras\n\nThis answer is based on the inference made in Chunk 0, which is the most relevant and has the highest confidence score. However, it's essential to note that this answer is not definitive, and there might be other information in the complete text that could change our answer.", "ground_truth": ["At the Mauras", "D"]}
+{"id": 3, "prediction": "answer: A. Methodist", "ground_truth": ["Methodist", "A"]}
+{"id": 4, "prediction": "I'm ready to process the task. Please provide the chunks of information, and I'll integrate and reason through the data to provide the final answer.", "ground_truth": ["That Italy inherit the Latins' name and language and not the Trojans'", "D"]}
+{"id": 5, "prediction": "answer: A. 12 days", "ground_truth": ["12 days", "A"]}
+{"id": 6, "prediction": "answer: D. Carley", "ground_truth": ["Carley", "D"]}
+{"id": 7, "prediction": "answer: B. Jaelynn", "ground_truth": ["Jaelynn", "B"]}
+{"id": 12, "prediction": "answer: B. The Serbian war", "ground_truth": ["The Serbian war", "B"]}
+{"id": 13, "prediction": "answer: A. Mitya", "ground_truth": ["Mitya", "A"]}
+{"id": 14, "prediction": "answer: B. The death of Clarisse's horse", "ground_truth": ["The death of Clarisse's horse", "B"]}
+{"id": 15, "prediction": "answer: C. At the opera", "ground_truth": ["At the opera", "C"]}
+{"id": 16, "prediction": "answer: D. Puffed sleeves", "ground_truth": ["Puffed sleeves", "D"]}
+{"id": 17, "prediction": "answer: D. Carmody", "ground_truth": ["Avonlea", "A"]}
+{"id": 18, "prediction": "answer: A. Losing Hattie's brooch", "ground_truth": ["Losing Hattie's brooch", "A"]}
+{"id": 19, "prediction": "answer: D. Clinging to a bridge pile", "ground_truth": ["Clinging to a bridge pile", "D"]}
+{"id": 24, "prediction": "answer: C. It lacks real passion and love.", "ground_truth": ["All of the above", "D"]}
+{"id": 25, "prediction": "answer: A. Lorelei doesn't approve of early marriages and he wishes Colleen would finish college, but he supports Colleen's right to live his life on his own terms.", "ground_truth": ["Lorelei doesn't approve of early marriages and he wishes Colleen would finish college, but he supports Colleen's right to live his life on his own terms.", "A"]}
+{"id": 26, "prediction": "answer: C. He married her for her money.", "ground_truth": ["He became engaged to her almost by accident, and he didn't have the courage to break it off", "B"]}
+{"id": 27, "prediction": "answer: B. Religion is heavily influenced by materialism and competition for social status.", "ground_truth": ["Religion is heavily influenced by materialism and competition for social status.", "B"]}
+{"id": 28, "prediction": "answer: D. A kiss", "ground_truth": ["A kiss", "D"]}
+{"id": 29, "prediction": "I'm ready to process the chunks of information. However, I don't see any chunks provided. Please provide the chunks of information, and I'll be happy to help you integrate and reason through the information to find the correct answer.", "ground_truth": ["Haunted by humans", "C"]}
+{"id": 30, "prediction": "answer: D. He'll die and they'll have to get rid of his body", "ground_truth": ["He'll die and they'll have to get rid of his body", "D"]}
+{"id": 31, "prediction": "answer: B. Candace can write her own story", "ground_truth": ["Candace can write her own story", "B"]}
+{"id": 120, "prediction": "answer: C. In the woods", "ground_truth": ["In the woods", "C"]}
+{"id": 121, "prediction": "answer: B. He once slept with Marie Antoinette", "ground_truth": ["He once slept with Marie Antoinette", "B"]}
+{"id": 126, "prediction": "I'm ready to process the task. Please provide the chunks of information.", "ground_truth": ["Nobel Prize for Literature", "D"]}
+{"id": 127, "prediction": "answer: C. Sauk Centre, Minnesota", "ground_truth": ["Sauk Centre, Minnesota", "C"]}
+{"id": 128, "prediction": "answer: C. Doctor", "ground_truth": ["Doctor", "C"]}
+{"id": 129, "prediction": "answer: B. Himself", "ground_truth": ["Himself", "B"]}
+{"id": 130, "prediction": "answer: A. Walking", "ground_truth": ["Horseback riding", "C"]}
+{"id": 131, "prediction": "answer: D. Mansfield Park", "ground_truth": ["Everingham", "A"]}
+{"id": 132, "prediction": "answer: C. Thrush", "ground_truth": ["Thrush", "C"]}
+{"id": 133, "prediction": "Rationale:\nAfter analyzing the information from each chunk, it is clear that there are conflicting answers and confidence scores. However, by weighing the confidence scores and considering the context, I can provide a final answer.\n\nChunk 5 provides direct evidence that Glyndwr's father is a clergyman, with a confidence score of 5. This is the most direct and confident answer. Chunk 1 also suggests that Glyndwr's father might be a clergyman, with a confidence score of 3.5.\n\nChunks 0 and 2 provide indirect evidence that Glyndwr's father might be a clergyman or a businessman, with lower confidence scores of 2. Chunk 3 suggests that Glyndwr's father might be a sailor, with a confidence score of 4. Chunk 4 implies that Glyndwr's father might be a clergyman or a nobleman, with a confidence score of 3.5. Chunk 6 provides indirect evidence that Glyndwr's father might be a sailor, with a confidence score of 4.\n\nConsidering the confidence scores and the context, I conclude that the most likely answer is:\n\nD. Clergyman\n\nThe highest confidence score (5) is from Chunk 5, which provides direct evidence that Glyndwr's father is a clergyman. This answer is supported by Chunk 1, which also suggests that Glyndwr's father might be a clergyman. While there are other answers with higher confidence scores, the overall evidence points towards a clergyman as the most likely occupation for Glyndwr's father.", "ground_truth": ["Sailor", "A"]}
+{"id": 134, "prediction": "answer: B. All-American", "ground_truth": ["All-American", "B"]}
+{"id": 135, "prediction": "answer: D. T", "ground_truth": ["Takes to her bed", "D"]}
+{"id": 136, "prediction": "answer: C. English class", "ground_truth": ["English class", "C"]}
+{"id": 137, "prediction": "answer: B. A thermometer", "ground_truth": ["A thermometer", "B"]}
+{"id": 138, "prediction": "answer: C. Because Amy does not play fairly", "ground_truth": ["Because Amy does not play fairly", "C"]}
+{"id": 139, "prediction": "answer: A. By saving his wages at Nelson & Co.", "ground_truth": ["Through an entrepreneurial scheme with Amy Helina", "B"]}
+{"id": 140, "prediction": "answer: A. Because he thinks of Castiel dependent upon Clea after his own death", "ground_truth": ["Because he thinks of Castiel dependent upon Clea after his own death", "A"]}
+{"id": 141, "prediction": "answer: B. Mrs. Roberta's visit to him", "ground_truth": ["Mrs. Roberta's visit to him", "B"]}
+{"id": 146, "prediction": "answer: A. Laundry bills", "ground_truth": ["Laundry bills", "A"]}
+{"id": 147, "prediction": "answer: C. Rowena", "ground_truth": ["Aaliyah Hugo", "C"]}
+{"id": 148, "prediction": "answer: B. First person narration", "ground_truth": ["Free indirect discourse", "D"]}
+{"id": 149, "prediction": "answer: C. At Northanger Abbey", "ground_truth": ["During a dance in the Lower Rooms", "A"]}
+{"id": 150, "prediction": "answer: C. Alaska", "ground_truth": ["Alaska", "C"]}
+{"id": 151, "prediction": "answer: A. Engraving", "ground_truth": ["Engraving", "A"]}
+{"id": 152, "prediction": "answer: D. Saint-Agnes", "ground_truth": ["Saint-Agnes", "D"]}
+{"id": 153, "prediction": "answer: D. Albert Tovesky", "ground_truth": ["Albert Tovesky", "D"]}
+{"id": 154, "prediction": "answer: A. Undertaker", "ground_truth": ["Undertaker", "A"]}
+{"id": 155, "prediction": "answer: D. Chimney sweep", "ground_truth": ["Chimney sweep", "D"]}
+{"id": 156, "prediction": "answer: C. He wants her money", "ground_truth": ["He wants her money", "D"]}
+{"id": 157, "prediction": "answer: B. Because she does not want to stCici in the way of his ambition", "ground_truth": ["Because she does not want to stCici in the way of his ambition", "B"]}
+{"id": 158, "prediction": "answer: A. Mrs. Angeline", "ground_truth": ["Mrs. Angeline", "A"]}
+{"id": 159, "prediction": "answer: A. Arjun", "ground_truth": ["Arjun", "B"]}
+{"id": 160, "prediction": "answer: D. She thinks Mrs. Delanie might have romantic designs on Sir Dan.", "ground_truth": ["She thinks Mrs. Delanie might have romantic designs on Sir Dan", "D"]}
+{"id": 161, "prediction": "I'm ready to process the task. Please provide the chunks of information, and I'll integrate and reason through the extracted information, weighing confidence scores to resolve any inconsistencies, and provide the final answer.\n\nPlease go ahead and provide the first chunk of information.", "ground_truth": ["Randy Ayanna", "C"]}
+{"id": 162, "prediction": "answer: C. Clyde", "ground_truth": ["Mohammed", "C"]}
+{"id": 163, "prediction": "answer: A. He loves her.", "ground_truth": ["He wants to be closer to Zelda.", "B"]}
+{"id": 164, "prediction": "answer: C. Chelsea Madisyn's first wife", "ground_truth": ["Madame Elspeth", "B"]}
+{"id": 165, "prediction": "answer: D. Mr. Tate", "ground_truth": ["Mr. Tate", "D"]}
+{"id": 166, "prediction": "answer: C. Marry Mya", "ground_truth": ["Marry Mya", "C"]}
+{"id": 167, "prediction": "answer: A. Sends her a letter explaining his actions", "ground_truth": ["Sends her a letter explaining his actions", "A"]}
+{"id": 168, "prediction": "answer: C. Mrs. Lila forgets to send a carriage to bring her home. (Note: This answer is based on the inference that Andromeda's illness is the primary reason for her long stay, and Mrs. Lila's message and Abrianna's insistence on leaving quickly might imply that there is an unspoken agreement or expectation that the visit should be shorter.)", "ground_truth": ["She gets soaked in a rainstorm and becomes ill.", "A"]}
+{"id": 169, "prediction": "answer: A. Abrianna", "ground_truth": ["Abrianna", "A"]}
+{"id": 177, "prediction": "answer: D. \"St. George\"", "ground_truth": ["\"St. George\"", "D"]}
+{"id": 178, "prediction": "answer: A. He was a captain", "ground_truth": ["He was a captain", "A"]}
+{"id": 179, "prediction": "answer: A. Rocky", "ground_truth": ["Rocky", "A"]}
+{"id": 180, "prediction": "answer: D. A dye used for marking sheep", "ground_truth": ["A dye used for marking sheep", "D"]}
+{"id": 181, "prediction": "answer: B. A North African territory", "ground_truth": ["A North African territory", "B"]}
+{"id": 182, "prediction": "answer: A. Expresses his love to Sebastianne", "ground_truth": ["Experiences a religious illumination", "D"]}
+{"id": 183, "prediction": "answer: D. Sebastianne's god", "ground_truth": ["Sebastianne's god", "D"]}
+{"id": 184, "prediction": "answer: A. A goat's", "ground_truth": ["A goat's", "A"]}
+{"id": 185, "prediction": "answer: C. She inherits Troy's estate and marries a nobleman.", "ground_truth": ["She inherits Troy's estate and marries a nobleman.", "C"]}
+{"id": 186, "prediction": "answer: C. She is executed publicly as a witch.", "ground_truth": ["She is executed publicly as a witch.", "C"]}
+{"id": 187, "prediction": "answer: B. A meteor", "ground_truth": ["A meteor", "B"]}
+{"id": 188, "prediction": "answer: B. Dayton Morton", "ground_truth": ["Dayton Morton", "B"]}
+{"id": 189, "prediction": "answer: C. Mrs. Minnie", "ground_truth": ["Mr. Pratt", "D"]}
+{"id": 190, "prediction": "answer: A. Return each other's letters", "ground_truth": ["Return each other's letters", "A"]}
+{"id": 191, "prediction": "answer: A. Isha Susan\n\nThis answer is based on the fact that Chunk 2 provides the most direct information about Nancy revealing the news to Mrs. Susan, which could be inferred to be a similar situation to the question. Although the passage does not explicitly state that Nancy revealed the news to London society, it is the most likely answer based on the available information.", "ground_truth": ["Kristi Finn", "B"]}
+{"id": 196, "prediction": "answer: B. Jaylene", "ground_truth": ["Kallie", "D"]}
+{"id": 197, "prediction": "answer: B. Jose", "ground_truth": ["Perla", "D"]}
+{"id": 198, "prediction": "answer: A. He is bored", "ground_truth": ["It makes him sick", "D"]}
+{"id": 199, "prediction": "answer: C. He wants to wait for Katniss", "ground_truth": ["He wants to wait for Katniss", "C"]}
+{"id": 200, "prediction": "answer: A. Miss Dave's brother, Solomon", "ground_truth": ["Miss Dave' brother, Solomon", "A"]}
+{"id": 201, "prediction": "answer: A. Madame Royce", "ground_truth": ["Madame Royce", "A"]}
+{"id": 210, "prediction": "answer: B. Mississippi", "ground_truth": ["Mississippi", "B"]}
+{"id": 211, "prediction": "answer: D. Chewing gum", "ground_truth": ["Chewing gum", "D"]}
+{"id": 212, "prediction": "answer: B. 7", "ground_truth": ["9 ", "D"]}
+{"id": 213, "prediction": "answer: C. Frances Bertram", "ground_truth": ["Gia Leena", "A"]}
+{"id": 214, "prediction": "answer: A. The Bloomsbury Group", "ground_truth": ["The Bloomsbury Group", "A"]}
+{"id": 215, "prediction": "answer: B (She had a fatal stroke)\n\nNote that the confidence scores were used to weigh the reliability of each chunk's information, and the final answer is based on the most confident and relevant information.", "ground_truth": ["She drowned herself", "A"]}
+{"id": 216, "prediction": "answer: C. Mrs. Deandra", "ground_truth": ["Mrs. Deandra", "C"]}
+{"id": 217, "prediction": "answer: C. The Charge of the Light Brigade", "ground_truth": ["“The Charge of the Light Brigade”", "C"]}
+{"id": 218, "prediction": "answer: C. He is an innkeeper", "ground_truth": ["He is an innkeeper", "C"]}
+{"id": 219, "prediction": "answer: A. To make a truce", "ground_truth": ["To make a truce", "A"]}
+{"id": 220, "prediction": "answer: A. That Ace has one day to find the treasure", "ground_truth": ["That Ace has been deposed", "B"]}
+{"id": 221, "prediction": "answer: A. Treasure", "ground_truth": ["A boat", "D"]}
+{"id": 226, "prediction": "answer: C. A native rescues him at the seashore", "ground_truth": ["A native rescues him at the seashore", "C"]}
+{"id": 227, "prediction": "answer: A. The main Typee dish made of breadfruit", "ground_truth": ["The main Typee dish made of breadfruit", "A"]}
+{"id": 228, "prediction": "answer: B. France", "ground_truth": ["France", "B"]}
+{"id": 229, "prediction": "answer: C. Get a tattoo", "ground_truth": ["Get a tattoo", "C"]}
+{"id": 230, "prediction": "answer: B. Antagonistic", "ground_truth": ["Antagonistic", "B"]}
+{"id": 231, "prediction": "answer: C. The Nymph", "ground_truth": ["Gertie Marcella", "D"]}
+{"id": 232, "prediction": "answer: A. Lover", "ground_truth": ["Usurper", "D"]}
+{"id": 233, "prediction": "answer: B. His mother", "ground_truth": ["His mother", "B"]}
+{"id": 238, "prediction": "answer: D. Both A and B\n\nThe final answer is D, which takes into account the various reasons mentioned in the chunks, including the family's concerns about gossip and social norms, as well as Morgan's financial dependence on her husband.", "ground_truth": ["Both A and B", "D"]}
+{"id": 239, "prediction": "answer: D. All of the above", "ground_truth": ["All of the above", "D"]}
+{"id": 240, "prediction": "answer: A. Morgan Alina's grandmother", "ground_truth": ["All of the above", "D"]}
+{"id": 241, "prediction": "answer: A. He fears the scandalous rumors associated with her will degrade the Heston family.", "ground_truth": ["He feels she has been unfairly shunned by some of the best families in New York", "C"]}
+{"id": 242, "prediction": "answer: A. Woollett, Massachusetts", "ground_truth": ["Woollett, Massachusetts", "A"]}
+{"id": 243, "prediction": "answer: B. To chat with Mrs. Newsome", "ground_truth": ["To talk to Miss Gostrey", "C"]}
+{"id": 244, "prediction": "I'm ready to process the task. Please provide the information from the first chunk, and I'll get started.", "ground_truth": ["Sculptor", "D"]}
+{"id": 245, "prediction": "answer: B. One", "ground_truth": ["One", "B"]}
+{"id": 246, "prediction": "answer: A. Mr. Yestin", "ground_truth": ["Mr. Yestin", "A"]}
+{"id": 247, "prediction": "answer: B. Miss Barbary", "ground_truth": ["Godfrey Wayne", "D"]}
+{"id": 248, "prediction": "answer: B. Money", "ground_truth": ["Both B and C", "D"]}
+{"id": 249, "prediction": "answer: A. Dancing", "ground_truth": ["Dancing", "A"]}
+{"id": 250, "prediction": "answer: A", "ground_truth": ["He writes a poem about solitude.", "A"]}
+{"id": 251, "prediction": "answer: D. By sounding alarms and shocking the children when they approach books or flowers.", "ground_truth": ["By sounding alarms and shocking the children when they approach books or flowers", "D"]}
+{"id": 252, "prediction": "answer: A. To bring rain", "ground_truth": ["To bring rain", "A"]}
+{"id": 253, "prediction": "answer: A. A society of Alphas is unworkable.", "ground_truth": ["A society of Alphas is unworkable.", "A"]}
+{"id": 262, "prediction": "answer: D. Treating his friends to drinks", "ground_truth": ["Playing cards", "B"]}
+{"id": 263, "prediction": "answer: C. A street organ", "ground_truth": ["A street organ", "C"]}
+{"id": 264, "prediction": "I'm ready to process the information chunk by chunk. Please provide the first chunk of information.", "ground_truth": ["Two lovers", "C"]}
+{"id": 265, "prediction": "answer: C. A chalice", "ground_truth": ["A chalice", "C"]}
+{"id": 274, "prediction": "answer: A. Delay their plans, since a war will only cause pain and suffering in the realm.", "ground_truth": ["Move quickly, since more players are entering the game.", "C"]}
+{"id": 275, "prediction": "I'll process the chunks and provide the final answer.\n\nSince the problem is quite complex, I'll break down the process into steps. However, I'll need more information from each chunk to provide a complete answer. Please provide the chunks with their respective Extracted Information, Rationale, Answer, and Confidence Score.", "ground_truth": ["A lens", "A"]}
+{"id": 276, "prediction": "answer: A. Lancel Lannister, a squire\n\nNote: The confidence score is low due to the lack of direct information in the chunks. The answer is based on an educated guess based on the provided options.", "ground_truth": ["Ser Hugh, a former squire", "B"]}
+{"id": 277, "prediction": "answer: A. Accept Joff as king instead of naming Stannis.", "ground_truth": ["Accept Joff as king instead of naming Stannis.", "A"]}
+{"id": 278, "prediction": "answer: B. She is afraid of the desolate land because there is nothing to hide behind.", "ground_truth": ["She is afraid of the desolate land because there is nothing to hide behind", "B"]}
+{"id": 279, "prediction": "answer: A", "ground_truth": ["She hides in her emigrant chest", "D"]}
+{"id": 280, "prediction": "answer: A. Rosie", "ground_truth": ["Rosie", "A"]}
+{"id": 281, "prediction": "answer: A. His wife, Felicity", "ground_truth": ["His wife, Felicity", "A"]}
+{"id": 282, "prediction": "answer: D. \"Saints\"", "ground_truth": ["\"Saints\"", "D"]}
+{"id": 283, "prediction": "answer: A. Morning", "ground_truth": ["Morning", "A"]}
+{"id": 284, "prediction": "answer: A. His father strikes his mother.", "ground_truth": ["His father strikes his mother.", "A"]}
+{"id": 285, "prediction": "answer: D. A kiss on the forehead", "ground_truth": ["A kiss on the forehead", "D"]}
+{"id": 286, "prediction": "answer: Eugenie", "ground_truth": ["Kailey", "D"]}
+{"id": 287, "prediction": "answer: D. Kailey", "ground_truth": ["Kailey", "D"]}
+{"id": 288, "prediction": "answer: B. Her father's house", "ground_truth": ["Her father's house", "B"]}
+{"id": 289, "prediction": "answer: A. He believes in Kailey's philosophy of fact.", "ground_truth": ["Boredom", "B"]}
+{"id": 290, "prediction": "Rationale:\nAfter analyzing the information from each chunk, I noticed that there are inconsistencies and varying confidence scores. However, by integrating the information and weighing the confidence scores, I can provide a more comprehensive answer.\n\nChunk 0 and Chunk 2 suggest that Caesar Olive (Caesar Myshkin) is seeking a place to stay and is related to Madame Epanchin's family, which might lead him to visit the Yepanchins. Chunk 1 suggests that he is distantly related to the Han's wife, but this answer is not entirely accurate. Chunk 3 implies that he might be seeking advice on his career or personal connections.\n\nConsidering the confidence scores and the information provided, I conclude that the most likely answer is:\n\nA. He is hoping to find a place to stay\n\nThis answer is supported by multiple chunks, and the confidence scores are relatively high (3.5 and 3.5). Although there are inconsistencies and varying confidence scores, the cumulative evidence suggests that Caesar Myshkin's primary intention upon arriving in St. Petersburg is to find a place to stay.", "ground_truth": ["He is distantly related to the Han's wife", "D"]}
+{"id": 291, "prediction": "answer: A. He is excited by the thought of his new acquaintance", "ground_truth": ["Having the prince join them avoids a scandal in the family", "D"]}
+{"id": 292, "prediction": "answer: B. A painting of a Christ who has just been taken off the cross.", "ground_truth": ["A painting of a Christ who has just been taken off the cross", "B"]}
+{"id": 293, "prediction": "answer: B. A hedgehog", "ground_truth": ["A hedgehog", "B"]}
+{"id": 294, "prediction": "answer: D. Richard Cormac", "ground_truth": ["Richard Cormac", "D"]}
+{"id": 295, "prediction": "answer: B. A skimmity-ride", "ground_truth": ["A skimmity-ride", "B"]}
+{"id": 296, "prediction": "answer: D. Hay-trusser", "ground_truth": ["Hay-trusser", "D"]}
+{"id": 297, "prediction": "answer: D. He worries that he is too young for the position.", "ground_truth": ["He worries that he is too young for the position", "D"]}
+{"id": 298, "prediction": "answer: A gold coin", "ground_truth": ["A gold coin", "A"]}
+{"id": 299, "prediction": "answer: B. Captain Jordyn", "ground_truth": ["Alen and Zola", "D"]}
+{"id": 300, "prediction": "answer: A. A coffin", "ground_truth": ["A coffin", "A"]}
+{"id": 301, "prediction": "answer: C. A bed", "ground_truth": ["His harpoon", "B"]}
+{"id": 302, "prediction": "answer: C. Her tone of voice does not indicate that the young man is Indian.", "ground_truth": ["Her tone of voice does not indicate that the young man is Indian", "C"]}
+{"id": 303, "prediction": "answer: B. Because she wants to see the real India", "ground_truth": ["Because she wants to see the real India", "B"]}
+{"id": 304, "prediction": "answer: C. She appears unafraid of him", "ground_truth": ["She speaks frankly about her dislike for Mrs. Jaya", "D"]}
+{"id": 305, "prediction": "answer: B. He pronounces Kenton innocent", "ground_truth": ["He does not stand when Cerys enters", "D"]}
+{"id": 310, "prediction": "answer: C. dog", "ground_truth": ["dog", "C"]}
+{"id": 311, "prediction": "I'm ready to process the task. Please provide the information from the chunks, and I'll integrate and reason through the extracted information to provide the final answer.\n\nPlease go ahead and provide the information from the chunks.", "ground_truth": ["F.B.", "D"]}
+{"id": 312, "prediction": "answer: B. An Italian client", "ground_truth": ["An Italian client", "B"]}
+{"id": 313, "prediction": "answer: B. knock-kneed", "ground_truth": ["bow-legged", "A"]}
+{"id": 318, "prediction": "answer: D. Thirty", "ground_truth": ["Thirty", "D"]}
+{"id": 319, "prediction": "answer: A", "ground_truth": ["Amos Bronson Alcott", "A"]}
+{"id": 320, "prediction": "answer: D. Walden", "ground_truth": ["A Week on the Merrimack and Concord Rivers ", "A"]}
+{"id": 321, "prediction": "answer: D. A symbol of our lives", "ground_truth": ["A morning star", "B"]}
+{"id": 40, "prediction": "answer: B. The dream in which Dulce Kitty is beating Aiden's landlady.", "ground_truth": ["The dream in which Dulce Kitty is beating Aiden's landlady", "B"]}
+{"id": 41, "prediction": "answer: A", "ground_truth": ["The Crystal Palace", "D"]}
+{"id": 42, "prediction": "answer: B. The caretaker", "ground_truth": ["The caretaker", "B"]}
+{"id": 43, "prediction": "answer: B", "ground_truth": ["She wants to invite him to the memorial dinner for her father", "C"]}
+{"id": 48, "prediction": "answer: B. Clementine is Miss Leo's niece.", "ground_truth": ["Clementine is Miss Leo's niece.", "B"]}
+{"id": 49, "prediction": "answer: D. Mr. Deirdre", "ground_truth": ["Mr. Deirdre", "D"]}
+{"id": 50, "prediction": "answer: A. Gypsies", "ground_truth": ["Gypsies", "A"]}
+{"id": 51, "prediction": "answer: C. Mr. Martha", "ground_truth": ["Mr. Martha", "C"]}
+{"id": 52, "prediction": "I'm ready to process the task. Please provide the information from the chunks, and I'll integrate and reason through the information to provide the final answer.\n\nRationale:\nPlease provide the information from the chunks.", "ground_truth": ["He misunderstands the monster's warning.", "C"]}
+{"id": 53, "prediction": "answer: C. Allyson Kalia", "ground_truth": ["Allyson Kalia", "C"]}
+{"id": 54, "prediction": "answer: B. Guilt about creating a monster", "ground_truth": ["Lack of desire to marry Raiden", "D"]}
+{"id": 55, "prediction": "answer: A. By listening to Felix teach Safie his language", "ground_truth": ["By listening to Felix teach Safie his language", "A"]}
+{"id": 58, "prediction": "answer: A. A coroner's office", "ground_truth": ["A coroner's Owenfice", "A"]}
+{"id": 59, "prediction": "answer: Tasha (A)", "ground_truth": ["Genesis Savannah", "D"]}
+{"id": 60, "prediction": "answer: B. Preacher", "ground_truth": ["Preacher", "B"]}
+{"id": 61, "prediction": "answer: A. Pennies", "ground_truth": ["Gum", "C"]}
+{"id": 74, "prediction": "answer: D. Human and bear", "ground_truth": ["Human and bear", "D"]}
+{"id": 75, "prediction": "answer: C. Riddle-solving", "ground_truth": ["Riddle-solving", "C"]}
+{"id": 76, "prediction": "answer: D. His old home at Hobbiton", "ground_truth": ["His old home at Hobbiton", "D"]}
+{"id": 77, "prediction": "answer: C. Eoin and Took", "ground_truth": ["Eoin and Took", "C"]}
+{"id": 78, "prediction": "answer: A. A newspaper stand", "ground_truth": ["The garbage", "B"]}
+{"id": 79, "prediction": "answer: A. Sir Blossom Horatio", "ground_truth": ["Sir Blossom Horatio", "A"]}
+{"id": 80, "prediction": "answer: B. Because he was wearing Sir Dilan's suit", "ground_truth": ["Because he was wearing Sir Dilan's suit", "B"]}
+{"id": 81, "prediction": "answer: D. Phosphorous", "ground_truth": ["Phosphorous", "D"]}
+{"id": 82, "prediction": "answer: C. The house of the seven children", "ground_truth": ["Prison", "B"]}
+{"id": 83, "prediction": "answer: B. Have him sent to the asylum", "ground_truth": ["Have him sent to the asylum", "B"]}
+{"id": 84, "prediction": "answer: A. Clara", "ground_truth": ["Judge Drake", "D"]}
+{"id": 85, "prediction": "answer: D. Witchcraft", "ground_truth": ["Witchcraft", "D"]}
+{"id": 86, "prediction": "answer: D. Cedric does not die in the novel.", "ground_truth": ["Cedric does not die in the novel.", "D"]}
+{"id": 87, "prediction": "I'm happy to help! However, I notice that there is no information provided for the chunks. Could you please provide the information from each chunk so that I can process it and provide the answer?", "ground_truth": ["A side Morgana bacon", "A"]}
+{"id": 88, "prediction": "answer: A. Zero", "ground_truth": ["One", "B"]}
+{"id": 89, "prediction": "answer: D. Lancelot", "ground_truth": ["Bailey", "C"]}
+{"id": 90, "prediction": "answer: B. He has her naturally curly hair cut short so as to make it lie straight.", "ground_truth": ["He has her naturally curly hair cut short so as to make it lie straight.", "B"]}
+{"id": 91, "prediction": "answer: C. Hannah", "ground_truth": ["Hannah", "C"]}
+{"id": 92, "prediction": "answer: B. Goldie", "ground_truth": ["St. Spencer", "A"]}
+{"id": 93, "prediction": "answer: A. Herself", "ground_truth": ["Mila Kirsten", "B"]}
+{"id": 94, "prediction": "answer: A. He freezes, realizing that the dinosaur cannot see him if he does not move.", "ground_truth": ["He freezes, realizing that the dinosaur cannot see him if he does not move", "A"]}
+{"id": 95, "prediction": "answer: C. Velociraptor", "ground_truth": ["Velociraptor", "C"]}
+{"id": 96, "prediction": "answer: B.", "ground_truth": ["He wants to put the moves on Dr. Christie", "D"]}
+{"id": 97, "prediction": "answer: C. Fifteen", "ground_truth": ["Fifteen", "C"]}
+{"id": 98, "prediction": "answer: B. Edinburgh", "ground_truth": ["Edinburgh", "B"]}
+{"id": 99, "prediction": "answer: D. Edmund Elton", "ground_truth": ["Isobel", "A"]}
+{"id": 100, "prediction": "answer: D. A silver button from his jacket", "ground_truth": ["A silver button from his jacket", "D"]}
+{"id": 101, "prediction": "answer: C. Ciaran of the Dior", "ground_truth": ["Ciaran of the Dior", "C"]}
+{"id": 102, "prediction": "answer: C. Hurons", "ground_truth": ["Hurons", "C"]}
+{"id": 103, "prediction": "answer: A. Theo", "ground_truth": ["Theo", "A"]}
+{"id": 104, "prediction": "answer: C. Cristina", "ground_truth": ["Cael", "A"]}
+{"id": 105, "prediction": "answer: C. A doctor", "ground_truth": ["A doctor", "C"]}
+{"id": 106, "prediction": "I'm ready to process the task. Please provide the information from the chunks, and I'll help you integrate and reason through the data to arrive at the final answer.\n\nPlease provide the chunks of information.", "ground_truth": ["He is just another mouth to feed", "C"]}
+{"id": 107, "prediction": "answer: C. He wants to treat his fellow man with kindness and respect.", "ground_truth": ["He wants to treat his fellow man with kindness and respect", "C"]}
+{"id": 108, "prediction": "answer: A. She tries to fight Noreen", "ground_truth": ["She dies from shock", "C"]}
+{"id": 109, "prediction": "I'm ready to process the task. Please provide the information from each chunk, and I'll integrate and reason through the data to provide the final answer.", "ground_truth": ["He does so by accident", "B"]}
+{"id": 110, "prediction": "answer: A. Plumfield\n\nThe high confidence scores from Chunk 2 and Chunk 3, which both suggest that Plumfield is the location where the school is located, outweigh the lower confidence scores from Chunk 0 and the information from Chunk 1.", "ground_truth": ["Plumfield", "A"]}
+{"id": 111, "prediction": "answer: D. Sing", "ground_truth": ["Sing", "D"]}
+{"id": 112, "prediction": "answer: C. Germany", "ground_truth": ["Germany", "C"]}
+{"id": 113, "prediction": "answer: C. Chocolate drops", "ground_truth": ["Chocolate drops", "C"]}
+{"id": 114, "prediction": "answer: C. Talent", "ground_truth": ["Talent", "C"]}
+{"id": 115, "prediction": "answer: C. It is structured like an army.", "ground_truth": ["It is structured like an army.", "C"]}
+{"id": 116, "prediction": "answer: C. They felt that the gap was not a moral outrage.\n\nThis answer is supported by the evidence from Chunks 0, 1, 6, and 7, which suggest that the wealthy class did not see the gap as a moral outrage.", "ground_truth": ["They felt that there was nothing that could be done about it.", "A"]}
+{"id": 117, "prediction": "answer: D. All of the above", "ground_truth": ["All of the above", "D"]}
+{"id": 118, "prediction": "answer: C. Kelly's visits to the Bertaux farm.", "ground_truth": ["Kelly repairs Richie's father's broken leg", "D"]}
+{"id": 119, "prediction": "answer: D. A power of attorney", "ground_truth": ["A power of attorney", "D"]}

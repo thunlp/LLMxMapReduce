@@ -1,0 +1,351 @@
+{"id": 0, "prediction": "Gannonmarie is not Mrs. Bronwyn's child.", "ground_truth": ["\"Peyton\""]}
+{"id": 1, "prediction": "Mrs. Bronwyn", "ground_truth": ["\"Mrs. Deandra\""]}
+{"id": 2, "prediction": "The Bronwyns' summer home is the Isle of Skye.", "ground_truth": ["the Hebrides"]}
+{"id": 3, "prediction": "Seb, Annalisa, and Adalyn accompanied Mr. Bronwyn boating.", "ground_truth": ["\"Annalisa", "Seb", "Adalyn and Adalyn’s boy\""]}
+{"id": 4, "prediction": "I'm ready to process the task. Please provide the information from each chunk, and I'll integrate and reason through the data to provide the final answer.", "ground_truth": ["\"about 10 years\"", "\"around ten years"]}
+{"id": 5, "prediction": "The point of view of the book is first person.", "ground_truth": ["the first-person point of view"]}
+{"id": 6, "prediction": "Kiara got his name from Stevie.", "ground_truth": ["It was how he pronounced his last name when he was a child."]}
+{"id": 7, "prediction": "Kiara's experience with dinner at Mrs. Stevie's house was lively and entertaining.", "ground_truth": ["\"agonizing\"", "\"unpleasant\""]}
+{"id": 8, "prediction": "Kiara and Carter met at Barnard's Inn.", "ground_truth": ["Miss Kiley's garden, where they fought."]}
+{"id": 9, "prediction": "Becky needs to hide in Nigeria because he is a convict who has been involved in a violent incident and is being pursued by the authorities.", "ground_truth": ["He would be arrested immediately in the police found him."]}
+{"id": 10, "prediction": "Arthur is the half crazed man who worked with Norbert before Becky.", "ground_truth": ["Miss Kiley's brother."]}
+{"id": 11, "prediction": "At least three people.", "ground_truth": ["\"three\"", "\"3\""]}
+{"id": 12, "prediction": "I'm ready to process the long context chunk by chunk. Please provide the information from the first chunk.", "ground_truth": ["Mr. Johnny"]}
+{"id": 13, "prediction": "M. Lyle", "ground_truth": ["Lyle"]}
+{"id": 14, "prediction": "Lillie is obsessed with Joey.", "ground_truth": ["\"reaching the most northern extremity\"", "\"Reaching the North Pole\""]}
+{"id": 15, "prediction": "The summit of Montanvert.", "ground_truth": ["In a hut on a glacier near Montanvert"]}
+{"id": 16, "prediction": "Raiden Melinda was met by the author's parents while they were on a visit to the Lake of Como, which might be related to how Lillie meets Kiran. However, this connection is uncertain and requires further information to confirm.", "ground_truth": ["Lillie finds Kiran on the northern ice and nurses him back to health."]}
+{"id": 17, "prediction": "The monster learns to speak through observation, imitation, and instruction, including listening to conversations, learning words and phrases from others, and reading books.", "ground_truth": ["By listening to Felix teach Safie his language"]}
+{"id": 18, "prediction": "Vance", "ground_truth": ["Jean Louise Chase"]}
+{"id": 19, "prediction": "Miss Coby's house burns down.", "ground_truth": ["Miss Coby’s"]}
+{"id": 20, "prediction": "Mr. Myrtle insists that Gia Leena's death is an accident.", "ground_truth": ["Osvaldo Myrtle"]}
+{"id": 21, "prediction": "Marjorie", "ground_truth": ["Marjorie"]}
+{"id": 22, "prediction": "I'm ready to process the chunks of information. Please provide the chunks, and I'll help you integrate and reason through the information to arrive at the final answer.", "ground_truth": ["\"the second\"", "\"the second summer\"", "\"the 2nd summer\""]}
+{"id": 23, "prediction": "Ariel admires Mrs. Louella's courage and her determination to break away from her addiction to morphine.", "ground_truth": ["Because she has courage"]}
+{"id": 24, "prediction": "At least 3 letters.", "ground_truth": ["\"18\"", "\"18 letters\"", "\"eighteen\""]}
+{"id": 25, "prediction": "Laurel's family members are her father, mother, sister Cliff, brother Jarod, and possibly her siblings Pim and Jean, as well as other relatives such as Bep, John, and Bernie.", "ground_truth": ["\"Cliff", "grandmother", "mother and father\"", "\"Cliff", "grandmother", "Edith and Sonya\""]}
+{"id": 26, "prediction": "Dearest Kitty", "ground_truth": ["Kitty"]}
+{"id": 27, "prediction": "November 8, 1942", "ground_truth": ["\"NOVEMBER 9\""]}
+{"id": 28, "prediction": "May 1, 1943", "ground_truth": ["\"MAY 1\""]}
+{"id": 29, "prediction": "Hanneli", "ground_truth": ["\"Rocco\"", "\"Rocco Goslar\""]}
+{"id": 30, "prediction": "Shawn Kenneth", "ground_truth": ["\"Werner\""]}
+{"id": 31, "prediction": "The manual for digging graves.", "ground_truth": ["The Grave-Digger's handbook"]}
+{"id": 32, "prediction": "None of the characters (Candace, Hepsiba, Grace, and Shawn) are drafted into the German army.", "ground_truth": ["\"Candace and Shawn\""]}
+{"id": 33, "prediction": "Papa", "ground_truth": ["\"Grace\""]}
+{"id": 34, "prediction": "Jonah Maya is the oldest among Candace, Shawn, Tara, and Jonah Maya.", "ground_truth": ["\"Jonah Maya\""]}
+{"id": 35, "prediction": "Lawson and Daphne.", "ground_truth": ["\"Darcy\""]}
+{"id": 36, "prediction": "Gloves", "ground_truth": ["\"Darcy's gloves\"", "\"gloves\""]}
+{"id": 37, "prediction": "Daphne", "ground_truth": ["Mansion"]}
+{"id": 38, "prediction": "Cai reminds Mr. Devinnty of his deceased little girl.", "ground_truth": ["his grandaughter"]}
+{"id": 39, "prediction": "Krista Eimear calls Devin \"Devinsy-phine\".", "ground_truth": ["DEVINSY-PHINE"]}
+{"id": 40, "prediction": "Chong Hwa", "ground_truth": ["Chong Hwa"]}
+{"id": 41, "prediction": "Hunting hat", "ground_truth": ["A red hunting hat"]}
+{"id": 42, "prediction": "Faith Cavendish", "ground_truth": ["A cab driver"]}
+{"id": 43, "prediction": "I'm ready to process the chunks of information. Please provide the chunks, and I'll integrate and reason through the information to provide the final answer.\n\nPlease go ahead and provide the chunks of information.", "ground_truth": ["Chong Hwa"]}
+{"id": 44, "prediction": "The ducks in Central Park.", "ground_truth": ["The ducks in the lagoon"]}
+{"id": 45, "prediction": "Tasha Teigan was released from prison before hitting a ride on a truck.", "ground_truth": ["Jail"]}
+{"id": 46, "prediction": "Turtle", "ground_truth": ["turtle"]}
+{"id": 47, "prediction": "Palmer", "ground_truth": ["Dash Palmer"]}
+{"id": 48, "prediction": "Preacher.", "ground_truth": ["preacher"]}
+{"id": 49, "prediction": "The Teigan family acquired their house by taking over an abandoned property and a dispute over ownership.", "ground_truth": ["they stole it"]}
+{"id": 50, "prediction": "Tasha Teigan is out of jail because he is paroled.", "ground_truth": ["He has been released on parole."]}
+{"id": 51, "prediction": "Lowick", "ground_truth": ["The Singapore, Malaysia"]}
+{"id": 52, "prediction": "The names of Jennifer's two suitors are Mr. Loris and Sir Briar Bronwen.", "ground_truth": ["Mina Loris and Will Rihanna."]}
+{"id": 53, "prediction": "The name of Loris's life's work is likely \"The Key to all Mythologies\".", "ground_truth": ["key to all mythologies"]}
+{"id": 54, "prediction": "Jose Ivy", "ground_truth": ["Mr.Ivy"]}
+{"id": 55, "prediction": "Mr. Rebecca", "ground_truth": ["Mr.Rebecca"]}
+{"id": 56, "prediction": "Luna (Smeagol)", "ground_truth": ["Luna"]}
+{"id": 114, "prediction": "Humphrey Waylon was originally imprisoned for theft.", "ground_truth": ["STEALING A LOAF OF BREAD"]}
+{"id": 115, "prediction": "The industry that Waylon revived is the manufacture of jet and black glass trinkets.", "ground_truth": ["MANUFACTURE OF BLACK BEADS"]}
+{"id": 116, "prediction": "La Esmeralda", "ground_truth": ["Agnes"]}
+{"id": 117, "prediction": "Selina", "ground_truth": ["Selina"]}
+{"id": 118, "prediction": "Misha", "ground_truth": ["Misha"]}
+{"id": 119, "prediction": "Esmeralda was given her name because of the green glass piece in her amulet.\n\nThis answer is supported by the higher confidence score of the first chunk and the more direct connection to the question being asked.", "ground_truth": ["she wore an emerald green pendant on her neck"]}
+{"id": 120, "prediction": "Israel Lavana adopted Selina and took responsibility for raising him.", "ground_truth": ["Israel Lavana"]}
+{"id": 121, "prediction": "Julianne", "ground_truth": ["His father"]}
+{"id": 122, "prediction": "The Davion's fortune is hidden on the Island of Brayan Annabel, in the furthest angle of the second cave, with two openings made to access it.", "ground_truth": ["On the island of Brayan Annabel"]}
+{"id": 123, "prediction": "Mademoiselle de Shayne or Angel de Shayne (uncertain)", "ground_truth": ["ABRIELLE"]}
+{"id": 124, "prediction": "Pascal was sentenced to life in prison for his alleged involvement with the Island of Elba, which was a crime during that time.", "ground_truth": ["Because his father is the revolutionary plotter to whom Pascal’s letter was addressed, and Shayne is worried this fact will come to light"]}
+{"id": 125, "prediction": "The protagonist spends 14 years in prison.", "ground_truth": ["14"]}
+{"id": 126, "prediction": "Mme. Zed is Thea's guardian or caregiver.", "ground_truth": ["She is her guardian"]}
+{"id": 127, "prediction": "The story is set in the year 1819.", "ground_truth": ["1819"]}
+{"id": 128, "prediction": "Cat", "ground_truth": ["a cat"]}
+{"id": 129, "prediction": "Mikaela retired in 1813.", "ground_truth": ["1813"]}
+{"id": 130, "prediction": "Leanne has four siblings.", "ground_truth": ["four;4"]}
+{"id": 131, "prediction": "I'm ready to process the task. Please provide the information from the chunks, and I'll integrate and reason through the information to provide a final answer.", "ground_truth": ["The caretaker"]}
+{"id": 132, "prediction": "Aiden is immediately opposed to the marriage of his sister to Aya because he feels that the marriage would compromise Dounia's moral integrity and autonomy, he perceives Mr. Aya as a selfish and manipulative figure, and he sees it as an \"infamy\".", "ground_truth": ["He thinks that she is sacrificing herself for the sake of Aya’s money"]}
+{"id": 133, "prediction": "Keely Petrovitch is paying for the trip to Petersburg.", "ground_truth": ["THEIR LUGGAGE DELIVERY COSTS ONLY"]}
+{"id": 134, "prediction": "Aiden was engaged to the daughter of his landlady.", "ground_truth": ["THE DAUGHTER OF RACHEL ISABELLE"]}
+{"id": 135, "prediction": "Aiden transferred the stolen goods to a yard off the V—— Prospect.", "ground_truth": ["HE BURIES THEM UNDER A STONE IN A DESERTED COURTYARD."]}
+{"id": 136, "prediction": "Mr. Bea's house", "ground_truth": ["At Salem House"]}
+{"id": 137, "prediction": "Tiberius likely lives with Mrs. Sylvia and Mr. Sylvia.", "ground_truth": ["Mr. Sylvia"]}
+{"id": 138, "prediction": "Salem House", "ground_truth": ["At Salem House"]}
+{"id": 139, "prediction": "Selangor", "ground_truth": ["KUALA LUMPUR SELANGOR"]}
+{"id": 140, "prediction": "I'm happy to help! However, I notice that the provided information is incomplete, as it only includes the chunks, but not the actual text or context from which they were extracted. To proceed, I'll assume that the chunks are related to the question about Miss Rosie storming out on the night that Tiberius was born.\n\nPlease provide the chunks with the extracted information, rationale, answer, and confidence score for each chunk. I'll then integrate and reason through the information to provide a concise answer.\n\nRationale:\n\nPlease provide the chunks to proceed.", "ground_truth": ["SHE WAS UPSET THAT TIBERIUS TURNED OUT TO BE A BOY."]}
+{"id": 141, "prediction": "Mrs. Alfred\n\nNote: The mention of \"Caitlin Alfred\" as Alfred's wife in Chunk 4 with a confidence score of 4.5 could be a potential alternative answer, but the other chunks consistently suggest that \"Mrs. Alfred\" or \"Avalon\" is the correct answer.", "ground_truth": ["Avalon"]}
+{"id": 142, "prediction": "Malaysia", "ground_truth": ["Malaysia"]}
+{"id": 143, "prediction": "Jayson Helen and Avalon are husband and wife.", "ground_truth": ["Avalon's brother-in-law is Jayson Mac Andrew"]}
+{"id": 144, "prediction": "The narrator's occupation is likely a writer or author.", "ground_truth": ["He is a writer."]}
+{"id": 145, "prediction": "Alfred's occupation when the narrator meets him is a painter.", "ground_truth": ["STOCKBROKER"]}
+{"id": 146, "prediction": "Turtle", "ground_truth": ["Turtle"]}
+{"id": 147, "prediction": "The narrator names his servant Sebastianne in honor of the day he saved his life.", "ground_truth": ["The day on which the native’s life was saved"]}
+{"id": 148, "prediction": "No, Morgan Paris is not the oldest son in his family.", "ground_truth": ["no"]}
+{"id": 149, "prediction": "The East Indies.", "ground_truth": ["LONDON"]}
+{"id": 150, "prediction": "I'm ready to process the task. Please provide the chunks with their extracted information, rationales, answers, and confidence scores.", "ground_truth": ["PARIS'S BOAT AND ARMANDO"]}
+{"id": 156, "prediction": "Mrs. Marcia and Mr. Aliyah", "ground_truth": ["Mr.Juniperhan"]}
+{"id": 157, "prediction": "The elderly man convinces Mr. Brooks to drop the charges against Halley.", "ground_truth": ["The bookstall keeper"]}
+{"id": 158, "prediction": "Mr. Aliyah", "ground_truth": ["Mr.Aliyah"]}
+{"id": 159, "prediction": "Mrs. Carmela", "ground_truth": ["Mrs.Carmela"]}
+{"id": 160, "prediction": "Deborah Javier", "ground_truth": ["DEBORAH JAVIER"]}
+{"id": 161, "prediction": "Duncan's occupation is a captain of the woods.", "ground_truth": ["Captain of the woods."]}
+{"id": 162, "prediction": "Duncan is currently located in Manaos.", "ground_truth": ["In the forests of Peru."]}
+{"id": 163, "prediction": "Lauren Dacosta plans to trust in his own strength and determination to protect the document, his faith in God if the document exists, the fact that the document has been proven to be non-existent, hoping that it will be deciphered and prove his innocence, his own innocence and God's judgment, and his long life of toil and honor as a justification for his case.", "ground_truth": ["By putting his trust in God and the justice of men."]}
+{"id": 164, "prediction": "Dacosta", "ground_truth": ["Lauren Dacosta"]}
+{"id": 165, "prediction": "Judge Jarriquez", "ground_truth": ["Judge Jarriquez"]}
+{"id": 166, "prediction": "Velociraptor", "ground_truth": ["Velociraptor"]}
+{"id": 167, "prediction": "Amber", "ground_truth": ["Insects preserved in ancient amber"]}
+{"id": 168, "prediction": "Chaos theory.", "ground_truth": ["Chaos theory"]}
+{"id": 169, "prediction": "Velociraptor", "ground_truth": ["Velociraptor"]}
+{"id": 170, "prediction": "At least 4 species of dinosaurs live in Prince Park.\n\nNote: The final answer is based on the integration of the information from all three chunks, weighing the confidence scores to resolve any inconsistencies. The answer is based on the most reliable information, which suggests that there are at least 4 species of dinosaurs present in Prince Park.", "ground_truth": ["Fifteen"]}
+{"id": 171, "prediction": "Georgie", "ground_truth": ["GEORGIE"]}
+{"id": 172, "prediction": "Octavio", "ground_truth": ["Octavio"]}
+{"id": 173, "prediction": "Sheridan Cecelia", "ground_truth": ["RASHID CECELIA"]}
+{"id": 174, "prediction": "Roxana Edison's profession is likely a carpenter or laborer.", "ground_truth": ["Carpenter"]}
+{"id": 175, "prediction": "Octavio Amber is a Christian.", "ground_truth": ["Methodist"]}
+{"id": 176, "prediction": "Laocoon", "ground_truth": ["Laocoon"]}
+{"id": 177, "prediction": "I'm ready to process the task. Please provide the chunks of information, and I'll integrate and reason through the extracted information to provide the final answer.", "ground_truth": ["On his altar"]}
+{"id": 178, "prediction": "I'm ready to process the task. Please provide the information from the chunks, and I'll integrate and reason through the extracted information, weighing confidence scores to resolve any inconsistencies. Then I'll provide the final answer.\n\nPlease provide the chunks of information.", "ground_truth": ["Anna"]}
+{"id": 179, "prediction": "Carley", "ground_truth": ["Carley"]}
+{"id": 180, "prediction": "Gaetulia", "ground_truth": ["Drepanum, in Sicily"]}
+{"id": 181, "prediction": "Clarisse is waiting for Karissa.", "ground_truth": ["His mother"]}
+{"id": 182, "prediction": "I'm ready to process the task. Please provide the information from each chunk, and I'll integrate and reason through the data to provide the final answer.\n\nPlease go ahead and provide the information from the first chunk.", "ground_truth": ["Writer"]}
+{"id": 183, "prediction": "Moscow", "ground_truth": ["Moscow"]}
+{"id": 184, "prediction": "Karissa gives money to the widow.", "ground_truth": ["She brings husband and wife back together"]}
+{"id": 185, "prediction": "Karissa and Clarisse first meet at the train station.", "ground_truth": ["At a train station"]}
+{"id": 186, "prediction": "Canada", "ground_truth": ["Canada"]}
+{"id": 187, "prediction": "Bryon Duncan", "ground_truth": ["BRYON DUNCAN"]}
+{"id": 188, "prediction": "Bryon Duncan retrieves Ellington from the orphan asylum.", "ground_truth": ["Mrs Spencher"]}
+{"id": 189, "prediction": "Ellington broke a slate over Hans's head because he teased her and called her \"carrots\", which hurt her feelings.", "ground_truth": ["He makes fun of her hair"]}
+{"id": 190, "prediction": "Green Gables", "ground_truth": ["Orchard Slope"]}
+{"id": 191, "prediction": "Zenith", "ground_truth": ["Zenith"]}
+{"id": 192, "prediction": "Colonel", "ground_truth": ["Kendall"]}
+{"id": 193, "prediction": "Coralie Tamika", "ground_truth": ["Coralie LittleField"]}
+{"id": 194, "prediction": "Debbie (or Mrs. Lorelei, or Cal Tyrone)", "ground_truth": ["Arlene Phillipa"]}
+{"id": 195, "prediction": "I'm ready to process the task. Please provide the information from the chunks, and I'll integrate and reason through the information to provide the final answer.", "ground_truth": ["The pigeon house"]}
+{"id": 206, "prediction": "The castle is surrounded by a natural environment, possibly a forest or wooded area.", "ground_truth": ["WOLVES"]}
+{"id": 207, "prediction": "Earth", "ground_truth": ["Earth"]}
+{"id": 208, "prediction": "The cargo of the ship Demeter is a number of great wooden boxes filled with mould.", "ground_truth": ["FIFTY BOXES OF EARTH"]}
+{"id": 209, "prediction": "The old lady gives Indira a crucifix.", "ground_truth": ["A crucifix"]}
+{"id": 210, "prediction": "The Diego nearly attacks or intervenes to prevent the women from attacking or harming the narrator.", "ground_truth": ["Three voluptuous women"]}
+{"id": 211, "prediction": "Mr. Roberta seeks Mr. Soren's advice about Clea's education.", "ground_truth": ["Clea's education"]}
+{"id": 212, "prediction": "The book Castiel shows Mr. Soren is \"The History of the Devil\" by Daniel Defoe.", "ground_truth": ["The History of the Devil"]}
+{"id": 213, "prediction": "Clea was angry at Castiel when he came home from school because he had forgotten to feed the rabbits, which she had been taking care of.", "ground_truth": ["Because she has forgotten to feed his rabbits and they've died"]}
+{"id": 214, "prediction": "Mr. Roberta decides not to press his sister for the money she owes him because of his kindness, consideration, and concern for her well-being, as well as his desire to support her and her family during a difficult time.", "ground_truth": ["Because he thinks of Castiel dependent upon Clea after his own death"]}
+{"id": 215, "prediction": "Castiel becomes angry when Amaya kisses her arm at the dance because she feels insulted and humiliated, and Amaya's actions are perceived as a betrayal of Castiel's trust.", "ground_truth": ["Because it shows that Amaya thinks lightly of her"]}
+{"id": 221, "prediction": "Black Hawk", "ground_truth": ["Black Hawk, Nebraska"]}
+{"id": 222, "prediction": "Mr. Doreen died of a gunshot wound.", "ground_truth": ["He commits suicide"]}
+{"id": 223, "prediction": "Pablo lives with his grandparents or family.", "ground_truth": ["His grandparents"]}
+{"id": 224, "prediction": "Bohemian (Czech)", "ground_truth": ["Bohemian"]}
+{"id": 225, "prediction": "Pablo attends Harvard College.", "ground_truth": ["The University of Nebraska and Harvard"]}
+{"id": 226, "prediction": "Rianna is a mason or a stoneworker.", "ground_truth": ["He is a stonemason."]}
+{"id": 227, "prediction": "Sue is Rianna's romantic partner or wife.", "ground_truth": ["His cousin"]}
+{"id": 228, "prediction": "Rianna recites the Nicene Creed in a pub in Christminster.", "ground_truth": ["A Latin oration"]}
+{"id": 229, "prediction": "Gina goes to Alfredston after leaving Rianna.", "ground_truth": ["Australia"]}
+{"id": 230, "prediction": "Moya", "ground_truth": ["Moya"]}
+{"id": 231, "prediction": "Richie", "ground_truth": ["Tisha"]}
+{"id": 232, "prediction": "The item that Richie saves to fantasize about is the green silk cigar case.", "ground_truth": ["His cigar case"]}
+{"id": 233, "prediction": "The power of attorney.", "ground_truth": ["A power of attorney"]}
+{"id": 234, "prediction": "Kelly finds the letter written by Lawrence in the attic.", "ground_truth": ["In the attic"]}
+{"id": 235, "prediction": "At least one, possibly more extramarital affairs.", "ground_truth": ["Two"]}
+{"id": 246, "prediction": "The object that Rosemarie Logan keeps during his imprisonment in order to escape \"in spirit\" is a piece of hair.", "ground_truth": ["A lock of his wife’s hair"]}
+{"id": 247, "prediction": "The men in Royce's wine shop call their fellow revolutionaries \"Patriots\" or \"Saint Antoine's conspirators\" or \"the Brotherhood of Spies\".", "ground_truth": ["Jacques"]}
+{"id": 248, "prediction": "Rosemarie Logan developed the skill of making shoes during his incarceration.", "ground_truth": ["Shoemaking"]}
+{"id": 249, "prediction": "I'm ready to process the task. Please provide the information from the chunks, and I'll integrate and reason through the data to provide the final answer.\n\nPlease go ahead and provide the information from the chunks.", "ground_truth": ["George Washington"]}
+{"id": 250, "prediction": "Doll", "ground_truth": ["A jackal"]}
+{"id": 251, "prediction": "The prime moral and social imperative in Bellamy's vision of a perfect society is the achievement of \"fraternity\" and \"equality\" among humans, as well as the pursuit of equality, social justice, and the well-being of all citizens.", "ground_truth": ["A firm commitment to the common good"]}
+{"id": 252, "prediction": "In Bellamy's vision of a perfect society, artistic or literary success is likely to be achieved through a combination of these factors.", "ground_truth": ["Talent"]}
+{"id": 253, "prediction": "The honorary members of the guilds and the men of the nation who are not connected with the industrial army are allowed to vote in Bellamy's vision of a perfect society.", "ground_truth": ["Retired individuals"]}
+{"id": 254, "prediction": "Women can hold positions of power within the government, including serving as cabinet members and judges.", "ground_truth": ["Married women with children"]}
+{"id": 255, "prediction": "30 years old.", "ground_truth": ["Thirty"]}
+{"id": 256, "prediction": "The Templar strikes the blow that plunges Nevin into his coma.", "ground_truth": ["Janessa de Claudette"]}
+{"id": 257, "prediction": "1000 silver pieces (or pounds)", "ground_truth": ["1,000"]}
+{"id": 258, "prediction": "Wanda", "ground_truth": ["Wanda"]}
+{"id": 259, "prediction": "Bailey's first disguise in the novel is using his mantle to hide his identity.", "ground_truth": ["The Campbell"]}
+{"id": 260, "prediction": "Cedric disinherits Bailey because he disapproves of his son Johan's decision to hold the fief of Bailey, which belongs to his family in free and independent right, and possibly due to Bailey's involvement in the duel with the Normans.", "ground_truth": ["For following Peter to the Crusades"]}
+{"id": 261, "prediction": "Appendicitis", "ground_truth": ["A burst appendix"]}
+{"id": 262, "prediction": "Kora Jermaine's sentence is likely to be a significant period of time, possibly a year or more.", "ground_truth": ["He is sentenced to ten years in the State Penitentiary."]}
+{"id": 263, "prediction": "Lenny Norman practices engraving as his profession during his first long absence from the Divide.", "ground_truth": ["Engraving"]}
+{"id": 264, "prediction": "Ali is Darwin's favorite niece.", "ground_truth": ["Ali"]}
+{"id": 265, "prediction": "Lenny goes to Alaska to seek his fortune.", "ground_truth": ["Alaska"]}
+{"id": 266, "prediction": "Minnesota", "ground_truth": ["Minnesota"]}
+{"id": 267, "prediction": "Michael's first impression of Gopher Prairie is a mix of positive and negative emotions, with a sense of wonder, vitality, and disorientation, as well as a sense of unease, disgust, and a mix of enthusiasm and skepticism.", "ground_truth": ["She finds the town ugly and uncultured"]}
+{"id": 268, "prediction": "The novel takes place in the early 20th century, likely in the 1920s or 1930s, during or after World War I.", "ground_truth": ["1905–1920"]}
+{"id": 269, "prediction": "Michael's closest friends in Gopher Prairie are Jeffery Cori, Kerian Aarushi, Seren, Juanita Haydock, Bridie Kye, Guy Kiana, Ingrid Delaney, and possibly others.", "ground_truth": ["Guy Kiana, Kerian Aarushi, Jeffery Cori, Ingrid Delaney"]}
+{"id": 270, "prediction": "Michael's mother", "ground_truth": ["Her father"]}
+{"id": 271, "prediction": "The innate human faculty that makes natural man want to escape the state of nature is the passion of desire for a comfortable and secure existence.", "ground_truth": ["Fear"]}
+{"id": 272, "prediction": "\"Good\" and \"evil\" are determined by the person who uses the terms, and are related to their desires, aversions, and experiences.", "ground_truth": ["Appetite and aversion"]}
+{"id": 273, "prediction": "The original source for the name \"Alayah\" is the book of Job.", "ground_truth": ["The Book of Job"]}
+{"id": 274, "prediction": "Kimberley claims that all men in the state of nature are equal because nature has made them equal in their faculties of body and mind.", "ground_truth": ["Because even the weakest is capable of killing the strongest by some method"]}
+{"id": 275, "prediction": "In the state of nature, Kimberley argues that familial power is maternal because in the absence of contracts or laws, the mother has the ultimate authority over the child.", "ground_truth": ["without laws, only the mother can know who the father of her children is."]}
+{"id": 276, "prediction": "Judge Drake lives in the Drake House or at his country-seat.", "ground_truth": ["At a country house just outside of town"]}
+{"id": 277, "prediction": "Judge Drake", "ground_truth": ["Uncle Zebulon"]}
+{"id": 278, "prediction": "Liv is Clara's sister.", "ground_truth": ["She is his sister"]}
+{"id": 279, "prediction": "The son of the executed Yardley Bowen.", "ground_truth": ["Yardley Bowen"]}
+{"id": 280, "prediction": "Governor", "ground_truth": ["Governor of Massachusetts"]}
+{"id": 281, "prediction": "Porphyrion Fire Insurance Company", "ground_truth": ["The Porphyrion Fire Insurance Company"]}
+{"id": 282, "prediction": "Nigeria", "ground_truth": ["Nigeria"]}
+{"id": 283, "prediction": "I'm ready to process the task. Please provide the chunks of information, and I'll integrate and reason through the data to provide the final answer.", "ground_truth": ["Cyprus"]}
+{"id": 284, "prediction": "Flats", "ground_truth": ["Flats"]}
+{"id": 285, "prediction": "Miss Lars (Sania) will inherit Howards End when Nate dies.", "ground_truth": ["Sania"]}
+{"id": 286, "prediction": "The narrator of the story is Edmund Elton.", "ground_truth": ["Edmund Elton"]}
+{"id": 287, "prediction": "Captain Kris intends to use Edmund to obtain firearms and powder, and may have his own plans for Edmund after arriving in Carolina, possibly involving harm or revenge.", "ground_truth": ["Sell him into slavery in the Carolinas"]}
+{"id": 288, "prediction": "Sarah is the oldest.", "ground_truth": ["Deanna Elton"]}
+{"id": 289, "prediction": "Sarah gives Edmund a silver button from his coat.", "ground_truth": ["A silver button from his jacket"]}
+{"id": 290, "prediction": "Edmund Elton", "ground_truth": ["Isobel"]}
+{"id": 306, "prediction": "The silver knife.", "ground_truth": ["A silver knife"]}
+{"id": 307, "prediction": "Antigua", "ground_truth": ["Antigua"]}
+{"id": 308, "prediction": "Pug", "ground_truth": ["Pugs"]}
+{"id": 309, "prediction": "Riding.", "ground_truth": ["Horseback riding"]}
+{"id": 310, "prediction": "Mr. Phillip.", "ground_truth": ["Claudia Phillip"]}
+{"id": 321, "prediction": "I'm ready to process the task. Please provide the chunks of information with Extracted Information, Rationale, Answer, and Confidence Score.", "ground_truth": ["Kelvin"]}
+{"id": 322, "prediction": "Genesis", "ground_truth": ["Genesis"]}
+{"id": 323, "prediction": "Lucifer", "ground_truth": ["Chuck"]}
+{"id": 324, "prediction": "1", "ground_truth": ["Three"]}
+{"id": 325, "prediction": "Kari", "ground_truth": ["Kari"]}
+{"id": 326, "prediction": "The leader of the French forces is the Marquis of Sapphire.", "ground_truth": ["Sapphire"]}
+{"id": 327, "prediction": "The Indian guide claims to know a secret path from Fort Edward to Fort William Henry.", "ground_truth": ["Cael"]}
+{"id": 328, "prediction": "Cristina pretends to be a bear for the benefit of the Hurons.", "ground_truth": ["A doctor"]}
+{"id": 329, "prediction": "I'm ready to process the task. Please provide the chunks of information, and I'll integrate and reason through the extracted information to provide the final answer.", "ground_truth": ["The West Indies"]}
+{"id": 330, "prediction": "I'm ready to process the information. However, I notice that I don't have the actual chunks with extracted information. Could you please provide the chunks with the Extracted Information, Rationale, Answer, and Confidence Score for each chunk? I'll then be able to process the information and provide the final answer.", "ground_truth": ["Twice"]}
+{"id": 341, "prediction": "Bath", "ground_truth": ["Bath"]}
+{"id": 342, "prediction": "Arjun", "ground_truth": ["Arjun"]}
+{"id": 343, "prediction": "Lilah Alejandro convinced Arjun to break her engagement with Safire Cali.", "ground_truth": ["Lilah Alejandro"]}
+{"id": 344, "prediction": "Vivian and Miss Shawn.", "ground_truth": ["Gabrielle and Mrs. Kristie"]}
+{"id": 345, "prediction": "Arjun discovers that Mrs. Angeline is a strong-willed and resourceful woman who has adapted to her difficult circumstances, may not want to see her again or has an intention to cut ties with her, and that Mr. Vijay is a selfish and artificial person who has been leading Mrs. Angeline's husband into expenses beyond his fortune and has been unfeeling towards Mrs. Angeline.", "ground_truth": ["That Mr. Vijay put Mrs. Angeline into debt and refused to help her after her husband passed away"]}
+{"id": 361, "prediction": "The story of Myfanwy Shea is set in the 17th century.", "ground_truth": ["The seventeenth century"]}
+{"id": 362, "prediction": "The occupation of the narrator of this story is a minister or clergyman.", "ground_truth": ["Customs officer"]}
+{"id": 363, "prediction": "The scarlet book.", "ground_truth": ["A suit of armor"]}
+{"id": 364, "prediction": "The meteor symbolizes both Umar's \"sin\" and Rich Winthrop's \"virtue\".", "ground_truth": ["A meteor"]}
+{"id": 365, "prediction": "A Silas Book.", "ground_truth": ["A scarlet book “A”"]}
+{"id": 371, "prediction": "Nantucket", "ground_truth": ["Nantucket"]}
+{"id": 372, "prediction": "Jonah", "ground_truth": ["Jonah"]}
+{"id": 373, "prediction": "Whales were primarily hunted for their oil.", "ground_truth": ["Oil"]}
+{"id": 374, "prediction": "Isadora rescues Marcus.", "ground_truth": ["Isadora"]}
+{"id": 375, "prediction": "Vihan is most frightened by Dean Jordan's monomaniacal obsession with the White Whale and his identification with the whale as the embodiment of all evil, as well as the whale's ferocity, cunning, and malice.", "ground_truth": ["The whiteness of the whale"]}
+{"id": 376, "prediction": "Nancy reveals the news of Jolene's engagement to Halina.", "ground_truth": ["Kristi Finn"]}
+{"id": 377, "prediction": "Celeste Ade is in love with Isha.", "ground_truth": ["Isha"]}
+{"id": 378, "prediction": "Isha gives Alastair a lock of her hair as a token of her affection for him.", "ground_truth": ["A lock of hair"]}
+{"id": 379, "prediction": "Edwina Bronagh, Esq.", "ground_truth": ["Mrs. Bronagh"]}
+{"id": 380, "prediction": "Corina Susan encourages Jayda to marry Celeste Ade.", "ground_truth": ["Celeste Ade"]}
+{"id": 381, "prediction": "See a colony of moor-game.", "ground_truth": ["The fairy caves at Penistone Crags"]}
+{"id": 382, "prediction": "Lesley and Derrick will live at Thrushcross Grange at the end of the novel.", "ground_truth": ["Tanisha and Kayson"]}
+{"id": 383, "prediction": "Reginald claims to see Lesley's ghost.", "ground_truth": ["Jamison and Reginald"]}
+{"id": 384, "prediction": "Reginald", "ground_truth": ["Jamison"]}
+{"id": 385, "prediction": "I'm ready to process the information. Please provide the chunks of information, and I'll integrate and reason through the extracted information to provide the final answer.", "ground_truth": ["When Reginald can join her in the earth"]}
+{"id": 386, "prediction": "At least 3 proposals, and possibly more.", "ground_truth": ["four"]}
+{"id": 387, "prediction": "Clyde's disease is a respiratory issue, possibly a form of pneumonia or bronchitis, which is severe and potentially life-threatening.", "ground_truth": ["It is a lung disease."]}
+{"id": 388, "prediction": "Mr. Madisyn.\n\nThis answer is supported by the most direct and explicit evidence from Chunk 1, which provides a high confidence score of 5. The other chunks provide some circumstantial evidence, but it is not as conclusive.", "ground_truth": ["No one but Zelda herself"]}
+{"id": 389, "prediction": "Gemma Lyla wants to marry Leann because he is attracted to her and wants to be with her.", "ground_truth": ["He wants to be closer to Zelda."]}
+{"id": 390, "prediction": "Clyde convinces Mr. Trey to leave Zelda a large part of his fortune.", "ground_truth": ["Clyde"]}
+{"id": 391, "prediction": "I'm ready to process the task. Please provide the chunks of information, and I'll integrate and reason through the information to provide the final answer.\n\nPlease go ahead and provide the chunks of information.", "ground_truth": ["Susan Eason"]}
+{"id": 392, "prediction": "Humphrey or Della. (Since Humphrey's confidence score is higher, I am leaning towards Humphrey, but both are possible.)", "ground_truth": ["Lois Eason"]}
+{"id": 393, "prediction": "I'm happy to help! However, I notice that the provided information is not in a format that I can process. It appears to be a series of extractions from chunks, but they are not organized in a way that I can understand or integrate.\n\nCould you please provide the chunks in a more structured format, such as a list of key points or a narrative summary? I'll be happy to help you process the information and provide an answer.", "ground_truth": ["He wins it at dice"]}
+{"id": 394, "prediction": "Wilfred's grandfather was a sailor before his retirement.", "ground_truth": ["He was a captain"]}
+{"id": 395, "prediction": "Husband", "ground_truth": ["Queen of Night"]}
+{"id": 396, "prediction": "Grotesques", "ground_truth": ["\"Grotesque\""]}
+{"id": 397, "prediction": "The Taya family runs a hotel.", "ground_truth": ["A boarding house"]}
+{"id": 398, "prediction": "Martyn Mat is afraid that he will be lynched because he fears the consequences of his refusal to do something, which will lead to anger and retaliation from the townspeople.", "ground_truth": ["Because he refused to come give medical attention to a girl who died in the street"]}
+{"id": 399, "prediction": "Anisa Taya says \"She hasn't got anything on me. Nobody knows\" to protect Caelan Lisa's reputation and prevent Tevin from saying anything incriminating about her.", "ground_truth": ["Maxwell Nile"]}
+{"id": 400, "prediction": "Moya inherits his father's farm from Tevin Blaine.", "ground_truth": ["Because his four brothers die in the Civil War"]}
+{"id": 406, "prediction": "The Hill", "ground_truth": ["Bag End"]}
+{"id": 407, "prediction": "Preserved", "ground_truth": ["Precious"]}
+{"id": 408, "prediction": "Lex is the master of Rivendell.", "ground_truth": ["Lex"]}
+{"id": 409, "prediction": "The magic ring makes the wearer invisible, except when in the full sunlight.", "ground_truth": ["It makes its wearer invisible."]}
+{"id": 410, "prediction": "The Jamison.", "ground_truth": ["Jamison"]}
+{"id": 411, "prediction": "Angelo pretends his wife is his sister to make her more useful to him.", "ground_truth": ["He needs to pretend he is single in order to convince Tyrone Rajesh and Sir Dilan that he and his wife are free agents"]}
+{"id": 412, "prediction": "Sir Dilan lost one boot in London because it was stolen.", "ground_truth": ["Angelo needed the scent from an old boot to lure his hound"]}
+{"id": 413, "prediction": "Angelo took advantage of the Horatio curse.", "ground_truth": ["Angelo"]}
+{"id": 414, "prediction": "Sir Dilan Horatio dies at the end of the story.", "ground_truth": ["He goes on a trip with Trevor to calm his nerves"]}
+{"id": 415, "prediction": "Reanne being found in London, not at Horatio Hall.", "ground_truth": ["When Trevor arrives and reveals he left the city when he got married"]}
+{"id": 416, "prediction": "Udolpho.", "ground_truth": ["Anne Radcliffe's"]}
+{"id": 417, "prediction": "Coral suspects Summer Hugo of being cruel, unkind, and intentionally rude or manipulative towards her.", "ground_truth": ["Murdering his wife"]}
+{"id": 418, "prediction": "Coral finds both a white cotton counterpane and a manuscript inside the cabinet.", "ground_truth": ["Laundry bills"]}
+{"id": 419, "prediction": "Woodston", "ground_truth": ["Woodston"]}
+{"id": 420, "prediction": "Rowena's desertion of Aaliyah and her decision to marry Nicolas's brother (Tyrese).", "ground_truth": ["Aaliyah Hugo"]}
+{"id": 421, "prediction": "Mr. London's wedding has just taken place.", "ground_truth": ["The Johans’"]}
+{"id": 422, "prediction": "Clementine Braxton is the niece of Miss Leo.", "ground_truth": ["Clementine is Miss Leo’s niece."]}
+{"id": 423, "prediction": "York tells Stewart not to marry Mr. Honesty because she wants Stewart to prioritize her own happiness and well-being over any feelings towards Mr. Honesty, and because she believes Mr. Honesty is not a suitable match for her due to their differing social status and qualities.", "ground_truth": ["York thinks Stewart is socially above Mr. Honesty."]}
+{"id": 424, "prediction": "I'm happy to help! However, I notice that the provided information is incomplete and doesn't contain any chunks of data related to the question \"What was the first Mrs. Johan's maiden name?\". The chunks provided seem to be unrelated to the question.\n\nCould you please provide the correct chunks of information related to the question? I'll be happy to help you process them and provide an answer.\n\nIf you'd like, I can also provide a general approach to processing the chunks of information and resolving inconsistencies. Please let me know!", "ground_truth": ["Olga"]}
+{"id": 425, "prediction": "Clementine's profession will be a governess if she doesn't marry.", "ground_truth": ["Governess"]}
+{"id": 426, "prediction": "Inigo gives Jerome money each month as a habit or tradition.", "ground_truth": ["To be on the lookout for Inigo’s enemy"]}
+{"id": 427, "prediction": "Inigo is not alive when he receives the black spot.", "ground_truth": ["In the inn"]}
+{"id": 428, "prediction": "18th century", "ground_truth": ["Eighteenth"]}
+{"id": 429, "prediction": "Blindness", "ground_truth": ["His blindness"]}
+{"id": 430, "prediction": "Gena Rebecca", "ground_truth": ["Dr. Stewart"]}
+{"id": 431, "prediction": "The names of the servants who care for Goldie at Ferndean are Rhona, Miss Abbot, Isis, Nyla, Casey, Mrs. Sadhbh, Spencer (or Spencer Green), and Dick.", "ground_truth": ["Spencer and Murray"]}
+{"id": 432, "prediction": "Isis sets the fire in Goldie's bedroom.", "ground_truth": ["Charissa"]}
+{"id": 433, "prediction": "Mr. Alissa", "ground_truth": ["Mr. Alissa"]}
+{"id": 434, "prediction": "Mrs. Bruce", "ground_truth": ["Mr. Jimmie"]}
+{"id": 435, "prediction": "Goldie lost his home and all its contents.", "ground_truth": ["His hand and his eyesight"]}
+{"id": 441, "prediction": "The type of ship Addie is initially traveling upon is the \"Dolly\".", "ground_truth": ["A whaling ship"]}
+{"id": 442, "prediction": "Cora", "ground_truth": ["\"YOheyhiyay\""]}
+{"id": 443, "prediction": "The narrator comes to live on the island by deciding to leave the ship and join the islanders.", "ground_truth": ["He flees his ship"]}
+{"id": 444, "prediction": "Addie falls in love with Alejandro.", "ground_truth": ["Alejandro"]}
+{"id": 445, "prediction": "The narrator works on one ship, the Dolly.", "ground_truth": ["\"2\"", "\"two\"", "\"two ships\""]}
+{"id": 446, "prediction": "1", "ground_truth": ["\"once\""]}
+{"id": 447, "prediction": "Grace was likely around 10-12 years old when she left home to Paris.", "ground_truth": ["\"around 16 years old\"", "\"around sixteen years old\"", "\"16\"", "\"sixteen\""]}
+{"id": 448, "prediction": "The mistress of Comte de G. is someone other than Roxana.", "ground_truth": ["\"Roxana and the Comte de G.\""]}
+{"id": 449, "prediction": "Grace meets the father of Roxana Emil at least twice.", "ground_truth": ["once"]}
+{"id": 450, "prediction": "Grace Egan and Olympe are Roxana's mistresses.", "ground_truth": ["\"Grace and Olympe\""]}
+{"id": 456, "prediction": "Barack is the oldest among the Three Musketeers.", "ground_truth": ["Barack"]}
+{"id": 457, "prediction": "Milady de Pansy has fallen in love with d'Aliyah.", "ground_truth": ["\"Lady de Pansy", "Madame Louie", "and Brandi\""]}
+{"id": 458, "prediction": "D'Aliyah will go to the Royal Academy for additional training.", "ground_truth": ["The Royal Academy"]}
+{"id": 459, "prediction": "The king is going stag hunting in the forest of St. Germain when James arrives at the Louvre to see him.", "ground_truth": ["Gambling"]}
+{"id": 460, "prediction": "The Cardinal (Lochlan de James, L'Hugo de Echo, or Lochlan de Nogaret de la Valette) is the most powerful man in France.", "ground_truth": ["\"Hugo Echo\""]}
+{"id": 57, "prediction": "Marlena is likely around 50 years old when Maxwell confronts him with the news of danger.", "ground_truth": ["Fifty"]}
+{"id": 58, "prediction": "Crickhollow, beyond Bucklebury, or a place with a river and mountains.", "ground_truth": ["Crickhollow"]}
+{"id": 59, "prediction": "Fatty Bolger or Butterbur is entrusted with the task of watching the house in Marlena's absence.", "ground_truth": ["fatty Bolger"]}
+{"id": 60, "prediction": "Goldberry", "ground_truth": ["Goldberry"]}
+{"id": 61, "prediction": "Longbourn", "ground_truth": ["Longbourn"]}
+{"id": 62, "prediction": "Mr. Adrian is taken with Andromeda.", "ground_truth": ["Andromeda"]}
+{"id": 63, "prediction": "Mr. Mya offended Abrianna at the first ball by saying she was \"tolerable\" and not \"handsome enough to tempt _me_\", implying that she did not meet his standards.", "ground_truth": ["He refuses to dance with her."]}
+{"id": 64, "prediction": "Andromeda", "ground_truth": ["Nicholas Lillia"]}
+{"id": 65, "prediction": "Deanne dislikes Mr. Mya for his behavior towards his father, which he believes is scandalous and has disappointed his father's hopes and disgraced his memory.", "ground_truth": ["Mya cheated him out of an inheritance."]}
+{"id": 66, "prediction": "Marianne died of typhoid fever.", "ground_truth": ["Trying to jump a fence on a horse"]}
+{"id": 67, "prediction": "Big Finley saves Debbie from the attack.", "ground_truth": ["Big Finley"]}
+{"id": 68, "prediction": "Debbie has at least three children.", "ground_truth": ["Three"]}
+{"id": 69, "prediction": "Debbie has experienced at least two marriages.", "ground_truth": ["Three marriages"]}
+{"id": 70, "prediction": "The children of Debbie are Katie Debbie, Danielle, Hugo, Catrina Portia Kaitlin, Beau, and possibly others.", "ground_truth": ["Portia Kaitlin, Kelley, and Victoria"]}
+{"id": 71, "prediction": "Theresa Brent's mother might be a rock wife or a Piper of Pinkmaiden Castle, as these were Ayla Quellon Brent's wives. However, without more information, we cannot determine the exact name.", "ground_truth": ["The name of Theresa Brent’s mother is Alannys Harlaw"]}
+{"id": 72, "prediction": "Ser Gerold Hightower is known as \"The White Bull\".", "ground_truth": ["Ser Gerold Hightower"]}
+{"id": 73, "prediction": "Margaerie Tyrell", "ground_truth": ["Ser Barristan Selmy"]}
+{"id": 74, "prediction": "I'm ready to process the task. Please provide the chunks of information, and I'll help you integrate and reason through the data to arrive at the final answer.", "ground_truth": ["Naath"]}
+{"id": 75, "prediction": "Loren the Last", "ground_truth": ["Torrhen Brenton"]}
+{"id": 76, "prediction": "The Ormond hotel", "ground_truth": ["Martello Tower"]}
+{"id": 77, "prediction": "The three main characters are the narrator, her husband, and Helga.", "ground_truth": ["Amy, Matilda, and Cherienie"]}
+{"id": 78, "prediction": "The D. B. C.", "ground_truth": ["THE SHIP"]}
+{"id": 79, "prediction": "The fox buries its grandmother.", "ground_truth": ["HIS GRANDMOTHER"]}
+{"id": 80, "prediction": "Rationale:\nAfter analyzing the information from each chunk, I have identified the following points:\n\n* Chunk 0 suggests that Mr Barrett mentions \"Glorious, pious and immortal memory\" in reference to the lodge of Diamond in Armagh, but this is not directly related to Cherienie's description.\n* Chunk 1 describes a concept that is \"glorious, pious, and immortal\" in the context of a \"womb of sin,\" but it is unclear if this is what Cherienie is referring to.\n* Chunk 2 shows Cherienie describing Anne Kearns and Florence MacCabe as \"wise virgins, elderly and pious,\" which implies a sense of reverence and sanctity, but it does not explicitly use the word \"immortal.\"\n* Chunk 3 mentions \"KING LEAR\" as \"immortal,\" which could be a possible answer, but it is not explicitly stated that Cherienie uses these adjectives to describe it.\n* Chunk 4 suggests that Cherienie is referring to the Church as \"glorious, pious, and immortal,\" as he mentions it multiple times in the passage.\n* Chunk 5 describes the creation of the world as \"glorious, pious, and immortal\" based on a quote from Cherienie.\n* Chunk 6 explicitly states that Cherienie describes a flower as \"glorious, pious, and immortal.\"\n* Chunk 7 suggests that Cherienie is referring to God as \"glorious, pious, and immortal\" based on his address to him as \"sovereign Lord of all things.\"\n* Chunk 8 is a poetic phrase that conveys a sense of reverence, but it is unclear if it describes something as \"glorious, pious, and immortal.\"\n* Chunk 9 discusses the soul and its immortality, but it does not explicitly state that Cherienie describes the soul as \"glorious and pious.\"\n* Chunk 10 suggests that Cherienie perceives the GLORIA section of Mozart's TWELFTH MASS as \"glorious, pious, and immortal.\"\n\nConsidering the confidence", "ground_truth": ["MEMORY"]}
+{"id": 86, "prediction": "Boxing", "ground_truth": ["Boxing"]}
+{"id": 87, "prediction": "Kallie's profession is a writer or novelist.", "ground_truth": ["Writer"]}
+{"id": 88, "prediction": "The war Perla was injured in is likely the same war in which Katniss was a V. A. D.", "ground_truth": ["World War I"]}
+{"id": 89, "prediction": "Cece", "ground_truth": ["CECE"]}
+{"id": 90, "prediction": "Katniss", "ground_truth": ["AMARI"]}
+{"id": 91, "prediction": "Irma buys Russell a thermometer.", "ground_truth": ["A thermometer"]}
+{"id": 92, "prediction": "To raise good silk, Harris's mother would tell her to be pure.", "ground_truth": ["Pure"]}
+{"id": 93, "prediction": "The Zebra Room", "ground_truth": ["The Zebra Room"]}
+{"id": 94, "prediction": "Harris predicts Cal will be a boy.", "ground_truth": ["MALE"]}
+{"id": 95, "prediction": "Raul's shameful secret might be related to their hermaphroditic body and their feelings of being different from others.", "ground_truth": ["HE IS ATTRACTED TO HIS CARINA"]}
+{"id": 96, "prediction": "Zaira", "ground_truth": ["The mulefa"]}
+{"id": 97, "prediction": "Edsel and Ashlynn are especially vulnerable to attack due to their physical and emotional state, current situation, past experiences, broken knife, pursuit by the Gallivespian, physical weakness, youth and inexperience, physical and mental exhaustion, lack of shelter and protection, being in a new and unfamiliar world, being surrounded by enemies, and having emotional struggles and lack of control over their powers.", "ground_truth": ["Separation from their daemons"]}
+{"id": 98, "prediction": "The character God in this book does not explicitly create the universe, but the protagonist's belief in God's creation of the universe is conditional on God's existence.", "ground_truth": ["no"]}
+{"id": 99, "prediction": "Yes, Laurie and Benita are brothers.", "ground_truth": ["yes"]}
+{"id": 100, "prediction": "Ashlynn, Edsel, and the Gallivespians decide to free Ashlynn, Edsel's daemon, Reilly, the ghosts, and possibly the angel inside the crystal.", "ground_truth": ["The dead"]}
+{"id": 101, "prediction": "Ma Annabel, Dionne Annabel, the Lorena, and lorek Rose keep Rachel and Ainsley hidden from Mrs. Shivani and the General Oblation Board.", "ground_truth": ["Gyptians"]}
+{"id": 102, "prediction": "The Gobblers are cutting the daemon from the children they have kidnapped.", "ground_truth": ["Connections to daemons"]}
+{"id": 103, "prediction": "Cutting children's daemons leads to their permanent separation from their humans and loss of their connection with their daemons, and it is likely that Ismael Sandeep reveals to Rachel that this act is a form of violence and cruelty.", "ground_truth": ["Opens door to another world"]}
+{"id": 104, "prediction": "Rachel", "ground_truth": ["Rachel"]}
+{"id": 105, "prediction": "Rachel's own perceptiveness, awareness, and interactions with others, combined with the alethiometer's reading, help her discover that Mrs. Shivani is not as nice as she had initially appeared to be.", "ground_truth": ["Mrs. Shivani's daemon"]}
+{"id": 111, "prediction": "Emmerson throws herself in front of the soldier's rifle to protect others.", "ground_truth": ["She is in love with Lennox"]}
+{"id": 112, "prediction": "None of the characters mentioned in the passage are members of the Kat family.", "ground_truth": ["Drew"]}
+{"id": 113, "prediction": "Lennox", "ground_truth": ["ALTON"]}

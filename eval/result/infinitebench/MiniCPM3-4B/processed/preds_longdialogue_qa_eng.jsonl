@@ -1,0 +1,200 @@
+{"id": 0, "prediction": "Ace Rothstein", "ground_truth": ["ACE", "ACE ROTHSTEIN"]}
+{"id": 1, "prediction": "Gaggi", "ground_truth": ["GAGGI", "Remo", "remo Gaggi"]}
+{"id": 2, "prediction": "Mary", "ground_truth": ["JIM", "JIM GARRISON", "GARRISON"]}
+{"id": 3, "prediction": "BOWMAN", "ground_truth": ["BILL", "BILL BROUSSARD", "BROUSSARD"]}
+{"id": 4, "prediction": "Mirabehn", "ground_truth": ["FARROUHK"]}
+{"id": 5, "prediction": "Philip", "ground_truth": ["EDWARD"]}
+{"id": 6, "prediction": "The second character in the phone call conversation, likely a family member or someone close to Hammond.", "ground_truth": ["HAMMOND"]}
+{"id": 7, "prediction": "Ash", "ground_truth": ["DAVID", "DAVID WILLS"]}
+{"id": 8, "prediction": "Mickey", "ground_truth": ["MICKEY", "Mickey Sachs"]}
+{"id": 9, "prediction": "OIL MAN", "ground_truth": ["OIL MAN"]}
+{"id": 10, "prediction": "Captain\n\nCaptain is the character most likely to be represented by the placeholder \"$$MASK$$\" based on the integrated information from all 10 chunks.", "ground_truth": ["TONY", "TONY MONTANA"]}
+{"id": 11, "prediction": "Oogway", "ground_truth": ["CLAUDIA"]}
+{"id": 12, "prediction": "Andre", "ground_truth": ["BETSY"]}
+{"id": 13, "prediction": "Hector", "ground_truth": ["HECTOR"]}
+{"id": 14, "prediction": "Michael", "ground_truth": ["CLEMENZA", "Peter Clemenza"]}
+{"id": 15, "prediction": "Kate", "ground_truth": ["PLAGUE"]}
+{"id": 16, "prediction": "O-Ren Ishii", "ground_truth": ["THE BRIDE"]}
+{"id": 17, "prediction": "Monica", "ground_truth": ["RAMON"]}
+{"id": 18, "prediction": "Russel Deutsch", "ground_truth": ["LISA", "LISA COHEN"]}
+{"id": 19, "prediction": "MUMBLE\n\nNote: Although \"MUMBLE\" has the highest confidence score, I will take a weighted average of the confidence scores to determine the most likely answer. This approach is more robust than simply choosing the answer with the highest confidence score.", "ground_truth": ["KATIE"]}
+{"id": 20, "prediction": "Harriet", "ground_truth": ["BLOMKVIST", "Mikael Blomkvist"]}
+{"id": 21, "prediction": "Dr. Marcia Fieldstone.", "ground_truth": ["DOUG", "DOUG BUKOWSKI"]}
+{"id": 22, "prediction": "LORL", "ground_truth": ["SALIERI"]}
+{"id": 23, "prediction": "The old man.", "ground_truth": ["JONAH KING"]}
+{"id": 120, "prediction": "ALBUQUERQUE", "ground_truth": ["LINNEA"]}
+{"id": 121, "prediction": "Bane", "ground_truth": ["BASQUIAT", "JEAN MICHEL BASQUIAT"]}
+{"id": 122, "prediction": "BANE", "ground_truth": ["SECURITY CHIEF"]}
+{"id": 123, "prediction": "Wayne", "ground_truth": ["CHRISTY"]}
+{"id": 124, "prediction": "Walter", "ground_truth": ["WALTER", "WALTER VALE"]}
+{"id": 125, "prediction": "Gideon", "ground_truth": ["REGGIE"]}
+{"id": 126, "prediction": "Based on the integration of all the information and considering the confidence scores, I conclude that the character whose name is most likely replaced with \"$$MASK$$\" is Hamilton Bartholomew.\n\n", "ground_truth": ["LEONARD", "LEONARD FISHER"]}
+{"id": 127, "prediction": "Shelly", "ground_truth": ["TYLER", "Tyler Durden"]}
+{"id": 128, "prediction": "Jackie", "ground_truth": ["BIALYSTOCK"]}
+{"id": 129, "prediction": "Bloom", "ground_truth": ["BLOOM", "LEO BLOOM"]}
+{"id": 130, "prediction": "MAC", "ground_truth": ["RACHEL", "RACHEL KELLY"]}
+{"id": 131, "prediction": "Bloom", "ground_truth": ["JUNO"]}
+{"id": 132, "prediction": "Pilgrim #3\n\nNote: The confidence score is low because the passage does not provide direct information about a character being replaced with \"$$MASK$$\". The answer is based on an inference, and there might be other possible interpretations.", "ground_truth": ["D'ARTAGNAN"]}
+{"id": 133, "prediction": "Riddick", "ground_truth": ["LOUIS", "King Louis XIII", "Louis XIII"]}
+{"id": 134, "prediction": "Anne", "ground_truth": ["FRY", "CAROLYN FRY"]}
+{"id": 135, "prediction": "Riddick", "ground_truth": ["FIRST CAVALIER"]}
+{"id": 136, "prediction": "Jonathan", "ground_truth": ["TITO"]}
+{"id": 137, "prediction": "Mortimer Brewster", "ground_truth": ["NICK"]}
+{"id": 138, "prediction": "Rufus", "ground_truth": ["WILLIAM"]}
+{"id": 139, "prediction": "Dorothy", "ground_truth": ["KIT"]}
+{"id": 140, "prediction": "Malcolm", "ground_truth": ["BETTY"]}
+{"id": 141, "prediction": "The character whose name has been replaced with \"$$MASK$$\" is the character described as wearing the grey-flannel curtain and hat.", "ground_truth": ["ADRIAN"]}
+{"id": 142, "prediction": "PRINCE CHARLES (or the Elephant Man, but PRINCE CHARLES is more prominent in the context)", "ground_truth": ["ANGEL"]}
+{"id": 143, "prediction": "The Elephant Man", "ground_truth": ["DAN RATHER"]}
+{"id": 144, "prediction": "Quoyle", "ground_truth": ["QUOYLE"]}
+{"id": 145, "prediction": "Dmitri", "ground_truth": ["DMITRI"]}
+{"id": 146, "prediction": "Hartman", "ground_truth": ["STARLING", "CLARICE STARLING"]}
+{"id": 147, "prediction": "Mapp", "ground_truth": ["BARNEY"]}
+{"id": 148, "prediction": "Big Dan Teague", "ground_truth": ["EVERETT"]}
+{"id": 149, "prediction": "Amanda", "ground_truth": ["BERLIN", "JOHN BERLIN", "JOHN"]}
+{"id": 150, "prediction": "St Anne", "ground_truth": ["SUMMER"]}
+{"id": 151, "prediction": "SINCLAIR\n\nNote: The answer is based on the pattern of frequent mentions of SINCLAIR across multiple chunks, and the context provided in the chunks suggests that SINCLAIR is a significant character in the story. However, the confidence score is still relatively low due to the lack of direct information about the character whose name is replaced with \"$$MASK$$\".", "ground_truth": ["MAYA"]}
+{"id": 152, "prediction": "Faith", "ground_truth": ["PANES", "LEVI PANES"]}
+{"id": 153, "prediction": "Ed", "ground_truth": ["RIEDENSCHNEIDER", "Freddy Riedenschneider"]}
+{"id": 154, "prediction": "Frank Lucas", "ground_truth": ["FRANK"]}
+{"id": 155, "prediction": "Jerry Heller", "ground_truth": ["ALI", "Ali Van Versh"]}
+{"id": 156, "prediction": "Suge", "ground_truth": ["SUGE", "SUGE KNIGHT"]}
+{"id": 157, "prediction": "Ed", "ground_truth": ["RAOUL"]}
+{"id": 158, "prediction": "Harris", "ground_truth": ["PETER", "Peter Vincent"]}
+{"id": 159, "prediction": "Johnna", "ground_truth": ["JEAN"]}
+{"id": 160, "prediction": "NYKWANNA WOMBOSI", "ground_truth": ["WYATT", "Wyatt Earp"]}
+{"id": 161, "prediction": "Wombosi", "ground_truth": ["MATTIE"]}
+{"id": 162, "prediction": "KAFFEE", "ground_truth": ["AUFIDIUS", "TULLUS AUFIDIUS"]}
+{"id": 163, "prediction": "Lt. Jonathan Kendrick", "ground_truth": ["JO"]}
+{"id": 164, "prediction": "COLE", "ground_truth": ["KAFKA"]}
+{"id": 165, "prediction": "Harry", "ground_truth": ["HARRY", "HARRY TASKER"]}
+{"id": 166, "prediction": "Black Dude", "ground_truth": ["SONNY", "SONNY CORLEONE"]}
+{"id": 167, "prediction": "Dr. Rumack.", "ground_truth": ["DON CORLEONE"]}
+{"id": 168, "prediction": "Kym", "ground_truth": ["ABBY"]}
+{"id": 169, "prediction": "Eric", "ground_truth": ["FLEURY"]}
+{"id": 170, "prediction": "Larsen", "ground_truth": ["TEN BEARS"]}
+{"id": 171, "prediction": "Kate", "ground_truth": ["KATE"]}
+{"id": 172, "prediction": "Ray", "ground_truth": ["TYRELL", "TYRELL MARTIN"]}
+{"id": 173, "prediction": "Pavel Lubyarsky", "ground_truth": ["BOBBY GREEN"]}
+{"id": 174, "prediction": "Teddy", "ground_truth": ["ROSARIO DIAZ"]}
+{"id": 175, "prediction": "Basil", "ground_truth": ["LEON", "Count Leon d'Algout"]}
+{"id": 176, "prediction": "Paul Marco", "ground_truth": ["ED"]}
+{"id": 177, "prediction": "Bela Lugosi", "ground_truth": ["GARRETT"]}
+{"id": 178, "prediction": "Gabriel", "ground_truth": ["CHARLIE", "CHARLIE MacCORRY"]}
+{"id": 179, "prediction": "John", "ground_truth": ["DYSON", "MILES DYSON"]}
+{"id": 180, "prediction": "Mark Whitacre", "ground_truth": ["VOSEN", "NOAH VOSEN"]}
+{"id": 181, "prediction": "Vosen", "ground_truth": ["MILLER"]}
+{"id": 182, "prediction": "Job", "ground_truth": ["ETHAN", "ETHAN HUNT"]}
+{"id": 183, "prediction": "Nigel", "ground_truth": ["SERENDIPITY"]}
+{"id": 184, "prediction": "Almásy", "ground_truth": ["ELAINE"]}
+{"id": 185, "prediction": "Max", "ground_truth": ["LOOMIS", "SAMUEL J. LOOMIS"]}
+{"id": 186, "prediction": "Brandon", "ground_truth": ["OLIVE"]}
+{"id": 187, "prediction": "Truman", "ground_truth": ["FRANK", "Frank Baker"]}
+{"id": 188, "prediction": "Taupin", "ground_truth": ["TAUPIN", "RICHARD TAUPIN"]}
+{"id": 189, "prediction": "Mike", "ground_truth": ["GENERAL HAIG"]}
+{"id": 190, "prediction": "Ramius", "ground_truth": ["MILTON", "JOHN MILTON"]}
+{"id": 191, "prediction": "Leonor", "ground_truth": ["LEONOR"]}
+{"id": 192, "prediction": "Anne", "ground_truth": ["NEFF"]}
+{"id": 193, "prediction": "Machine", "ground_truth": ["BECK"]}
+{"id": 194, "prediction": "Moncrief", "ground_truth": ["CATHERINE", "Catherine Tramell"]}
+{"id": 195, "prediction": "Romeo, Balthasar, or Helen Dextra (all with varying confidence scores).", "ground_truth": ["JOAN"]}
+{"id": 196, "prediction": "Nicholas", "ground_truth": ["HANNA"]}
+{"id": 197, "prediction": "Phil Stevens", "ground_truth": ["NEIL"]}
+{"id": 198, "prediction": "Ghost Masked Figure", "ground_truth": ["BREEDAN"]}
+{"id": 199, "prediction": "SHEPHERD", "ground_truth": ["THE GANG"]}
+{"id": 24, "prediction": "Andy Lapitski", "ground_truth": ["BRUCE", "Bruce Baldwin"]}
+{"id": 25, "prediction": "Bruce", "ground_truth": ["ENDICOTT"]}
+{"id": 26, "prediction": "Walter Burns", "ground_truth": ["HILDY", "Hildy Johnson"]}
+{"id": 27, "prediction": "BURNS", "ground_truth": ["BURNS", "Walter", "Walter BURNS"]}
+{"id": 28, "prediction": "Mertin", "ground_truth": ["MARTHA"]}
+{"id": 29, "prediction": "Dad", "ground_truth": ["MASON"]}
+{"id": 30, "prediction": "Samantha", "ground_truth": ["DAD"]}
+{"id": 31, "prediction": "Frank Hofstetter", "ground_truth": ["DR. SANGER", "HENRY SANGER", "DR. HENRY SANGER"]}
+{"id": 32, "prediction": "Sidney", "ground_truth": ["HUNSECKER"]}
+{"id": 33, "prediction": "The character most likely to be \"$$MASK$$\" is the \"leading social scientist\".", "ground_truth": ["PRIMATE PETE", "PETE"]}
+{"id": 34, "prediction": "Kelly", "ground_truth": ["KELLY"]}
+{"id": 35, "prediction": "Uhura", "ground_truth": ["NICKY"]}
+{"id": 36, "prediction": "Da Mayor", "ground_truth": ["DA MAYOR"]}
+{"id": 37, "prediction": "Russell", "ground_truth": ["DARRYL"]}
+{"id": 38, "prediction": "Ben Fong-Torres", "ground_truth": ["ESTRELLA"]}
+{"id": 39, "prediction": "Fiske", "ground_truth": ["ANNIE", "ANNIE MACLEAN"]}
+{"id": 40, "prediction": "Gil Pender", "ground_truth": ["INEZ"]}
+{"id": 41, "prediction": "The head of production of MGM", "ground_truth": ["PHIL"]}
+{"id": 42, "prediction": "Bernie Bernheim", "ground_truth": ["BRUWER", "MELANIE BRUWER"]}
+{"id": 43, "prediction": "Seroke", "ground_truth": ["CLOETE"]}
+{"id": 44, "prediction": "Chloe", "ground_truth": ["PRIEST"]}
+{"id": 45, "prediction": "Louis Bernard", "ground_truth": ["HEDONIA"]}
+{"id": 46, "prediction": "Nina", "ground_truth": ["GWEN"]}
+{"id": 47, "prediction": "Jerry", "ground_truth": ["SAMANTHA"]}
+{"id": 48, "prediction": "Biker", "ground_truth": ["WARDEN", "MILTON WARDEN"]}
+{"id": 49, "prediction": "Donnie", "ground_truth": ["PINHEAD"]}
+{"id": 50, "prediction": "Fox", "ground_truth": ["NICOLET", "RAY NICOLET"]}
+{"id": 51, "prediction": "Jackie", "ground_truth": ["JACKIE", "JACKIE BROWN"]}
+{"id": 52, "prediction": "Rusty Ryan", "ground_truth": ["RUSTY"]}
+{"id": 53, "prediction": "Danny", "ground_truth": ["TESS"]}
+{"id": 54, "prediction": "Sidney (also referred to as Sid)", "ground_truth": ["ROY"]}
+{"id": 55, "prediction": "Ackerman", "ground_truth": ["QUINCE"]}
+{"id": 56, "prediction": "Joe", "ground_truth": ["JOE", "JOE Black"]}
+{"id": 57, "prediction": "Z", "ground_truth": ["ALLISON"]}
+{"id": 58, "prediction": "ISHMAEL", "ground_truth": ["HELEN", "HELEN CHAMBERS"]}
+{"id": 59, "prediction": "Martin Talbot", "ground_truth": ["MILLS", "David Mills"]}
+{"id": 60, "prediction": "Valerian (or someone closely associated with Valerian)", "ground_truth": ["TYRIAN"]}
+{"id": 61, "prediction": "Galen", "ground_truth": ["STEPHEN", "Stephen Meyers"]}
+{"id": 62, "prediction": "Harmsway", "ground_truth": ["BOND", "JAMES BOND"]}
+{"id": 63, "prediction": "Number Three", "ground_truth": ["HARMSWAY", "ELLIOT HARMSWAY"]}
+{"id": 64, "prediction": "The Sonar Operator.", "ground_truth": ["MR. PINK"]}
+{"id": 65, "prediction": "Mack", "ground_truth": ["NICOLE"]}
+{"id": 66, "prediction": "Mitchell", "ground_truth": ["ALISON", "Ally Jones", "Ally"]}
+{"id": 67, "prediction": "Carol", "ground_truth": ["CAROL"]}
+{"id": 68, "prediction": "Harvey", "ground_truth": ["ANN", "ANN BISHOP MILLANEY"]}
+{"id": 69, "prediction": "REAL HARVEY", "ground_truth": ["LELAND"]}
+{"id": 70, "prediction": "Charles Foster Kane", "ground_truth": ["HARVEY", "HARVEY PEKAR"]}
+{"id": 71, "prediction": "Arn", "ground_truth": ["BILLY"]}
+{"id": 72, "prediction": "DE ROSSI", "ground_truth": ["CLAUDIA", "CLAUDIA JENSSEN,"]}
+{"id": 73, "prediction": "Kay", "ground_truth": ["KAY"]}
+{"id": 74, "prediction": "Aaron or the Shape", "ground_truth": ["DAVE"]}
+{"id": 75, "prediction": "The Shape", "ground_truth": ["LISA"]}
+{"id": 76, "prediction": "Douglas Quail", "ground_truth": ["QUAIL", "Douglas Quail"]}
+{"id": 77, "prediction": "Quail or Melina (or possibly Bennie)", "ground_truth": ["SAM", "SAM PICKLES"]}
+{"id": 78, "prediction": "Andrew", "ground_truth": ["JOHNNY", "JOHNNY FOOTE"]}
+{"id": 79, "prediction": "Dr. Hirsch.", "ground_truth": ["CHARLOTTE", "CHARLOTTE BOUDREAU CANTELLE PHELAN"]}
+{"id": 80, "prediction": "Mr. Detmer", "ground_truth": ["ELIZABETH", "ELIZABETH LEEFOLT"]}
+{"id": 81, "prediction": "Mattie's sister", "ground_truth": ["BUDDY"]}
+{"id": 82, "prediction": "Prince Albert", "ground_truth": ["AUSTIN", "AUSTIN POWERS"]}
+{"id": 83, "prediction": "Mark", "ground_truth": ["EDUARDO", "EDUARDO SAVERIN"]}
+{"id": 84, "prediction": "BATMAN", "ground_truth": ["JENNIFER", "JENNIFER HILLS"]}
+{"id": 85, "prediction": "Bruce Wayne (Batman)", "ground_truth": ["JOHNNY"]}
+{"id": 86, "prediction": "Samuel", "ground_truth": ["SAMUEL"]}
+{"id": 87, "prediction": "Obi-Wan Kenobi", "ground_truth": ["MOTTI", "Admiral Motti"]}
+{"id": 88, "prediction": "The mysterious voice.", "ground_truth": ["STU", "STUART SHEPARD"]}
+{"id": 89, "prediction": "Aragorn", "ground_truth": ["MAURICE"]}
+{"id": 90, "prediction": "Col. Heinrich Bestler", "ground_truth": ["BESTLER", "HEINRICH BESTLER"]}
+{"id": 91, "prediction": "Johann Keltner", "ground_truth": ["HELMUT", "HELMUT DORQUE"]}
+{"id": 92, "prediction": "Vanessa", "ground_truth": ["FAIT", "TONY FAIT"]}
+{"id": 93, "prediction": "Margaret", "ground_truth": ["ECKER", "COMMANDER BILL ECKER"]}
+{"id": 94, "prediction": "Kenny", "ground_truth": ["DAVY JONES"]}
+{"id": 95, "prediction": "Scotty Reston", "ground_truth": ["BOBBY", "Bobby Kennedy"]}
+{"id": 96, "prediction": "Denver", "ground_truth": ["PAUL", "PAUL D. GARNER", "Paul D."]}
+{"id": 97, "prediction": "Halle", "ground_truth": ["STAMP PAID"]}
+{"id": 98, "prediction": "Mary Burke", "ground_truth": ["BABY SUGGS"]}
+{"id": 99, "prediction": "Li Po", "ground_truth": ["DENVER"]}
+{"id": 100, "prediction": "Zoey", "ground_truth": ["ZED"]}
+{"id": 101, "prediction": "The character is likely an undercover agent for the United States Secret Service.", "ground_truth": ["ISABELLA", "ISABELLA MOLINA"]}
+{"id": 102, "prediction": "Scotty", "ground_truth": ["CARTER"]}
+{"id": 103, "prediction": "ROSALYN ROSENFELD", "ground_truth": ["PETE MUSANE"]}
+{"id": 104, "prediction": "Step", "ground_truth": ["DAVE"]}
+{"id": 105, "prediction": "Edith", "ground_truth": ["JOEL", "JOEL REYNOLDS"]}
+{"id": 106, "prediction": "Jude White", "ground_truth": ["WEISS"]}
+{"id": 107, "prediction": "Paul", "ground_truth": ["SHERMAN", "Sherman McCoy"]}
+{"id": 108, "prediction": "Peter Fallow", "ground_truth": ["LUIS"]}
+{"id": 109, "prediction": "Henry or Sherman McCoy (based on the highest confidence scores", "ground_truth": ["PETER", "Peter Fallow"]}
+{"id": 110, "prediction": "Ryan or César", "ground_truth": ["MISSION CONTROL"]}
+{"id": 111, "prediction": "Julius Rosenberg", "ground_truth": ["OLIVER", "OLIVER FIELDS"]}
+{"id": 112, "prediction": "Sam Lowry", "ground_truth": ["COACH"]}
+{"id": 113, "prediction": "Jack", "ground_truth": ["SAM", "SAM LOWRY"]}
+{"id": 114, "prediction": "Hannah", "ground_truth": ["LOU"]}
+{"id": 115, "prediction": "Phil", "ground_truth": ["STEVE CARELL"]}
+{"id": 116, "prediction": "Eve", "ground_truth": ["KAREN", "KAREN RICHARDS"]}
+{"id": 117, "prediction": "Eddie", "ground_truth": ["CINDY", "CINDY PERIERA"]}
+{"id": 118, "prediction": "Mary Johanson", "ground_truth": ["GLADYS", "GLADYS LEEMAN"]}
+{"id": 119, "prediction": "Mr. Johnson", "ground_truth": ["MR. JOHNSON"]}
