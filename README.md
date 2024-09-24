@@ -190,7 +190,7 @@ Our experiments demonstrate the improved performance of various LLMs using the $
 ```
 @article{Zhou2024LLMxMapReduce,
   title={LLM$\times$MapReduce: An Effective Divide-and-Conquer Framework for Long-Sequence Processing},
-  author={Zihan Zhou, Chong Li, Xinyi Chen, Yu Chao, Zhili Li, Haoyu Wang, Rongqiao An, Qi Shi, Shuo Wang, Xu Han, Zhiyuan Liu, Xiaodong Shi, Maosong Sun},
+  author={Zihan Zhou, Chong Li, Xinyi Chen, Yu Chao, Shuo Wang, Zhili Li, Haoyu Wang, Rongqiao An, Qi Shi, Xu Han, Xiaodong Shi, Zhiyuan Liu, Maosong Sun},
   year={2024}
 }
 ```
