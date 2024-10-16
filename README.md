@@ -9,7 +9,8 @@
 <p align="center">•
  <a href="#-evaluation">📃 Evaluation</a> •
  <a href="#-experiment-results">📊Experiment Results</a> •
- <a href="#-citation">📝 Citation</a>
+ <a href="#-citation">📝 Citation</a>•
+ <a href="https://arxiv.org/abs/2410.09342">📃Paper</a>
 
 
 </p>
@@ -21,6 +22,7 @@ We design **a structured information protocol** to better cope with inter-chunk 
 
 # 🎉 News
 
+* 20241012: Released our [paper](https://arxiv.org/abs/2410.09342) on arXiv. 🎇
 * 20240912: Introducing the $\text{LLM}\times\text{MapReduce}$ framework, which delivers strong performance on long-sequence benchmarks and is compatible with various open-source LLMs. 🎊
 
 
@@ -188,10 +190,14 @@ Our experiments demonstrate the improved performance of various LLMs using the $
 # 📝 Citation
 
 ```
-@article{Zhou2024LLMxMapReduce,
-  title={LLM$\times$MapReduce: An Effective Divide-and-Conquer Framework for Long-Sequence Processing},
-  author={Zihan Zhou, Chong Li, Xinyi Chen, Yu Chao, Shuo Wang, Zhili Li, Haoyu Wang, Rongqiao An, Qi Shi, Xu Han, Xiaodong Shi, Zhiyuan Liu, Maosong Sun},
-  year={2024}
+@misc{zhou2024llmtimesmapreducesimplifiedlongsequenceprocessing,
+      title={LLM$\times$MapReduce: Simplified Long-Sequence Processing using Large Language Models}, 
+      author={Zihan Zhou and Chong Li and Xinyi Chen and Shuo Wang and Yu Chao and Zhili Li and Haoyu Wang and Rongqiao An and Qi Shi and Zhixing Tan and Xu Han and Xiaodong Shi and Zhiyuan Liu and Maosong Sun},
+      year={2024},
+      eprint={2410.09342},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2410.09342}, 
 }
 ```
 
