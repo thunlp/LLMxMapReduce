@@ -111,6 +111,41 @@ reduce_prompt: REDUCE_PROMPT
 
 You can modify these prompts and settings to suit your specific tasks. Be sure to adjust paths and parameters based on your environment and model setup.
 
+## Running Inference on Your Data
+
+You can quickly test the framework on your own data using the following script:
+
+```python
+from utils import read_yaml
+from pipeline import BasePipeline
+
+# Modify the configuration file path. The example configuration file is located in the `config/` directory.
+map_reduce_config = read_yaml('/path/to/your/config.yaml')
+
+# Define your context and question
+context = 'your context'
+question = 'your question'
+chunk_size = 4096  # Adjust the chunk size as needed for your data
+
+# Initialize the pipeline with the configuration
+pipeline = BasePipeline(map_reduce_config)
+
+# Run the pipeline
+result = pipeline.run(doc=context, question=question, chunk_size=chunk_size)
+
+# Print the result
+print('===============Final Result===============\n')
+print(result)
+```
+
+### Steps:
+1. Modify `/path/to/your/config.yaml` to point to your configuration file. Refer to the [Modify Config](#modify-config) section for more details on the configuration.
+2. Replace `context` and `question` with your input data.  
+   - `context`: Input the text or document you want to analyze.  
+   - `question`: Specify the query you want to answer based on the context.
+3. Adjust `chunk_size` based on the length of your text.
+
+This script allows you to test the framework on your own data before proceeding to large-scale evaluations.
 
 
 # 📃 Evaluation
