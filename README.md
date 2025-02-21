@@ -1,4 +1,4 @@
-# $\text{LLM}\times\text{MapReduce}$: Simplified Long-Sequence Processing\\using Large Language Models
+# $\text{LLM}\times\text{MapReduce}$: Simplified Long-Sequence Processing using Large Language Models
 
 <p align="center">•
  <a href="#-introduction"> 📖Introduction </a> •
