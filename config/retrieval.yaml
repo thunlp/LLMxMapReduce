@@ -1,10 +1,20 @@
-llm: 
-  name_or_path: your/model/path
-  model_args: 
-    enforce_eager: true
-# gen_args:
-url: http://localhost:5002/infer
-max_work_count: 4
+# Core LLM Configuration (for self-hosted Parallel Processing Backend)
+llm:
+  name_or_path: your/model/path      # Local HuggingFace model directory
+  url: http://localhost:5002/infer   # Local inference endpoint
+
+# OpenAI-compatible API Settings
+openai_api:
+  model: model_name             # API model identifier
+  name_or_path: your/model/path # Local HuggingFace model directory
+  base_url: https://api.openai.com/v1  # for vLLM: http://<host>:<port>/v1/
+  api_key: sk-xxxx                  
+  is_vllm_sever: false              # Set true for vLLM servers
+
+# Execution Parameters
+max_work_count: 4                   # Max parallel workers/requests
+use_openai_api: true                # Runtime mode selector
+
 
 map_prompt: "You are provided with a portion of an article and a question. Read the article portion and follow my instructions to process it.\n\nArticle:\nThe article begins as follows:\n{context}\nThe article concludes here.\n\nQuestion:\n{question}\n\nInstructions:\n\nPlease extract information from the provided passage to try and answer the given question. Note that you only have a part of the entire text, so the information you obtain might not fully answer the question. Therefore, please provide your reasoning for using the extracted information to answer the question and include a confidence score. Follow these steps:\n\n1. Extract Relevant Information: Identify and highlight the key pieces of information from the passage that are relevant to the given question.\n2. Reasoning: Analyze the extracted information and explain how it can be used to address the question. If the information is incomplete, discuss any assumptions or inferences you need to make.\n3. Answer the Question: Based on your reasoning, provide the best possible answer to the question.If, after reasoning, you believe the passage does not contain any information to solve the question, please output \"[NO INFORMATION]\" as the answer.\n4. Confidence Score: Assign a confidence score (out of 5) to your answer based on the completeness and reliability of the extracted information and your reasoning process.For answers that are directly taken literally from the text assign a score of 5.0 points. Answer which is \"[NO INFORMATION]\" can not assign 5.0 points.For all other responses, the highest possible score should be capped at 4.5 points.\nPlease follow this format:\n\nExtracted Information:\nReasoning:\nAnswer:\nConfidence Score:"
 

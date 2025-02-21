@@ -1,10 +1,20 @@
-llm: 
-  name_or_path: your/model/path
-  model_args: 
-    enforce_eager: true
-# gen_args:
-url: http://localhost:5002/infer
-max_work_count: 4
+# Core LLM Configuration (for self-hosted Parallel Processing Backend)
+llm:
+  name_or_path: your/model/path      # Local HuggingFace model directory
+  url: http://localhost:5002/infer   # Local inference endpoint
+
+# OpenAI-compatible API Settings
+openai_api:
+  model: model_name             # API model identifier
+  name_or_path: your/model/path # Local HuggingFace model directory
+  base_url: https://api.openai.com/v1  # for vLLM: http://<host>:<port>/v1/
+  api_key: sk-xxxx                  
+  is_vllm_sever: false              # Set true for vLLM servers
+
+# Execution Parameters
+max_work_count: 4                   # Max parallel workers/requests
+use_openai_api: true                # Runtime mode selector
+
 
 map_prompt: "You are provided with a portion of code and a question. Read the code snippet and follow my instructions to process it.\n\nCode Snippet:\n\n```\n{context}\n```\n\nQuestion:\n{question}\n\nInstructions:\n\nPlease extract information from the provided code to try and answer the given question. Note that you only have a part of the entire codebase, so the information you obtain might not fully answer the question. Therefore, provide your rationale for using the extracted information to answer the question and include a confidence score. Follow these steps:\n\n1. Extract Relevant Code: Identify and highlight the key pieces of code (such as functions, classes, or specific lines) from the snippet that are relevant to the given question.\n\n2. Provide a Rationale: Based on the collected and condensed code, attempt to solve the given problem. Discuss how the functions and code snippets can be used or manipulated to derive the answer to the question. This analysis should focus on the problem-solving process using the provided code.\n\n3. Answer the Question: Based on your rationale, provide the best possible answer to the question. If, after providing your rationale, you believe the code does not contain any information to solve the question, output \"[NO INFORMATION]\" as the answer.\n\n4. Assign a Confidence Score: Assign a confidence score (out of 5) to your answer based on the completeness and reliability of the extracted information and your rationale process.\n\nPlease follow this format:\n\nExtracted Code:\n```\n[code]\n```\nRationale:\nAnswer:\nConfidence Score:"
 

@@ -1,10 +1,20 @@
-llm: 
-  name_or_path: your/model/path
-  model_args: 
-    enforce_eager: true
-# gen_args:
-url: http://localhost:5002/infer
-max_work_count: 4
+# Core LLM Configuration (for self-hosted Parallel Processing Backend)
+llm:
+  name_or_path: your/model/path      # Local HuggingFace model directory
+  url: http://localhost:5002/infer   # Local inference endpoint
+
+# OpenAI-compatible API Settings
+openai_api:
+  model: model_name             # API model identifier
+  name_or_path: your/model/path # Local HuggingFace model directory
+  base_url: https://api.openai.com/v1  # for vLLM: http://<host>:<port>/v1/
+  api_key: sk-xxxx                  
+  is_vllm_sever: false              # Set true for vLLM servers
+
+# Execution Parameters
+max_work_count: 4                   # Max parallel workers/requests
+use_openai_api: true                # Runtime mode selector
+
 
 map_prompt: "你将获得一篇较长的文本片断和一个问题。请阅读相关内容，并按照我的指令进行处理。\n\n文本片断如下：\n文本片断从这里开始：\n{context}\n文本片断在这里结束。\n\n问题：\n{question}\n\n指令：\n\n请从提供的段落中提取信息以尝试回答给定的问题。请注意，你只有整个文本的一部分，因此你获得的信息可能无法完全回答问题。因此，请提供使用提取信息回答问题的理由并包括置信度分数。以下是一些估计置信度分数案例：<文本：[Jerry今年18岁。他会游泳并且想成为一名运动员。]。估计置信度分数：[Jerry会游泳，5分；Jerry将来会成为一名运动员，3.5分；Jerry将来会成为一名游泳运动员，3分；Jerry很强壮，3分；Jerry会下棋，0分；Jerry喜欢聊天，0分]>。请遵循以下步骤：\n\n1. 提取相关信息：从文本片断中识别并提取与给定问题相关的关键信息。\n2. 分析：分析提取的信息并解释如何使用它来解决问题。如果信息不完整，请讨论你需要做出的任何假设或推论。\n3. 回答问题：根据你的分析，提供问题的最佳答案。如果在进行分析后，你认为文章不包含任何解决问题的信息，请输出“[NO INFORMATION]”作为答案。\n4. 估计置信度分数：根据提取信息的完整性和可靠性以及你的理由过程为你的答案估计置信度分数（满分 5 分）。\n请遵循以下格式：\n\n提取的信息：\n分析：\n答案：\n置信度分数："
 

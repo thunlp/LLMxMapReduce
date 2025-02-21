@@ -1,10 +1,20 @@
-llm: 
-  name_or_path: your/model/path
-  model_args: 
-    enforce_eager: true
-# gen_args:
-url: http://localhost:5002/infer
-max_work_count: 4
+# Core LLM Configuration (for self-hosted Parallel Processing Backend)
+llm:
+  name_or_path: your/model/path      # Local HuggingFace model directory
+  url: http://localhost:5002/infer   # Local inference endpoint
+
+# OpenAI-compatible API Settings
+openai_api:
+  model: model_name             # API model identifier
+  name_or_path: your/model/path # Local HuggingFace model directory
+  base_url: https://api.openai.com/v1  # for vLLM: http://<host>:<port>/v1/
+  api_key: sk-xxxx                  
+  is_vllm_sever: false              # Set true for vLLM servers
+
+# Execution Parameters
+max_work_count: 4                   # Max parallel workers/requests
+use_openai_api: true                # Runtime mode selector
+
 
 map_prompt: "You are provided with a portion of an article and a question. Read the article portion and follow my instructions to process it.\n\nArticle:\nThe article begins as follows:\n{context}\nThe article concludes here.\n\nQuestion:\n{question}\n\nInstructions:\n\nPlease extract information from the provided passage to try and answer the given question. Note that you only have a part of the entire text, so the information you obtain might not fully answer the question. Therefore, provide your rationale for using the extracted information to answer the question and include a confidence score. The following is some assigning scoring cases: <Text: [Jerry is 18 years old this year. He can swim and wants to be an athlete.]. assigning scoring: [Jerry can swim, 5 points; Jerry will become an athlete in the future, 3.5 points; Jerry will become a swimming athlete in the future, 3 points;Jerry is strong,3 points; Jerry can play chess, 0 points;Jerry likes talking,0 points]>. Follow these steps:\n\n1. Extract Relevant Information: Identify and highlight the key pieces of information from the passage that are relevant to the given question.\n2. Provide a Rationale: Analyze the extracted information and explain how it can be used to address the question. If the information is incomplete, discuss any assumptions or inferences you need to make.\n3. Answer the Question: Based on your rationale, provide the best possible answer to the question. If, after providing your rationale, you believe the passage does not contain any information to solve the question, output \"[NO INFORMATION]\" as the answer.\n4. Assign a Confidence Score: Assign a confidence score (out of 5) to your answer based on the completeness and reliability of the extracted information and your rationale process.\nPlease follow this format:\n\nExtracted Information:\nRationale:\nAnswer:\nConfidence Score:"
 

@@ -1,6 +1,8 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import time
+import traceback
+import concurrent
 import requests
 from tqdm import tqdm
 from vllm import LLM, SamplingParams
@@ -127,3 +129,66 @@ def _post_request(url, data, params: dict):
 def thread_function(url: str, idx: int, chk: List[Any], params: dict):
     lp = _post_request(url, chk, params)
     return idx, lp
+
+def send_request(message,openai_client, params):
+    try:
+        # 构建请求数据
+        completion = openai_client.chat.completions.create(
+            messages=message,
+            **params
+        )
+        # 提取生成的文本
+        result = completion.choices[0].message.content
+        return result
+    except Exception as e:
+        # 记录错误日志并返回异常
+        traceback.print_exc()
+        return None
+
+def get_openai_batch_reply(messages, max_workers, openai_client,params):
+    # 初始化结果列表，与输入消息长度一致
+    results = [None] * len(messages)
+    max_workers = len(messages) if len(messages) < max_workers else max_workers
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # 使用索引作为 futures 的键
+        futures = {
+            i: executor.submit(send_request, mes,openai_client, params)
+            for i, mes in enumerate(messages)
+        }
+
+        while futures:
+            # 等待至少一个任务完成
+            completed, pending = concurrent.futures.wait(
+                futures.values(), return_when=concurrent.futures.FIRST_COMPLETED
+            )
+
+            new_futures = {}
+            for future in completed:
+                # 根据 future 找到对应的索引
+                index = next(i for i, f in futures.items() if f == future)
+                try:
+                    result = future.result()
+                    if result is not None:
+                        results[index] = result  # 按顺序保存结果
+                    else:
+                        # 如果任务失败，重新提交
+                        new_futures[index] = executor.submit(
+                            send_request, messages[index], params
+                        )
+                        print('job error sleep 1s')
+                        time.sleep(1)
+                except Exception as e:
+                    traceback.print_exc()
+                    # 任务失败重新提交
+                    new_futures[index] = executor.submit(
+                        send_request, messages[index], params
+                    )
+                    print('job error sleep 1s')
+                    time.sleep(1)
+
+            # 更新任务
+            futures = {i: f for i, f in futures.items()
+                       if f in pending}  # 保留未完成的任务
+            futures.update(new_futures)  # 添加重新提交的任务
+
+    return results

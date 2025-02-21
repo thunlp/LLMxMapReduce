@@ -1,4 +1,4 @@
-# $\text{LLM}\times\text{MapReduce}$: An Effective Divide-and-Conquer Framework for Long-Sequence Processing
+# $\text{LLM}\times\text{MapReduce}$: Simplified Long-Sequence Processing\\using Large Language Models
 
 <p align="center">•
  <a href="#-introduction"> 📖Introduction </a> •
@@ -22,6 +22,7 @@ We design **a structured information protocol** to better cope with inter-chunk 
 
 # 🎉 News
 
+* 20250221: Added support for both OpenAI API and OpenAI-compatible APIs (e.g., vLLM). 🚀
 * 20241012: Released our [paper](https://arxiv.org/abs/2410.09342) on arXiv. 🎇
 * 20240912: Introducing the $\text{LLM}\times\text{MapReduce}$ framework, which delivers strong performance on long-sequence benchmarks and is compatible with various open-source LLMs. 🎊
 
@@ -51,9 +52,9 @@ pip install -r requirements.txt
 ## Starting the Parallel Processing Backend
 
 
-To enable parallel processing, you need to start the parallel processing backend.
+To enable parallel processing, you need to start the parallel processing backend. *If you plan to use the native OpenAI API or vLLM's OpenAI-Compatible Server instead, you can skip this section and refer to the [🔄 Alternative Option: Using OpenAI API](#-alternative-option-using-openai-api) section.*
 
-Run the following command:
+To start the parallel processing backend, run the following command:
 
 ```bash
 bash URLs/start_gunicorn.sh --hf-model-name=your/model/path --per-proc-gpus 2 --quantization None --cuda-visible-devices 0,1,2,3,4,5,6,7 --port=5002
@@ -79,37 +80,90 @@ We also provide example scripts located in `URLs/scripts`, which include the fol
 You can modify these scripts according to your requirements to fit your specific setup.
 
 
+## 🔄 Alternative Option: Using OpenAI API
 
+If you prefer not to deploy the custom parallel processing backend, we also support two standardized approaches using OpenAI APIs:
+
+### Option 1: Native OpenAI API
+Directly use OpenAI's official API service. Simply add your API key to the config file. check out the [config modification guide](#modify-config) for details.
+
+### Option 2: Self-hosted vLLM OpenAI API
+
+Run the command to start your own OpenAI-Compatible Server:
+
+```bash
+python -m vllm.entrypoints.openai.api_server   \
+    --model your/model/path \
+    --served-model-name your-alias-name \
+    --port 8080 \
+    # --tensor-parallel-size 8
+```
+
+Ensure that the parameters in the command match those in your configuration file:  
+- **`openai_api.name_or_path`** → `--model` (Local model path)  
+- **`openai_api.model`** → `--served-model-name` (Your alias model name)  
+- **`openai_api.base_url`** → `http://<host>:<port>/v1/` (`--port` should match)  
+- **`openai_api.is_vllm_server`** → Set to `true` if using vLLM  
+- **`tensor-parallel-size`** → Adjust as needed for multi-GPU execution  
+
+For more details on configuring vLLM, refer to the [official documentation](https://docs.vllm.ai/en/latest/serving/openai_compatible_server.html). After starting the server, update your config file accordingly. For step-by-step configuration instructions, see the [config modification guide](#modify-config). 
 
 ## Modify Config
 
 The configuration file is located in the `config/` directory. This file allows you to set various parameters for the model, including prompts for each stage of processing. Below is an example configuration:
 
 ```yaml
-llm: 
-  name_or_path: your/model/path
+# Core LLM Configuration (for self-hosted Parallel Processing Backend)
+llm:
+  name_or_path: your/model/path      # Local HuggingFace model directory
+  url: http://localhost:5002/infer   # Local inference endpoint
 
+# OpenAI-compatible API Settings
+openai_api:
+  model: model_name                  # API model identifier
+  name_or_path: your/model/path      # Local HuggingFace model directory
+  base_url: https://api.openai.com/v1  # for vLLM: http://<host>:<port>/v1/
+  api_key: sk-xxxx                  
+  is_vllm_sever: false              # Set true for vLLM servers
 
-url: http://localhost:5002/infer
-max_work_count: 4
+# Execution Parameters
+max_work_count: 4                   # Max parallel workers/requests
+use_openai_api: true                # Whether to use OpenAI API (including OpenAI-compatible APIs)
 
-map_prompt: MAP_PROMPT
-
-collapse_prompt: COLLAPSE_PROMPT
-
-reduce_prompt: REDUCE_PROMPT
+# Prompts
+map_prompt: MAP_PROMPT              # Map stage prompt
+collapse_prompt: COLLAPSE_PROMPT    # Collapse stage prompt
+reduce_prompt: REDUCE_PROMPT        # Reduce stage prompt
 ```
 
-### Key Fields
+### Configuration Fields
 
-- `llm.name_or_path`: Specifies the path to the model, which should match the `hf-model-name` set in the backend.
-- `url`: The endpoint for the inference service. The default port is `5002`, which should align with the `port` specified in the backend.
-- `max_work_count`: Specifies the maximum number of workers, which should match the `worker_num` set in the backend.
-- `map_prompt`: The prompt template for the "map" stage.
-- `collapse_prompt`: The prompt template for the "collapse" stage.
-- `reduce_prompt`: The prompt template for the "reduce" stage.
+#### LLM Backend (`use_openai_api: false`)
+- `llm.name_or_path`: Local model directory path (must match `hf-model-name` in backend)
+- `llm.url`: The endpoint for the inference service. The default port is `5002`, which should align with the `port` specified in the backend.
 
-You can modify these prompts and settings to suit your specific tasks. Be sure to adjust paths and parameters based on your environment and model setup.
+
+#### OpenAI API (`use_openai_api: true`)
+Supports both OpenAI and self-hosted OpenAI-compatible APIs (e.g., vLLM).
+- `openai_api.model`: Model identifier for API calls
+- `openai_api.name_or_path`: Local model directory (used for vLLM-based deployments)
+- `openai_api.base_url`: API endpoint URL (When using vLLM, ensure the `base_url` matches the vLLM server configuration)
+- `openai_api.api_key`: Authentication key
+- `openai_api.is_vllm_sever`: Set `true` if using a self-hosted vLLM OpenAI-compatible API.
+
+#### Execution Parameters
+- `max_work_count`: use in concurrency control:  
+  - Self-hosted: Matches backend `worker_num`  
+  - API mode: Limits parallel requests (can be increased for higher concurrency).
+- `use_openai_api`
+  - `true`: OpenAI-compatible API  
+  - `false`: Local inference service
+
+### Deployment Guide  
+- **Local Inference**: Ensure `llm.name_or_path` and backend service are aligned  
+- **API Integration**: Configure `base_url` for OpenAI-compatible APIs (e.g., vLLM, OpenAI), set `is_vllm_server: true` if using a self-hosted API, and set `use_openai_api: true` to enable API mode.
+
+Adjust these parameters according to your deployment environment. The `use_openai_api` flag determines active configuration groups(`true` enables OpenAI API, including OpenAI-compatible APIs like vLLM), while `max_work_count` governs parallel processing capacity.
 
 ## Running Inference on Your Data
 

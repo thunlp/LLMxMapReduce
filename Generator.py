@@ -17,29 +17,45 @@ from tenacity import (
     stop_after_attempt,
     wait_random_exponential, stop_after_delay,
 )
-from utils import print_intermediate_output,  run_thread_pool_sub, split_list_of_docs, thread_function
+from utils import get_openai_batch_reply, print_intermediate_output,  run_thread_pool_sub, split_list_of_docs, thread_function
 
 
 class Generator:
     def __init__(
-            self,
-            config: dict,
-            
-            tokenizer=None,
-            print_intermediate_path=None,
+        self,
+        config: dict, 
+        tokenizer=None,
+        print_intermediate_path=None,
         doc_id=None
     ):
 
 
-        tokenizer = AutoTokenizer.from_pretrained(
-            config['llm']['name_or_path'])
-        
         self.first_prompt = config['map_prompt']
         self.gen_args = config.get('gen_args', {})
-        self.tokenizer = tokenizer
+        
         self.config = config
         self.max_work_count = config.get('max_work_count', 4)
-        self.url = config.get('url', 'http://localhost:5002/infer')
+        
+        self.use_openai_api = config.get('use_openai_api', False)
+        if self.use_openai_api:
+            self.openai_key = config.get('openai_api', {}).get('api_key', None)
+            self.openai_base_url = config.get('openai_api', {}).get(
+                'base_url', 'https://api.openai.com/v1')
+            self.openai_client = OpenAI(
+                api_key=self.openai_key, base_url=self.openai_base_url) # OpenAI API client
+            self.openai_model = config.get('openai_api', {}).get('model', 'text-davinci-003')
+            self.is_vllm_sever = config.get('openai_api', {}).get('is_vllm_sever', False)
+            if self.is_vllm_sever:
+                self.tokenizer = AutoTokenizer.from_pretrained(
+                    config['openai_api']['name_or_path'])
+            else:
+                self.tokenizer = tiktoken.encoding_for_model(self.openai_model)
+        else:
+            
+            self.url = config.get('llm', {}).get('url', 'http://localhost:5002/infer')
+            self.tokenizer = AutoTokenizer.from_pretrained(
+            config['llm']['name_or_path'])
+        
         self.print_intermediate_path = print_intermediate_path
         self.doc_id = doc_id
         
@@ -74,15 +90,24 @@ class Generator:
         batch = []
         intermediate_input = []
         for i, item in enumerate(context):
-            messages = self.build_message(
-                prompt, {"question": question, "context": item})
+            if self.use_openai_api:
+                messages = [{'role': 'user', 'content':prompt.format_map(
+                {"question": question, "context": item}) }]
+            else:
+                messages = self.build_message(
+                    prompt, {"question": question, "context": item})
 
             intermediate_input.append(prompt.format_map(
                 {"question": question, "context": item}))
 
             batch.append(messages)
-
-        res = self.get_batch_reply(batch)
+        if self.use_openai_api:
+            para = copy.deepcopy(self.gen_args)
+            para['model'] = self.openai_model
+            res = get_openai_batch_reply(
+                batch, self.max_work_count, self.openai_client, para)
+        else:
+            res = self.get_batch_reply(batch)
         print('map result:')
         print(res)
         if self.print_intermediate_path != None:
@@ -333,14 +358,24 @@ class Generator:
             for index, docs in enumerate(new_result_doc_list):
                 # new_doc = collapse_chain.invoke(
                 #     {"context": self.join_docs(docs), "question": question})
-                messages = self.build_message(
-                    prompt, {"context": self.join_docs(docs), "question": question})
+                if self.use_openai_api:
+                    messages = [{'role': 'user', 'content': prompt.format_map(
+                        {"question": question, "context": self.join_docs(docs)})}]
+                else:
+                    messages = self.build_message(
+                        prompt, {"context": self.join_docs(docs), "question": question})
                 current_batch.append(messages)
                 #!--------
                 intermediate_input.append(prompt.format_map(
                     {"question": question, "context": self.join_docs(docs)}))
                 #!--------
-            result_docs = self.get_batch_reply(current_batch)
+            if self.use_openai_api:
+                para = copy.deepcopy(self.gen_args)
+                para['model'] = self.openai_model
+                result_docs = get_openai_batch_reply(
+                    current_batch, self.max_work_count, self.openai_client, para)
+            else:
+                result_docs = self.get_batch_reply(current_batch)
             #!--------
             if self.print_intermediate_path != None:
                 print_intermediate_output(
@@ -363,9 +398,16 @@ class Generator:
         context = ''.join(self.format_chunk_information(context))
         print("=====Reduce=====")
 
-        messages = self.build_message(
-            prompt, {"context": context, "question": question})
-        result = self.get_batch_reply([messages])
+        if self.use_openai_api:
+            messages = [{'role': 'user', 'content': prompt.format_map({"context": context, "question": question})}]
+            para = copy.deepcopy(self.gen_args)
+            para['model'] = self.openai_model
+            result = get_openai_batch_reply(
+                [messages], self.max_work_count, self.openai_client, para)
+        else:
+            messages = self.build_message(
+                prompt, {"context": context, "question": question})
+            result = self.get_batch_reply([messages])
         result = result[0]
         print("input")
         print({"context": context, "question": question})
