@@ -9,9 +9,7 @@
 <p align="center">•
  <a href="https://arxiv.org/abs/2410.09342">📃V1 Paper</a>
  <a href="">📃V2 Paper</a>
- <a href="">📃 SurveyEval-Test</a> •
- <a href="">📃 SurveyEval-All</a> •
-
+ <a href="https://huggingface.co/datasets/R0k1e/SurveyEval">📃 SurveyEval</a> •
 
 </p>
 </div>
@@ -37,6 +35,9 @@ The following steps are about `LLMxMapReduceV2`. If you want to use `LLMxMapRedu
 
 To get started, ensure all dependencies listed in requirements.txt are installed. You can do this by running:
 ```bash
+cd LLMxMapReduceV2
+conda create -n llm_mr_v2 python=3.11
+conda activate llm_mr_v2
 pip install -r requirements.txt
 ```
 Before evaluation, you need to download punkt_tab firstly.
@@ -45,15 +46,15 @@ import nltk
 nltk.download('punkt_tab')
 ```
 ## Env config
-Please set your OPENAI_API_KEY and OPENAI_API_BASE in your environment variables before start the pipeline.
+Please set your OPENAI_API_KEY and OPENAI_API_BASE in your environment variables before start the pipeline. If you use miniconda, replace `anaconda3` in `LD_LIBRARY_PATH` with `miniconda3`
 ```bash
-export LD_LIBRARY_PATH=${HOME}/anaconda3/envs/YOUR_ENV_NAME/lib/YOUR_PYTHON_VERSION/site-packages/nvidia/nvjitlink/lib:${LD_LIBRARY_PATH}
+export LD_LIBRARY_PATH=${HOME}/anaconda3/envs/llm_mr_v2/lib/python3.11/site-packages/nvidia/nvjitlink/lib:${LD_LIBRARY_PATH}
 export PYTHONPATH=$(pwd):${PYTHONPATH}
 export OPENAI_API_KEY=Your OpenAI Key
 export OPENAI_API_BASE=Your OpenAI base url
 ```
 ## Start LLMxMapReduceV2 pipeline
-Follow the instructions and generate a survey. The generated Markdown file is at ./output/md. 
+Follow the instructions and generate a report. The generated Markdown file is at ./output/md. 
 ```bash
 cd LLMxMapReduceV2
 bash scripts/pipeline_start.sh input_references_path.jsonl output_file_path.jsonl
@@ -75,11 +76,15 @@ The following steps are about `LLMxMapReduceV2`. If you want to use `LLMxMapRedu
 
 Follow the steps below to set up the evaluation:
 ## 1. Download the Dataset
-Before running the evaluation, you need to download the SurveyEval dataset [here](https://huggingface.co/datasets/R0k1e/SurveyEval). After downloading, store it in a `.jsonl` file.
+Before running the evaluation, you need to download the `test` split of [SurveyEval dataset](https://huggingface.co/datasets/R0k1e/SurveyEval). After downloading, store it in a `.jsonl` file.
 
 ## 2. Run the Evaluation
-Execute the [scripts](scripts/eval_all.sh) to evaluate the generated result. 
-
+Execute the [scripts](LLMxMapReduceV2/scripts/eval_all.sh) to evaluate the generated result. 
+```bash
+cd LLMxMapReduceV2
+bash scripts/eval_all.sh output_data_file_path.jsonl
+```
+Aware that the evaluation process is token-consuming, you need to make sure you have enough balance.
 
 # 📊 Experiment Results
 Our experiments demonstrate the improved performance of various LLMs using the $\text{LLM}\times\text{MapReduce}V2$ framework on SurveyEval. Detailed results are provided below.
