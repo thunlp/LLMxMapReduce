@@ -15,7 +15,7 @@
 </div>
 
 # 🎉 News
-* 202503xx: Introducing the $\text{LLM}\times\text{MapReduce}-V2$ framework to support long-to-long generation! Released [paper]() on arXiv. 
+* 202503xx: Introducing the $\text{LLM}\times\text{MapReduce}\-V2$ framework to support long-to-long generation! Released [paper]() on arXiv. You could try to use it with expected topic and descriptions in discussions -> Write Ariticle.
 * 20250221: Added support for both OpenAI API and OpenAI-compatible APIs (e.g., vLLM). 🚀
 * 20241012: Released our [paper](https://arxiv.org/abs/2410.09342) on arXiv. 🎇
 * 20240912: Introducing the $\text{LLM}\times\text{MapReduce}$ framework, which delivers strong performance on long-sequence benchmarks and is compatible with various open-source LLMs. 🎊
@@ -23,15 +23,15 @@
 # 📖 Introduction
 $\text{LLM}\times\text{MapReduce}-V1$ Readme could be seen [here](LLMxMapReduce_V1/README.md).
 
-Long-form generation is crucial for a wide range of practical applications, typically categorized into short-to-long and long-to-long generation. While short-to-long generations have received considerable attention, generating long texts from extremely long resources remains relatively underexplored. The primary challenge in long-to-long generation lies in effectively integrating and analyzing relevant information from extensive inputs, which remains difficult for current large language models (LLMs). In this paper, we propose $\text{LLM}\times\text{MapReduce}-V2$, a novel test-time scaling strategy designed to enhance the ability of LLMs to process extremely long inputs. Drawing inspiration from convolutional neural networks, which iteratively integrate local features into higher-level global representations, $\text{LLM}\times\text{MapReduce}-V2$ utilizes stacked convolutional scaling layers to progressively expand the understanding of input materials. Both quantitative and qualitative experimental results demonstrate that our approach substantially enhances the ability of LLMs to process long inputs and generate coherent, informative long-form articles, outperforming several representative baselines.
+Long-form generation is crucial for a wide range of practical applications, typically categorized into short-to-long and long-to-long generation. While short-to-long generations have received considerable attention, generating long texts from extremely long resources remains relatively underexplored. The primary challenge in long-to-long generation lies in effectively integrating and analyzing relevant information from extensive inputs, which remains difficult for current large language models (LLMs). In this paper, we propose $\text{LLM}\times\text{MapReduce}\-V2$, a novel test-time scaling strategy designed to enhance the ability of LLMs to process extremely long inputs. Drawing inspiration from convolutional neural networks, which iteratively integrate local features into higher-level global representations, $\text{LLM}\times\text{MapReduce}\-V2$ utilizes stacked convolutional scaling layers to progressively expand the understanding of input materials. Both quantitative and qualitative experimental results demonstrate that our approach substantially enhances the ability of LLMs to process long inputs and generate coherent, informative long-form articles, outperforming several representative baselines.
 
 <div align="center">
-  <img src="assets/main_pic.jpg" alt="$\text{LLM}\times\text{MapReduce}-V2$ framework">
+  <img src="assets/main_pic.jpg" alt="$\text{LLM}\times\text{MapReduce}\-V2$ framework">
 </div>
 
 # ⚡️ Getting Started
 # Getting Started
-The following steps are about $\text{LLM}\times\text{MapReduce}-V2$. If you want to use $\text{LLM}\times\text{MapReduce}-V1$, you need to refer to [here](LLMxMapReduce_V1/README.md).
+The following steps are about $\text{LLM}\times\text{MapReduce}\-V2$. If you want to use $\text{LLM}\times\text{MapReduce}-V1$, you need to refer to [here](LLMxMapReduce_V1/README.md).
 
 To get started, ensure all dependencies listed in requirements.txt are installed. You can do this by running:
 ```bash
@@ -57,9 +57,9 @@ export OPENAI_API_BASE=Your OpenAI base url
 Follow the instructions and generate a report. The generated Markdown file is at ./output/md. 
 ```bash
 cd LLMxMapReduce_V2
-bash scripts/pipeline_start.sh input_references_path.jsonl output_file_path.jsonl
+bash scripts/pipeline_start.sh TOPIC output_file_path.jsonl
 ```
-The input data should have following components:
+If you wish to use your own data, the input data should have following components at least:
 ```json
 {
   "title": "The article title you wish to write",
@@ -74,7 +74,7 @@ The input data should have following components:
 You could use to use [this script](LLMxMapReduce_V2/scripts/output_to_md.py) to convert data from `.jsonl` to multiple `.md` files.
 
 # 📃 Evaluation
-The following steps are about $\text{LLM}\times\text{MapReduce}-V2$. If you want to use $\text{LLM}\times\text{MapReduce}-V1$, you need to refer to [here](LLMxMapReduce_V1/README.md).
+The following steps are about $\text{LLM}\times\text{MapReduce}\-V2$. If you want to use $\text{LLM}\times\text{MapReduce}-V1$, you need to refer to [here](LLMxMapReduce_V1/README.md).
 
 Follow the steps below to set up the evaluation:
 ## 1. Download the Dataset
@@ -89,7 +89,7 @@ bash scripts/eval_all.sh output_data_file_path.jsonl
 Aware that the evaluation process is token-consuming, you need to make sure you have enough balance.
 
 # 📊 Experiment Results
-Our experiments demonstrate the improved performance of various LLMs using the $\text{LLM}\times\text{MapReduce}-V2$ framework on SurveyEval. Detailed results are provided below.
+Our experiments demonstrate the improved performance of various LLMs using the $\text{LLM}\times\text{MapReduce}\-V2$ framework on SurveyEval. Detailed results are provided below.
 
 | **Methods**           | **Struct.** | **Fait.** | **Rele.** | **Lang.** | **Crit.** | **Num.** | **Dens.** | **Prec.** | **Recall** |
 |-----------------------|-------------|-----------|-----------|-----------|-----------|----------|-----------|-----------|------------|
