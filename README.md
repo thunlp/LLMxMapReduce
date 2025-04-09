@@ -21,7 +21,10 @@
 * 20240912: Introducing the $\text{LLM}\times\text{MapReduce}$ framework, which delivers strong performance on long-sequence benchmarks and is compatible with various open-source LLMs. 🎊
 
 # 📖 Introduction
+The $\text{LLM}\times\text{MapReduce}\-V2$ was jointly proposed by the THUNLP group from Tsinghua University, OpenBMB, and the 9#AISoft team. 
+
 $\text{LLM}\times\text{MapReduce}\-V1$ Readme could be seen [here](LLMxMapReduce_V1/README.md).
+
 
 Long-form generation is crucial for a wide range of practical applications, typically categorized into short-to-long and long-to-long generation. While short-to-long generations have received considerable attention, generating long texts from extremely long resources remains relatively underexplored. The primary challenge in long-to-long generation lies in effectively integrating and analyzing relevant information from extensive inputs, which remains difficult for current large language models (LLMs). In this paper, we propose $\text{LLM}\times\text{MapReduce}\-V2$, a novel test-time scaling strategy designed to enhance the ability of LLMs to process extremely long inputs. Drawing inspiration from convolutional neural networks, which iteratively integrate local features into higher-level global representations, $\text{LLM}\times\text{MapReduce}\-V2$ utilizes stacked convolutional scaling layers to progressively expand the understanding of input materials. Both quantitative and qualitative experimental results demonstrate that our approach substantially enhances the ability of LLMs to process long inputs and generate coherent, informative long-form articles, outperforming several representative baselines.
 
@@ -30,7 +33,6 @@ Long-form generation is crucial for a wide range of practical applications, typi
 </div>
 
 # ⚡️ Getting Started
-# Getting Started
 The following steps are about $\text{LLM}\times\text{MapReduce}\-V2$. If you want to use $\text{LLM}\times\text{MapReduce}\-V1$, you need to refer to [here](LLMxMapReduce_V1/README.md).
 
 To get started, ensure all dependencies listed in requirements.txt are installed. You can do this by running:
