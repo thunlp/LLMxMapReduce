@@ -1,0 +1,12 @@
+numpy
+gevent
+nltk
+trio
+tabulate
+openai
+tenacity
+requests
+pandas
+transformers
+crawl4ai=0.4.248
+nest_asyncio
