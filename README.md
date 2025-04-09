@@ -1,23 +1,22 @@
 # $\text{LLM}\times\text{MapReduce}$: Simplified Long-Sequence Processing using Large Language Models
 
-<p align="center">•
+<p align="center">
  <a href="#-introduction"> 📖Introduction </a> •
- <a href="#%EF%B8%8F-getting-started">⚡️Getting Started</a> 
+ <a href="#%EF%B8%8F-getting-started">⚡️Getting Started</a> •
  <a href="#-experiment-results">📊Experiment Results</a> •
- <a href="#-citation">📝 Citation</a>•
+ <a href="#-citation">📝 Citation</a>
 </p>
-<p align="center">•
- <a href="https://arxiv.org/abs/2410.09342">📃V1 Paper</a>
- <a href="https://arxiv.org/abs/2504.05732">📃V2 Paper</a>
- <a href="https://huggingface.co/datasets/R0k1e/SurveyEval">📚 SurveyEval</a> •
-
+<p align="center">
+ <a href="https://arxiv.org/abs/2410.09342">📃V1 Paper</a> •
+ <a href="https://arxiv.org/abs/2504.05732">📃V2 Paper</a> •
+ <a href="https://huggingface.co/datasets/R0k1e/SurveyEval">📚 SurveyEval</a> 
 </p>
 </div>
 
 # 🎉 News
-* 20250409: Introducing the $\text{LLM}\times\text{MapReduce}\-V2$ framework to support long-to-long generation! Released [paper](https://arxiv.org/abs/2504.05732) on arXiv.
+* 20250409: Introducing the $\text{LLM}\times\text{MapReduce}\-V2$ framework to support long-to-long generation! Released V2 [paper](https://arxiv.org/abs/2504.05732) on arXiv.
 * 20250221: Added support for both OpenAI API and OpenAI-compatible APIs (e.g., vLLM). 🚀
-* 20241012: Released our [paper](https://arxiv.org/abs/2410.09342) on arXiv. 🎇
+* 20241012: Released our V1 [paper](https://arxiv.org/abs/2410.09342) on arXiv. 🎇
 * 20240912: Introducing the $\text{LLM}\times\text{MapReduce}$ framework, which delivers strong performance on long-sequence benchmarks and is compatible with various open-source LLMs. 🎊
 
 # 📖 Introduction
