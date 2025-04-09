@@ -6,7 +6,7 @@ def parse_args():
     
     parser.add_argument("--topic", type=str, help="Your research topic")
     parser.add_argument("--description", type=str, help="Description about your research topic. It will be used to retrieve pages.")
-    parser.add_argument("--top_n", type=str, default=100, help="Number of top n references to retrieve")
+    parser.add_argument("--top_n", type=int, default=100, help="Number of top n references to retrieve")
     
     parser.add_argument("--input_file", type=str, help="Path to the input file")
     parser.add_argument("--output_file", type=str, required=True, help="Path to the output file")

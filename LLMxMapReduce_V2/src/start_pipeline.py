@@ -4,7 +4,7 @@ import logging
 import gevent
 from args import parse_args
 import asyncio
-import datetime
+from datetime import datetime
 
 from async_d import Monitor, PipelineAnalyser
 from async_d import Pipeline
@@ -92,7 +92,7 @@ def main():
         if not os.path.exists(os.path.dirname(crawl_output_path)):
             os.mkdir(os.path.dirname(crawl_output_path))
 
-        crawler = AsyncCrawler(model="claude-3-5-haiku-20241022")
+        crawler = AsyncCrawler(model="gemini-2.0-flash-thinking-exp-1219")
         asyncio.run(
             crawler.run(
                 topic=args.topic,

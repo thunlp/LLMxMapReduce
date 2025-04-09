@@ -119,8 +119,8 @@ class LLM_search:
                 raise QueryParseError("Unable to parse query list from response")
             return match.group(1).split(",")
         except Exception as e:
-            logger.error(f"Failed to parse queries: {str(e)}")
-            raise QueryParseError(f"Query parsing failed: {str(e)}")
+            logger.error(f"Failed to parse queries: {e}, current response: {response}")
+            raise QueryParseError(f"Query parsing failed: {e}")
 
     def _handle_refinement(self, queries: list) -> str:
         """Handle query refinement process
@@ -160,7 +160,7 @@ class LLM_search:
             list: List of optimized search queries
         """
         messages = self._initialize_chat(topic, description)
-        
+        queries = []
         while True:
             try:
                 # Get and parse queries
@@ -180,10 +180,10 @@ class LLM_search:
                 messages = check_prompt
 
             except QueryParseError as e:
-                logger.error(f"Parse error, retrying: {str(e)}")
+                logger.error(f"Parse error, retrying: {e}")
                 continue
             except Exception as e:
-                logger.error(f"Unexpected error: {str(e)}")
+                logger.error(f"Unexpected error: {e}")
                 break
 
         logger.info(f'Final queries:\n{queries}\nQuery count:{len(queries)}')

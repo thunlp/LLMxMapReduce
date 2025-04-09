@@ -51,7 +51,7 @@ class SingleDigestModule(Module):
             paper_info["content"] = paper_info["origin_content"]
         bibkeys = list2str(digest.bibkeys)
         dataset = Dataset([(paper_info, outline, digest, Digest([], topic)) for paper_info in paper_infos])
-        logger.info(f"Multiple Digest Generate Start, Count {dataset} in survey {topic}: {bibkeys} ")
+        logger.info(f"Multiple Digest Generate Start, Count {len(dataset)} in survey {topic}: {bibkeys} ")
         
         digests = self.single_digest_neuron(
             dataset
