@@ -9,7 +9,8 @@
 <p align="center">
  <a href="https://arxiv.org/abs/2410.09342">📃V1 Paper</a> •
  <a href="https://arxiv.org/abs/2504.05732">📃V2 Paper</a> •
- <a href="https://huggingface.co/datasets/R0k1e/SurveyEval">📚 SurveyEval</a> 
+ <a href="https://huggingface.co/datasets/R0k1e/SurveyEval">📚 SurveyEval</a> •
+ <a href="README_zh.md">📃汉语 README</a>
 </p>
 </div>
 
@@ -78,8 +79,8 @@ The input data should have following components at least:
   "title": "The article title you wish to write",
   "papers": [
     "title": "The material title",
-    "abstract": "the abstract material",
-    "txt": "the reference material full content"
+    "abstract": "The abstract material. Optional, if not, part of the full text will be excerpted",
+    "txt": "The reference material full content"
   ]
 }
 ```
