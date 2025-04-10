@@ -70,7 +70,7 @@
             "infer_type": "OpenAI"
         },
         "polish": {
-            "model": "claude-3-5-haiku-20241022",
+            "model": "o3-mini",
             "infer_type": "OpenAI"
         },
         "chart": {
