@@ -83,7 +83,7 @@ class AsyncCrawler:
             f"Filtering and similarity processing completed. Time spent {time.time() - start_time:.2f} seconds."
         )
 
-        await self.process_results(results, crawl_output_file_path, top_n)
+        await self.process_results(results, crawl_output_file_path, top_n=top_n)
         logger.info(
             f"Format input data completed. Time spent {time.time() - start_time:.2f} seconds."
         )

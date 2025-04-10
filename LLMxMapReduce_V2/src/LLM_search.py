@@ -60,7 +60,7 @@ class LLM_search:
             model: str = 'claude-3-5-haiku-20241022',
             engine: Literal['google', 'baidu', 'bing'] = 'google', 
             user_refine: bool = False,
-            count: int = 10,
+            count: int = 20,
             filter_date: Optional[str] = None,
             ):
         
@@ -113,11 +113,11 @@ class LLM_search:
         """
         try:
             response = self.request_pool.completion(message)
-            reg = r'\[(.*)\]'
+            reg = r'```markdown\n([\s\S]*?)```'
             match = re.search(reg, response)
             if not match:
                 raise QueryParseError("Unable to parse query list from response")
-            return match.group(1).split(",")
+            return match.group(1).strip().split(";")
         except Exception as e:
             logger.error(f"Failed to parse queries: {e}, current response: {response}")
             raise QueryParseError(f"Query parsing failed: {e}")
@@ -314,5 +314,6 @@ class LLM_search:
                 url = web_snippets[idx]['url']
                 if url not in url_list:
                     url_list.append(url)
+                    
         
         return url_list

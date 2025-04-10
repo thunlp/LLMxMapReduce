@@ -51,7 +51,7 @@ class Digest:
             if abstract:
                 abstract = self._del_citation(abstract)
             else:
-                abstract = origin_content[:500]
+                abstract = ""
             if paper_token > self.MAX_TOKEN:
                 logger.warning(
                     f"Total length of origin_content {paper_info['txt_token']} exceeds estimated max token {self.MAX_TOKEN}, scaling down content lengths."

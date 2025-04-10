@@ -699,7 +699,14 @@ SEARCH_SYSTEM_PROMPT_WITH_ABSTRACT = """You are an industry research expert task
 """
 SEARCH_SYSTEM_PROMPT_WITHOUT_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report.
 """
-SEARCH_USER_PROMPT = """If the query contains broad or vague concepts, break them down into more specific sub-concepts to enable more precise searches. For example, "foreign" could be further decomposed into specific countries or regions that are representative within the field of the report. Return only the queries quoted by [], separated by commas, as a simple string. For example: "[query_1,query_2,...,query_n]".
+SEARCH_USER_PROMPT = """Break down vague concepts in the current query into more specific subconcepts for more precise searches. For example, "foreign" can be further broken down into specific countries or regions that are representative within the reporting domain.
+
+Output Format:
+```markdown
+query_1;
+query_2;
+...
+```
 """
 QUERY_REFINE_STOP_FLAG = "No modifications needed"
 
