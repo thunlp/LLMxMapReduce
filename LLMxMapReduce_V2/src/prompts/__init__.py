@@ -33,6 +33,7 @@ LLM_CHECK_PROMPT = _default_manager.prompts.LLM_CHECK_PROMPT
 # Orchestra related prompts
 ORCHESTRA_PROMPT = _default_manager.prompts.ORCHESTRA_PROMPT
 SUMMARY_PROMPT = _default_manager.prompts.SUMMARY_PROMPT
+POLISH_PROMPT = _default_manager.prompts.POLISH_PROMPT
 CHART_PROMPT = _default_manager.prompts.CHART_PROMPT
 
 # Crawl related prompts

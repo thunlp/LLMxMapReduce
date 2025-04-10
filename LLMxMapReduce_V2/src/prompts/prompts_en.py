@@ -25,14 +25,14 @@ Think step-by-step about how to group the papers together.
 Group Result:
 ```markdown
 Group 1:
-Papers: ['bibkey1', 'bibkey2']
+Papers: [\"BIBKEY1\", \"BIBKEY2\"]
 Reason: Explain why you grouped these papers together
 Group 2:
-Papers: ['bibkey3', 'bibkey4']
+Papers: [\"BIBKEY3\", \"BIBKEY4\"]
 Reason: Explain why you grouped these papers together
 ...
 Group n:
-Papers: ['bibkey_m', 'bibkey_n']
+Papers: [\"BIBKEYM\", \"BIBKEYN\"]
 Reason: Explain why you grouped these papers together
 ```
 """
@@ -73,32 +73,32 @@ The wording and content arrangement of the outline should not carry personal sub
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 #### Subsubsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section C
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ```
 """
 
@@ -133,32 +133,32 @@ Each outline section should have a systematic and detailed description. The desc
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 #### Subsubsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section C
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ```
 """
 
@@ -258,19 +258,19 @@ The final goal is to build up a comprehensive and critical domain analysis frame
 ## Format Example
 ```suggestion
 1. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 2. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 3. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 ```
 """
 
@@ -311,19 +311,19 @@ To provide effective suggestions for refining the initial outline, please follow
 ## Format Example
 ```suggestion
 1. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 2. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 3. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 ```
 """
 
@@ -366,19 +366,19 @@ To integrate the group of suggestions, please follow these principles:
 ## Format Example
 ```suggestion
 1. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 2. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 3. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 ```
 """
 
@@ -418,32 +418,32 @@ Each outline section should have a systematic and detailed description. The desc
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 #### Subsubsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section C
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ```
 """
 
@@ -543,7 +543,7 @@ Output Requirements:
 Format Example:
 ```markdown
 {section_title}
-The content of the sub-section, which is generated by integrating the relevant content from the individual digests and refining the overall presentation for clarity and coherence ['BIBKEY1', 'BIBKEY2'].
+The content of the sub-section, which is generated by integrating the relevant content from the individual digests and refining the overall presentation for clarity and coherence [\"BIBKEY1\", \"BIBKEY2\"].
 ```
 Directly give a single section content without sub-section quoted by one pair of ```markdown\\n```.
 """
@@ -597,9 +597,19 @@ Output Requirements:
 Format Example:
 ```markdown
 {section_title}
-The content of the father section, which is generated by integrating the relevant content from the individual digests and refining the overall presentation for clarity and coherence ['BIBKEY1', 'BIBKEY2'].
+The content of the father section, which is generated by integrating the relevant content from the individual digests and refining the overall presentation for clarity and coherence [\"BIBKEY1\", \"BIBKEY2\"].
 ```
 Directly give a single section content without sub-section quoted by one pair of ```markdown\\n```.
+"""
+
+POLISH_PROMPT = """[Task Description] 
+Polish the content, convert multiple consecutive references to this form: [\"BIBKEY1\", \"BIBKEY2\"]. 
+
+[Content]
+{content}
+
+[Output Requirements]
+The polished content should be quoted by ```markdown\\n```.
 """
 
 CHART_PROMPT = """[Task Description]
