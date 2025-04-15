@@ -52,14 +52,33 @@ def remove_illegal_bibkeys(content, legal_bibkeys, raise_error=False, raise_warn
 
         rest_bibkeys = current_bibkeys - set(legal_bibkeys)
         return rest_bibkeys
+
+    # 保存数学公式
+    math_placeholders = {}
+    math_count = 0
     
+    # 处理块级公式
+    block_math_pattern = r'\$\$[^\$]+\$\$'
+    for match in re.finditer(block_math_pattern, content):
+        placeholder = f'MATH_PLACEHOLDER_{math_count}'
+        math_placeholders[placeholder] = match.group(0)
+        content = content.replace(match.group(0), placeholder)
+        math_count += 1
     
+    # 处理行内公式
+    inline_math_pattern = r'\$[^\$]+\$'
+    for match in re.finditer(inline_math_pattern, content):
+        placeholder = f'MATH_PLACEHOLDER_{math_count}'
+        math_placeholders[placeholder] = match.group(0)
+        content = content.replace(match.group(0), placeholder)
+        math_count += 1
+    
+    # 原有的引用处理逻辑
     references_reg = re.compile(r"(\[.*?\])", re.DOTALL)
-    content = references_reg.sub(lambda m: m.group(0).replace("-", "_").replace("‘", "'").replace("’", "'"), content)
+    content = references_reg.sub(lambda m: m.group(0).replace("-", "_").replace("'", "'").replace("'", "'"), content)
     
     rest_bibkeys = get_rest_bibkeys(content, references_reg)
     
-    # 检查 rest_bibkeys 中的每个 bibkey，并匹配编辑距离
     for rest_bibkey in list(rest_bibkeys):
         for legal_bibkey in legal_bibkeys:
             if SequenceMatcher(None, rest_bibkey, legal_bibkey).ratio() > 0.8:
@@ -81,7 +100,13 @@ def remove_illegal_bibkeys(content, legal_bibkeys, raise_error=False, raise_warn
                         ref_result.remove(ref)
                 ref_result = list(set(ref_result))
                 content = content.replace(ref_str, list2str(ref_result))
+    
     content = process_bibkeys(content)
+    
+    # 还原数学公式
+    for placeholder, math_content in math_placeholders.items():
+        content = content.replace(placeholder, math_content)
+    
     return content
 
 def process_bibkeys(raw_content):
