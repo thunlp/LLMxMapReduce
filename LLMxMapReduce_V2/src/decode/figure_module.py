@@ -45,8 +45,6 @@ class FigureModule(Module):
                     if pos_sent in section_node.content:
                         section_node.content = section_node.content.replace(pos_sent,
                                             "\n" + figure_link + "\n" + pos_sent, 1)
-                    else:
-                        section_node.content = "\n" + figure_link + "\n" + section_node.content
         logger.info(f"Finish processing figure for {survey.title}")
         return survey
 
