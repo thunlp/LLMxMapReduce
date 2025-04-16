@@ -35,6 +35,7 @@ class PromptsProtocol(Protocol):
     # Orchestra related prompts
     ORCHESTRA_PROMPT: str
     SUMMARY_PROMPT: str
+    POLISH_PROMPT: str
     CHART_PROMPT: str
 
     # Crawl related prompts

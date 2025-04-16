@@ -69,6 +69,10 @@
             "model": "gemini-2.0-flash-thinking-exp-1219",
             "infer_type": "OpenAI"
         },
+        "polish": {
+            "model": "o3-mini",
+            "infer_type": "OpenAI"
+        },
         "chart": {
             "model": "gemini-2.0-flash-thinking-exp-1219",
             "infer_type": "OpenAI"

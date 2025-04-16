@@ -8,5 +8,5 @@ tenacity
 requests
 pandas
 transformers
-crawl4ai=0.4.248
+crawl4ai==0.4.248
 nest_asyncio

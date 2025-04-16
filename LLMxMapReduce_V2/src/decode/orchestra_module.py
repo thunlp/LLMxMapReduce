@@ -16,15 +16,17 @@ from src.exceptions import (
 import logging
 
 logger = logging.getLogger(__name__)
-from src.prompts import ORCHESTRA_PROMPT, SUMMARY_PROMPT
+from src.prompts import ORCHESTRA_PROMPT, SUMMARY_PROMPT, POLISH_PROMPT
 
 class OrchestraModule(Module):
     def __init__(self, config):
         super().__init__()
         self.orchestra_neuron = OrchestraNeuron(config['orchestra'])
+        self.polish_neuron = PolishNeuron(config['polish'])
         
     def forward(self, content: ContentNode):
         content = self.orchestra_neuron(content)
+        content = self.polish_neuron(content)
         content.is_content_qualified = True
         return content
 
@@ -141,3 +143,43 @@ class OrchestraNeuron(Neuron):
                 for bibkey, digest in digests
             ]
         )
+
+class PolishNeuron(Neuron):
+    def __init__(self, config):
+        super().__init__()
+        self.req_pool = RequestWrapper(
+            model=config["model"],
+            infer_type=config["infer_type"],
+        )
+        
+    @retry(
+        stop=stop_after_attempt(10),
+        after=after_log(logger, logging.WARNING),
+        retry=retry_if_exception_type(
+            (
+                BibkeyNotFoundError,
+                StructureNotCorrespondingError,
+                MdNotFoundError,
+                ValueError,
+            )
+        ),
+    )
+    def forward(self, content: ContentNode):
+        try:
+            title = content.survey_title
+            section_title = content.title(with_index=False)
+            prompt = POLISH_PROMPT.format(
+                content = content.content
+            )
+            prompt = process_bibkeys(prompt)
+            result = self.req_pool.completion(prompt)
+            if content.is_leaf:
+                content.update_content(result, check_title=False)
+            else:
+                content.update_content(result)
+            logger.info(f"Decode Polish Node: '{section_title}' from survey '{title}'")
+            return content
+        except Exception as e:
+            logger.warning(f"Polish Node: {content.survey_title} failed, {e}, retrying...")
+            content.failure_count += 1
+            raise

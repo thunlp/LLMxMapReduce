@@ -24,7 +24,7 @@ class EntirePipeline(Pipeline):
 
         self.parallel_num = args.parallel_num
         self.encode_pipeline = EncodePipeline(
-            self.config["encode"], args.data_num, args.output_file
+            self.config["encode"], args.data_num
         )
         self.hidden_pipeline = HiddenPipeline(
             self.config["hidden"],

@@ -25,14 +25,14 @@ Think step-by-step about how to group the papers together.
 Group Result:
 ```markdown
 Group 1:
-Papers: ['bibkey1', 'bibkey2']
+Papers: [\"BIBKEY1\", \"BIBKEY2\"]
 Reason: Explain why you grouped these papers together
 Group 2:
-Papers: ['bibkey3', 'bibkey4']
+Papers: [\"BIBKEY3\", \"BIBKEY4\"]
 Reason: Explain why you grouped these papers together
 ...
 Group n:
-Papers: ['bibkey_m', 'bibkey_n']
+Papers: [\"BIBKEYM\", \"BIBKEYN\"]
 Reason: Explain why you grouped these papers together
 ```
 """
@@ -45,7 +45,7 @@ I need to develop an academic survey outline on the topic \"{title}\", using the
 # Task Description
 YOUR TASK is to construct the outline of the survey based on the provided **paper abstracts**. Each outline section should have a systematic and detailed description. The description consists of two parts:
 - Digest Construction: Determine the information to be gleaned from the provided reference full papers for creating a digest. This digest will be used in the subsequent Digest Analysis to write a logical, critical, and insightful academic survey section. The focus is on the reference papers, not the outline or the survey itself. Instead of focusing on a single paper, direct your attention to a particular topic and perspective. For example, "To facilitate the construction of the corresponding section in the final survey, the digest should extract the main content, research methods, results, conclusions, and limitations of the reference papers."
-- Digest Analysis: Explain how to use the extracted information to organize and analyze the papers with executable steps. Avoid merely listing the information; instead, analyze and synthesize it to form a coherent and well-structured narrative. For example, extract common patterns, conflicts, or evolutionary trends (e.g., "Method X yields divergent results in Studies A and B due to dataset biases"), propose representative viewpoints (e.g., "While mainstream research emphasizes Factor Y, emerging studies question its long-term validity"), provide actionable guidance for literature review writing, such as: "Compare the experimental designs of Study A (2018) and Study B (2022) to explain potential reasons for divergent conclusions.", "Summarize the common limitations of the 7 studies in Table 2 and propose an improved framework.", and highlight unresolved issues or interdisciplinary opportunities (e.g., "Integrating Computational Model X with Empirical Approach Y could overcome current bottlenecks").
+- Digest Analysis: Explain how to use the extracted information to organize and analyze the papers with executable steps. Avoid merely listing the information; instead, analyze and synthesize it to form a coherent and well-structured narrative. For example, extract common patterns, conflicts, or evolutionary trends (e.g., "Method X yields divergent results in Studies A and B due to dataset biases"), propose representative viewpoints (e.g., "While mainstream research emphasizes Factor Y, emerging studies question its long-term validity"), provide actionable guidance for literature review writing, such as: "Compare the experimental designs of Study A (2018) and Study B (2022) to explain potential reasons for divergent conclusions.", "Summarize the common limitations of the 7 studies and propose an improved framework.", and highlight unresolved issues or interdisciplinary opportunities (e.g., "Integrating Computational Model X with Empirical Approach Y could overcome current bottlenecks").
 
 You can follow the principles below to generate a high-quality outline:
 1. **Systematic**:
@@ -73,32 +73,32 @@ The wording and content arrangement of the outline should not carry personal sub
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 #### Subsubsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section C
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ```
 """
 
@@ -113,7 +113,7 @@ Given that there may be overlaps and conflicts among the outlines, you need to c
 ## Think Principles
 Each outline section should have a systematic and detailed description. The description consists of two parts:
 - Digest Construction: Determine the information to be gleaned from the provided reference full papers for creating a digest. This digest will be used in the subsequent Digest Analysis to write a logical, critical, and insightful academic survey section. The focus is on the reference papers, not the outline or the survey itself. Instead of focusing on a single paper, direct your attention to a particular topic and perspective. For example, "To facilitate the construction of the corresponding section in the final survey, the digest should extract the main content, research methods, results, conclusions, and limitations of the reference papers."
-- Digest Analysis: Explain how to use the extracted information to organize and analyze the papers with executable steps. Avoid merely listing the information; instead, analyze and synthesize it to form a coherent and well-structured narrative. For example, extract common patterns, conflicts, or evolutionary trends (e.g., "Method X yields divergent results in Studies A and B due to dataset biases"), propose representative viewpoints (e.g., "While mainstream research emphasizes Factor Y, emerging studies question its long-term validity"), provide actionable guidance for literature review writing, such as: "Compare the experimental designs of Study A (2018) and Study B (2022) to explain potential reasons for divergent conclusions.", "Summarize the common limitations of the 7 studies in Table 2 and propose an improved framework.", and highlight unresolved issues or interdisciplinary opportunities (e.g., "Integrating Computational Model X with Empirical Approach Y could overcome current bottlenecks").
+- Digest Analysis: Explain how to use the extracted information to organize and analyze the papers with executable steps. Avoid merely listing the information; instead, analyze and synthesize it to form a coherent and well-structured narrative. For example, extract common patterns, conflicts, or evolutionary trends (e.g., "Method X yields divergent results in Studies A and B due to dataset biases"), propose representative viewpoints (e.g., "While mainstream research emphasizes Factor Y, emerging studies question its long-term validity"), provide actionable guidance for literature review writing, such as: "Compare the experimental designs of Study A (2018) and Study B (2022) to explain potential reasons for divergent conclusions.", "Summarize the common limitations of the 7 studies and propose an improved framework.", and highlight unresolved issues or interdisciplinary opportunities (e.g., "Integrating Computational Model X with Empirical Approach Y could overcome current bottlenecks").
 
 # Input Materials
 ## **Initial Outlines**
@@ -133,32 +133,32 @@ Each outline section should have a systematic and detailed description. The desc
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 #### Subsubsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section C
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ```
 """
 
@@ -258,19 +258,19 @@ The final goal is to build up a comprehensive and critical domain analysis frame
 ## Format Example
 ```suggestion
 1. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 2. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 3. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 ```
 """
 
@@ -311,19 +311,19 @@ To provide effective suggestions for refining the initial outline, please follow
 ## Format Example
 ```suggestion
 1. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 2. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 3. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 ```
 """
 
@@ -366,19 +366,19 @@ To integrate the group of suggestions, please follow these principles:
 ## Format Example
 ```suggestion
 1. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 2. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 
 3. Describe the core objective of this group of suggestions:
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
-- Specific suggestion about how to modify initial outline about current core objective ['BIBKEY1', 'BIBKEY2',...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
+- Specific suggestion about how to modify initial outline about current core objective [\"BIBKEY1\", \"BIBKEY2\",...].
 ```
 """
 
@@ -392,7 +392,7 @@ Given the initial outline and the modification suggestions, your task is to crea
 
 Each outline section should have a systematic and detailed description. The description consists of two parts:
 - Digest Construction: Determine the information to be gleaned from the provided reference full papers for creating a digest. This digest will be used in the subsequent Digest Analysis to write a logical, critical, and insightful academic survey section. The focus is on the reference papers, not the outline or the survey itself. Instead of focusing on a single paper, direct your attention to a particular topic and perspective. For example, "To facilitate the construction of the corresponding section in the final survey, the digest should extract the main content, research methods, results, conclusions, and limitations of the reference papers."
-- Digest Analysis: Explain how to use the extracted information to organize and analyze the papers with executable steps. Avoid merely listing the information; instead, analyze and synthesize it to form a coherent and well-structured narrative. For example, extract common patterns, conflicts, or evolutionary trends (e.g., "Method X yields divergent results in Studies A and B due to dataset biases"), propose representative viewpoints (e.g., "While mainstream research emphasizes Factor Y, emerging studies question its long-term validity"), provide actionable guidance for literature review writing, such as: "Compare the experimental designs of Study A (2018) and Study B (2022) to explain potential reasons for divergent conclusions.", "Summarize the common limitations of the 7 studies in Table 2 and propose an improved framework.", and highlight unresolved issues or interdisciplinary opportunities (e.g., "Integrating Computational Model X with Empirical Approach Y could overcome current bottlenecks").
+- Digest Analysis: Explain how to use the extracted information to organize and analyze the papers with executable steps. Avoid merely listing the information; instead, analyze and synthesize it to form a coherent and well-structured narrative. For example, extract common patterns, conflicts, or evolutionary trends (e.g., "Method X yields divergent results in Studies A and B due to dataset biases"), propose representative viewpoints (e.g., "While mainstream research emphasizes Factor Y, emerging studies question its long-term validity"), provide actionable guidance for literature review writing, such as: "Compare the experimental designs of Study A (2018) and Study B (2022) to explain potential reasons for divergent conclusions.", "Summarize the common limitations of the 7 studies and propose an improved framework.", and highlight unresolved issues or interdisciplinary opportunities (e.g., "Integrating Computational Model X with Empirical Approach Y could overcome current bottlenecks").
 
 # Input Materials
 ## **Initial Skeleton**
@@ -418,32 +418,32 @@ Each outline section should have a systematic and detailed description. The desc
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ### Subsection B
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 #### Subsubsection A
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ## Section C
 Digest Construction:
 Write about what information should be extracted from the full paper in this section.
 Digest Analysis: 
-Write about how to organize and analyse papers ['BIBKEY1', 'BIBKEY2'] with executable step.
+Write about how to organize and analyse papers [\"BIBKEY1\", \"BIBKEY2\"] with executable step.
 ```
 """
 
@@ -538,12 +538,13 @@ Sub-Section Description:
 Output Requirements:
 1. The output section content must be quoted by one pair of ```markdown\\n```.
 2. Each group of reference paper bibkeys must be enclosed within a pair of brackets. Cite specific papers' bibkey rather than using general terms like \"all papers\" or \"all sections\". Cite the papers that are mentioned in the descriptions of section description and paper digests, not the index themselves. If there are no suitable papers to cite in a description, write the sentences without any citation. Don't separately list all bibkeys, but integrate them into the content.
-3. If there are formulas in the output, please use LaTeX format to represent them. For example, $y = x^2$ for inline formulas and $$y = x^2$$ for block formulas. Don't quote the formula with ```<FORMULA>```, replace it with $$<FORMULA>$$.
+3. If the output contains a formula, use the LaTeX format to represent it. For example, the internal connection formula uses $y = x ^ 2 $, and the block formula uses $$y = x ^ 2 $$. Check the syntax correctness and parenthesis integrity of the formula to ensure that it can be rendered by KaTeX, and convert the expression involving other macropackages into the expression supported by KaTeX. 
+4. Markdown tables are not allowed to be output in the content. 
 ====================
 Format Example:
 ```markdown
 {section_title}
-The content of the sub-section, which is generated by integrating the relevant content from the individual digests and refining the overall presentation for clarity and coherence ['BIBKEY1', 'BIBKEY2'].
+The content of the sub-section, which is generated by integrating the relevant content from the individual digests and refining the overall presentation for clarity and coherence [\"BIBKEY1\", \"BIBKEY2\"].
 ```
 Directly give a single section content without sub-section quoted by one pair of ```markdown\\n```.
 """
@@ -592,14 +593,26 @@ Section Description:
 Output Requirements:
 1. The output section content must be quoted by one pair of ```markdown\\n```.
 2. Each group of reference paper bibkeys must be enclosed within a pair of brackets. Cite specific papers' bibkey rather than using general terms like \"all papers\" or \"all sections\". Cite the papers that are mentioned in the descriptions of section description and paper digests, not the index themselves. If there are no suitable papers to cite in a description, write the sentences without any citation. Don't separately list all bibkeys, but integrate them into the content.
-3. If there are formulas in the output, please use LaTeX format to represent them. For example, $y = x^2$ for inline formulas and $$y = x^2$$ for block formulas. Don't quote the formula with ```<FORMULA>```, replace it with $$<FORMULA>$$.
+3. If the output contains a formula, use the LaTeX format to represent it. For example, the internal connection formula uses $y = x ^ 2 $, and the block formula uses $$y = x ^ 2 $$. Check the syntax correctness and parenthesis integrity of the formula to ensure that it can be rendered by KaTeX, and convert the expression involving other macropackages into the expression supported by KaTeX. 
+4. Markdown tables are not allowed to be output in the content.
 ====================
 Format Example:
 ```markdown
 {section_title}
-The content of the father section, which is generated by integrating the relevant content from the individual digests and refining the overall presentation for clarity and coherence ['BIBKEY1', 'BIBKEY2'].
+The content of the father section, which is generated by integrating the relevant content from the individual digests and refining the overall presentation for clarity and coherence [\"BIBKEY1\", \"BIBKEY2\"].
 ```
 Directly give a single section content without sub-section quoted by one pair of ```markdown\\n```.
+"""
+
+POLISH_PROMPT = """[Task Description] 
+1. Convert multiple consecutive references to this form: [\"BIBKEY1\", \"BIBKEY2\"]. 
+2. Check the syntax correctness and parenthesis integrity of the formula to ensure that it can be rendered by KaTeX, and convert the expressions involving other macro packages into expressions supported by KaTeX.
+
+[Content]
+{content}
+
+[Output Requirements]
+The polished content should be quoted by ```markdown\\n```.
 """
 
 CHART_PROMPT = """[Task Description]
@@ -607,7 +620,7 @@ Analyze the entire content of the Survey. Create multiple Markdown tables or Mer
 1. Prioritize the reader’s viewing experience; ensure a proper balance between the width and length of each chart or table. 
 2. Select precise and comprehensible keywords to summarize each corresponding section.
 3. Select suitable chart type to illustrate the information of corresponding section. 
-4. Multiple charts may be used to represent one chapter, and not each chapter needs to be represented by a chart. 
+4. A section can use one or two diagrams, and not every section needs to be represented by diagrams. The positions of the diagrams need to be different and evenly distributed in different parts of the article to help readers better understand the article. Only one diagram is allowed in one position.
 5. Each chart must have one core idea to connect all parts together. If each component of one chart is not related to the core idea, it should be split into multiple charts with the same title.
 
 [Full Content]
@@ -699,7 +712,14 @@ SEARCH_SYSTEM_PROMPT_WITH_ABSTRACT = """You are an industry research expert task
 """
 SEARCH_SYSTEM_PROMPT_WITHOUT_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report.
 """
-SEARCH_USER_PROMPT = """If the query contains broad or vague concepts, break them down into more specific sub-concepts to enable more precise searches. For example, "foreign" could be further decomposed into specific countries or regions that are representative within the field of the report. Return only the queries quoted by [], separated by commas, as a simple string. For example: "[query_1,query_2,...,query_n]".
+SEARCH_USER_PROMPT = """Break down vague concepts in the current query into more specific subconcepts for more precise searches. For example, "foreign" can be further broken down into specific countries or regions that are representative within the reporting domain.
+
+Output Format:
+```markdown
+query_1;
+query_2;
+...
+```
 """
 QUERY_REFINE_STOP_FLAG = "No modifications needed"
 
