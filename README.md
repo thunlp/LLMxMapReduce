@@ -78,9 +78,11 @@ The input data should have following components at least:
 {
   "title": "The article title you wish to write",
   "papers": [
-    "title": "The material title",
-    "abstract": "The abstract material. Optional, if not, part of the full text will be excerpted",
-    "txt": "The reference material full content"
+    {
+      "title": "The material title",
+      "abstract": "The abstract material. Optional, if not, part of the full text will be excerpted",
+      "txt": "The reference material full content"
+    }
   ]
 }
 ```
@@ -103,7 +105,7 @@ bash scripts/eval_all.sh output_data_file_path.jsonl
 Aware that the evaluation process is token-consuming, you need to make sure you have enough balance.
 
 # 📊 Experiment Results
-Our experiments demonstrate the improved performance of various LLMs using the $\text{LLM}\times \text{MapReduce}$-V2 framework on SurveyEval. Detailed results are provided below.
+Our experiments demonstrate the improved performance of LLM using the $\text{LLM}\times \text{MapReduce}$-V2 framework on SurveyEval. Detailed results are provided below.
 
 | **Methods**           | **Struct.** | **Fait.** | **Rele.** | **Lang.** | **Crit.** | **Num.** | **Dens.** | **Prec.** | **Recall** |
 |-----------------------|-------------|-----------|-----------|-----------|-----------|----------|-----------|-----------|------------|
