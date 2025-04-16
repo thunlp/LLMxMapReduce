@@ -620,7 +620,7 @@ Analyze the entire content of the Survey. Create multiple Markdown tables or Mer
 1. Prioritize the reader’s viewing experience; ensure a proper balance between the width and length of each chart or table. 
 2. Select precise and comprehensible keywords to summarize each corresponding section.
 3. Select suitable chart type to illustrate the information of corresponding section. 
-4. Multiple charts may be used to represent one chapter, and not each chapter needs to be represented by a chart. 
+4. A section can use one or two diagrams, and not every section needs to be represented by diagrams. The positions of the diagrams need to be different and evenly distributed in different parts of the article to help readers better understand the article. Only one diagram is allowed in one position.
 5. Each chart must have one core idea to connect all parts together. If each component of one chart is not related to the core idea, it should be split into multiple charts with the same title.
 
 [Full Content]
