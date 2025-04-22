@@ -59,7 +59,6 @@ class LLM_search:
             self,
             model: str = 'claude-3-5-haiku-20241022',
             engine: Literal['google', 'baidu', 'bing'] = 'google', 
-            user_refine: bool = False,
             count: int = 20,
             filter_date: Optional[str] = None,
             ):
@@ -67,7 +66,6 @@ class LLM_search:
         self.serpapi_key = os.getenv('SERP_API_KEY')
         self.model = model
         self.engine = engine
-        self.user_refine = user_refine
         self.count = count
         self.filter_date = filter_date
         self.request_pool = RequestWrapper(model=self.model)
@@ -93,8 +91,7 @@ class LLM_search:
         ]
 
     @retry(
-        stop=stop_after_attempt(3),
-        wait=wait_random_exponential(multiplier=1, max=60),
+        stop=stop_after_attempt(5),
         retry=retry_if_exception_type(QueryParseError),
         before=before_log(logger, logging.DEBUG)
     )
@@ -129,20 +126,8 @@ class LLM_search:
             queries: List of queries to refine
 
         Returns:
-            str: Refinement prompt or None if user chooses to quit
+            str: Refinement prompt
         """
-        if self.user_refine:
-            user_comment = input(
-                '\n\nPlease review the decomposed queries. '
-                'If satisfied, type "quit" to proceed. '
-                'If not, provide your feedback for adjustments.\n\n'
-            )
-            if user_comment == "quit":
-                return None
-            return USER_CHECK_PROMPT.format(
-                queries=queries, 
-                user_comment=user_comment
-            )
         return LLM_CHECK_PROMPT.format(queries=queries)
 
     def get_queries(
@@ -160,32 +145,7 @@ class LLM_search:
             list: List of optimized search queries
         """
         messages = self._initialize_chat(topic, description)
-        queries = []
-        while True:
-            try:
-                # Get and parse queries
-                queries = self._get_llm_response(messages)
-                logger.info(f'Current queries:\n{queries}\nQuery count:{len(queries)}')
-
-                # Check if optimization is complete
-                if QUERY_REFINE_STOP_FLAG in queries:
-                    break
-
-                # Handle query refinement
-                check_prompt = self._handle_refinement(queries)
-                if check_prompt is None:  # User chose to quit
-                    break
-                    
-                # Add new refinement prompt
-                messages = check_prompt
-
-            except QueryParseError as e:
-                logger.error(f"Parse error, retrying: {e}")
-                continue
-            except Exception as e:
-                logger.error(f"Unexpected error: {e}")
-                break
-
+        queries = self._get_llm_response(messages)
         logger.info(f'Final queries:\n{queries}\nQuery count:{len(queries)}')
         return queries
 

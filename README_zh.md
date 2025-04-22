@@ -15,24 +15,24 @@
 </div>
 
 # 🎉 新闻
-* 20250409: 推出 $\text{LLM}\times\text{MapReduce}\-V2$ 框架以支持长到长生成！在 arXiv 上发布 V2 [论文](https://arxiv.org/abs/2504.05732)。
+* 20250409: 推出 $\text{LLM}\times\text{MapReduce}$-V2 框架以支持长到长生成！在 arXiv 上发布 V2 [论文](https://arxiv.org/abs/2504.05732)。
 * 20250221: 添加对 OpenAI API 和 OpenAI 兼容 API（如 vLLM）的支持。🚀
 * 20241012: 在 arXiv 上发布 V1 [论文](https://arxiv.org/abs/2410.09342)。🎇
 * 20240912: 推出 $\text{LLM}\times\text{MapReduce}$ 框架，在长序列基准测试上表现出色，并与各种开源 LLM 兼容。🎊
 
 # 📖 简介
-$\text{LLM}\times\text{MapReduce}\-V2$ 由清华大学 THUNLP 小组、OpenBMB 和 9#AISoft 团队联合提出。
+$\text{LLM}\times\text{MapReduce}$-V2 由清华大学 THUNLP 小组、OpenBMB 和 9#AISoft 团队联合提出。
 
-$\text{LLM}\times\text{MapReduce}\-V1$ 的说明文档可在[此处](LLMxMapReduce_V1/README.md)查看。
+$\text{LLM}\times\text{MapReduce}$-V1 的说明文档可在[此处](LLMxMapReduce_V1/README.md)查看。
 
-长文本生成对于广泛的实际应用至关重要，通常分为短到长和长到长生成两类。虽然短到长生成已受到广泛关注，但从极长资源生成长文本的研究仍相对不足。长到长生成的主要挑战在于有效整合和分析来自大量输入的相关信息，这对当前的大语言模型（LLM）来说仍然困难。在本文中，我们提出 $\text{LLM}\times\text{MapReduce}\-V2$，这是一种新颖的测试时扩展策略，旨在增强 LLM 处理极长输入的能力。受卷积神经网络的启发，该网络能够迭代地将局部特征整合为更高层次的全局表示，$\text{LLM}\times\text{MapReduce}\-V2$ 使用堆叠的卷积扩展层来逐步扩大对输入材料的理解。定量和定性实验结果表明，我们的方法大大提高了 LLM 处理长输入和生成连贯、信息丰富的长文章的能力，优于多个代表性基线。
+长文本生成对于广泛的实际应用至关重要，通常分为短到长和长到长生成两类。虽然短到长生成已受到广泛关注，但从极长资源生成长文本的研究仍相对不足。长到长生成的主要挑战在于有效整合和分析来自大量输入的相关信息，这对当前的大语言模型（LLM）来说仍然困难。在本文中，我们提出 $\text{LLM}\times\text{MapReduce}$-V2，这是一种新颖的测试时扩展策略，旨在增强 LLM 处理极长输入的能力。受卷积神经网络的启发，该网络能够迭代地将局部特征整合为更高层次的全局表示，$\text{LLM}\times\text{MapReduce}$-V2 使用堆叠的卷积扩展层来逐步扩大对输入材料的理解。定量和定性实验结果表明，我们的方法大大提高了 LLM 处理长输入和生成连贯、信息丰富的长文章的能力，优于多个代表性基线。
 
 <div align="center">
-  <img src="assets/main_pic.jpg" alt="$\text{LLM}\times\text{MapReduce}\-V2$ 框架">
+  <img src="assets/main_pic.jpg" alt="$\text{LLM}\times\text{MapReduce}$-V2 框架">
 </div>
 
 # ⚡️ 开始使用
-以下步骤适用于 $\text{LLM}\times\text{MapReduce}\-V2$。如果您想使用 $\text{LLM}\times\text{MapReduce}\-V1$，请参考[此处](LLMxMapReduce_V1/README.md)。
+以下步骤适用于 $\text{LLM}\times\text{MapReduce}$-V2。如果您想使用 $\text{LLM}\times\text{MapReduce}$-V1，请参考[此处](LLMxMapReduce_V1/README.md)。
 
 首先，请确保安装了 requirements.txt 中列出的所有依赖项。您可以通过运行以下命令完成安装：
 ```bash
@@ -78,9 +78,11 @@ bash scripts/pipeline_start.sh 主题 输出文件路径.jsonl
 {
   "title": "您想要撰写的文章标题",
   "papers": [
-    "title": "材料标题",
-    "abstract": "摘要内容。可选项，如果没有则会节选全文中的一部分",
-    "txt": "参考材料全文"
+    {
+      "title": "材料标题",
+      "abstract": "摘要内容。可选项，如果没有则会节选全文中的一部分",
+      "txt": "参考材料全文"
+    }
   ]
 }
 ```
@@ -88,7 +90,7 @@ bash scripts/pipeline_start.sh 主题 输出文件路径.jsonl
 您可以使用[此脚本](LLMxMapReduce_V2/scripts/output_to_md.py)将数据从 `.jsonl` 转换为多个 `.md` 文件。
 
 # 📃 评估
-以下步骤适用于 $\text{LLM}\times\text{MapReduce}\-V2$。如果您想使用 $\text{LLM}\times\text{MapReduce}\-V1$，请参考[此处](LLMxMapReduce_V1/README.md)。
+以下步骤适用于 $\text{LLM}\times\text{MapReduce}$-V2。如果您想使用 $\text{LLM}\times\text{MapReduce}$-V1，请参考[此处](LLMxMapReduce_V1/README.md)。
 
 按照以下步骤设置评估：
 ## 1. 下载数据集
@@ -103,7 +105,7 @@ bash scripts/eval_all.sh 输出数据文件路径.jsonl
 请注意评估过程会消耗大量令牌，请确保您有足够的余额。
 
 # 📊 实验结果
-我们的实验表明，使用 $\text{LLM}\times\text{MapReduce}\-V2$ 框架在 SurveyEval 上显著提高了各种 LLM 的性能。详细结果如下：
+我们的实验表明，使用 $\text{LLM}\times\text{MapReduce}$-V2 框架在 SurveyEval 上显著提高了 LLM 的性能。详细结果如下：
 
 | **Methods**           | **Struct.** | **Fait.** | **Rele.** | **Lang.** | **Crit.** | **Num.** | **Dens.** | **Prec.** | **Recall** |
 |-----------------------|-------------|-----------|-----------|-----------|-----------|----------|-----------|-----------|------------|

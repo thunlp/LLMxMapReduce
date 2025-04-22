@@ -629,11 +629,11 @@ Analyze the entire content of the Survey. Create multiple Markdown tables or Mer
 [Output Requirements]
 The chart should include the following information: 
 1. The Section Title. The title of the section that the chart belongs to. This figure will be placed in this section.
-2. The Position Sentence. Repeat the sentence that is most relevant to the chart. This figure will be placed after the sentence.
+2. The Position Sentence. Repeat the sentence that is most relevant to the chart. This figure will be placed before the sentence.
 3. The figure title, summarise the main content of this figure.
 4. The Mermaid code quoted by ```mermaid\\n```. 
 - Strict adherence to Mermaid grammar.
-- Each node label must be quoted by [\"\"].
+- Each node label must be quoted by \"\", with suitable form of brackets.
 5. The Markdown code quoted by ```markdown\\n```.
 
 [Output Format]
@@ -729,13 +729,32 @@ LLM_CHECK_PROMPT = """The queries you have decomposed are: {queries}\nPlease rig
 """
 
 # crawl4ai prompts
-CRAWL_FILTER_PROMPT_WITH_TOPIC = """Here is a webpage's content obtained via a web crawler. Identify the main body of the text and remove any irrelevant content, including hyperlinks, image links, and advertisements. Return only the filtered text (including the title) without any additional information. The main content of this webpage is related to "{topic}".
+CRAWL_FILTER_PROMPT_WITH_TOPIC = """Analyze and process the following webpage content related to "{topic}". First filter out the main body text, removing irrelevant content like hyperlinks, image links and advertisements. Then evaluate the filtered content's quality and relevance.
 
-Here are the related information:
+Please provide your analysis in the following format:
+
+1. First provide the filtered main content, preserving only relevant text and title. Don't do any summary.
+
+2. Then evaluate the filtered content based on these criteria:
+   - Relevance to "{topic}": How well does the content align with or expand upon the topic?
+   - Content quality and usability: Consider factors like:
+     * Text length and completeness
+     * Absence of garbled characters
+     * Overall writing quality
+     * Value as a reference source
+
+Raw webpage content:
 {raw_content}
+
+Use these tags to enclose your response:
+- Title: <TITLE>your_title</TITLE>
+- Filtered content: <CONTENT>filtered_text</CONTENT>
+- Quality score: <SCORE>0-100</SCORE>
+
+Your response should keep all informative content without any urls and summary.
 """
 
-SIMILARITY_PROMPT = """Evaluate the quality of the following content retrieved from the internet based on the given topic. Provide a critical and strict assessment.
+SIMILARITY_PROMPT = """Evaluate the quality of the following content retrieved from the internet based on the given topic, and give a suitable title about the content. Provide a critical and strict assessment.
 
 Topic: {topic}  
 Content: {content}  
@@ -747,11 +766,13 @@ Evaluate the content based on the following dimensions:
 
 Provide a rationale for your evaluation before assigning scores. Score each dimension on a scale of 0-100, where 0 indicates no relevance and 100 indicates perfect relevance. Calculate the final average score after scoring each dimension.  
 
-Enclose the scores in `<SCORE></SCORE>` tags. For example: `<SCORE>78</SCORE>`  
+Enclose the scores in `<SCORE></SCORE>` tags. For example: `<SCORE>78</SCORE>` 
+Enclose the title in `<TITLE></TITLE>` tags. For example: `<TITLE>Title</TITLE>` 
 
 Example response:  
 Rationale: ...  
 Relevance score: <SCORE>89</SCORE>
+Title: <TITLE>Title</TITLE>
 """
 GENERATE_TITLE_PROMPT = """Generate a concise title based on the following content:\n{text}\nEnsure the title is clear and summarizes the main idea of the content. The title is not allowed to be too long. The Return the title nested within a markdown code block, like this:
 
