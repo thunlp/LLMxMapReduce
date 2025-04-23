@@ -1,10 +1,8 @@
-import os
-import json
 from typing import List, Dict
 from gevent.lock import Semaphore
 from .local import LocalRequest
 from .openai import OpenAIRequest
-import requests
+from .google import GoogleRequest
 
 import logging
 logger = logging.getLogger(__name__)
@@ -23,6 +21,8 @@ class RequestWrapper:
 
         if infer_type == "OpenAI":
             self.request_pool = OpenAIRequest(model=model)
+        elif infer_type == "Google":
+            self.request_pool = GoogleRequest(model=model)  
         elif infer_type == "local":
             self.request_pool = LocalRequest(port=port)
         else:
@@ -31,7 +31,6 @@ class RequestWrapper:
             )
 
     def completion(self, message, **kwargs):
-        logger.debug(f"Requesting completion sending")
         if isinstance(message, str):
             message = [{"role": "user", "content": message}]
         elif isinstance(message, List):
