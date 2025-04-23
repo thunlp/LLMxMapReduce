@@ -35,6 +35,7 @@ class OpenAIRequest:
                 logger.debug(error_msg)
                 raise ValueError(error_msg)
             answer = response.choices[0].message.content
+            token_usage = response.usage
 
         except RateLimitError as e:
             logger.warning(f"Rate limit exceeded in OpenAIRequest.completion: {e}")
@@ -46,5 +47,5 @@ class OpenAIRequest:
         except Exception as e:
             logger.error(f"Unexpected error in OpenAIRequest.completion: {e}. messages: \n{messages}")
             raise 
-
-        return answer
+                
+        return answer, token_usage

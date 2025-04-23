@@ -8,8 +8,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+
 class RequestWrapper:
     _connection_semaphore = {}
+    _calls_count = 0 # 用来统计api的调用次数
+    _token_usage_history = [] # 用来统计每次调用时使用的token数
 
     def __init__(self, model="gemini-2.0-flash-thinking-exp-1219", infer_type="OpenAI", connection=20, port=None):
         if not model:
@@ -45,12 +48,17 @@ class RequestWrapper:
                 raise ValueError(
                     "message should be a List[Dict['role':str, 'content':str]]"
                 )
+                
         if self.model in self._connection_semaphore:
             with self._connection_semaphore[self.model]:
                 logger.debug(f"Acquired semaphore for {self.model} (remain={self._connection_semaphore[self.model].counter})")
-                result = self.request_pool.completion(message, **kwargs)
+                result, token_usage = self.request_pool.completion(message, **kwargs)
         else:
-            result = self.request_pool.completion(message, **kwargs)
+            result, token_usage = self.request_pool.completion(message, **kwargs)
+            
+        self._calls_count += 1
+        self._token_usage_history.append(token_usage)
+            
         logger.debug(f"Requesting completion received")
         if not result:
             raise ValueError(

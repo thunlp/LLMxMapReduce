@@ -47,7 +47,8 @@ class GoogleRequest:
         )
         
         text = getattr(response, "text", None)
+        token_usage = response.usage_metadata.total_token_count
         if not text:
             logger.error("GoogleRequest.completion: empty response.text")
             raise ValueError("Empty response from GoogleRequest")
-        return text
+        return text, token_usage
