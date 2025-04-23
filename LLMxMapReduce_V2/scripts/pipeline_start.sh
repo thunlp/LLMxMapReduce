@@ -11,6 +11,6 @@ python ./src/start_pipeline.py \
   --topic ${topic} \
   --output_file ${output_file_path} \
   --config_file ./config/model_config.json\
-  --block_count 0\
+  --block_count 1\
   --data_num 1\
   2>&1 | tee "$log_file"
