@@ -13,11 +13,8 @@ from tenacity import (
 logger = logging.getLogger(__name__)
 
 proxy = "http://127.0.0.1:7890"
-# os.environ["HTTP_PROXY"]  = proxy
-# os.environ["http_proxy"]  = proxy
 os.environ["HTTPS_PROXY"] = proxy
-# os.environ["https_proxy"] = proxy
-
+print(f"Set HTTPS_PROXY to {proxy} in google_request.py")
 
 from google import genai
 

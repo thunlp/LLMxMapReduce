@@ -59,7 +59,7 @@
                 "eval": {
                     "model": "gemini-2.5-flash-preview-04-17",
                     "infer_type": "Google",
-                    "max_score": 18
+                    "max_score": 10
                 }
             }
         }
