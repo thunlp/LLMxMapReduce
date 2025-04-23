@@ -48,16 +48,3 @@ class OpenAIRequest:
             raise 
 
         return answer
-
-    @retry(
-            wait=wait_random_exponential(multiplier=2, max=60),
-            stop=stop_after_attempt(10),
-            retry=retry_if_exception_type((RateLimitError, InternalServerError, APIError))
-        )
-    def chat(self, messages):
-        completion = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-        )
-        return completion.choices[0].message.content
-
