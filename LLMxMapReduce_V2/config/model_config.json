@@ -71,7 +71,7 @@
         },
         "polish": {
             "model": "o3-mini",
-            "infer_type": "Google"
+            "infer_type": "OpenAI"
         },
         "chart": {
             "model": "gemini-2.5-flash-preview-04-17",

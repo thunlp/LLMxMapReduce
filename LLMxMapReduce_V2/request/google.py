@@ -2,6 +2,7 @@
 import os
 import logging
 from google import genai
+from google.genai import types
 from tenacity import (
     retry,
     stop_after_attempt,
@@ -12,10 +13,10 @@ from tenacity import (
 logger = logging.getLogger(__name__)
 
 proxy = "http://127.0.0.1:7890"
-os.environ["HTTP_PROXY"]  = proxy
-os.environ["http_proxy"]  = proxy
+# os.environ["HTTP_PROXY"]  = proxy
+# os.environ["http_proxy"]  = proxy
 os.environ["HTTPS_PROXY"] = proxy
-os.environ["https_proxy"] = proxy
+# os.environ["https_proxy"] = proxy
 
 
 from google import genai
@@ -31,19 +32,15 @@ class GoogleRequest:
         retry=retry_if_exception_type(Exception)  # 网络、限流、服务端错误等都重试
     )
     def completion(self, messages, **kwargs) -> str:
-        # 支持单字符串和 role/content 列表
-        if isinstance(messages, str):
-            contents = messages
-        else:
-            # 转换为 genai 期望的多轮对话格式
-            contents = [
-                {"role": m["role"], "parts": [m["content"]]}
-                for m in messages
-            ]
 
+        contents = [
+            {"role": m["role"], "parts": [types.Part.from_text(text=m["content"])]}
+            for m in messages
+        ]
+            
         # 调用生成接口
         response = self.client.models.generate_content(
-            model="gemini-2.5-flash-preview-04-17",
+            model=self.model,
             contents=contents,
             config=genai.types.GenerateContentConfig(
                 thinking_config=genai.types.ThinkingConfig(

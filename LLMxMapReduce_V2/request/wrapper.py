@@ -31,7 +31,6 @@ class RequestWrapper:
             )
 
     def completion(self, message, **kwargs):
-        logger.debug(f"Requesting completion sending")
         if isinstance(message, str):
             message = [{"role": "user", "content": message}]
         elif isinstance(message, List):
