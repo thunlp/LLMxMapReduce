@@ -56,6 +56,7 @@ export LD_LIBRARY_PATH=${HOME}/anaconda3/envs/llm_mr_v2/lib/python3.11/site-pack
 export PYTHONPATH=$(pwd):${PYTHONPATH}
 export OPENAI_API_KEY=Your OpenAI Key
 export OPENAI_API_BASE=Your OpenAI base url
+export GOOGLE_API_KEY=Your Google Cloud Key
 export SERP_API_KEY= Get SERP API key from https://serpapi.com
 ```
 
