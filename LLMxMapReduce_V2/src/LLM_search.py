@@ -58,6 +58,7 @@ class LLM_search:
     def __init__(
             self,
             model: str = 'claude-3-5-haiku-20241022',
+            infer_type: str = "OpenAI",
             engine: Literal['google', 'baidu', 'bing'] = 'google', 
             count: int = 20,
             filter_date: Optional[str] = None,
@@ -68,7 +69,7 @@ class LLM_search:
         self.engine = engine
         self.count = count
         self.filter_date = filter_date
-        self.request_pool = RequestWrapper(model=self.model)
+        self.request_pool = RequestWrapper(model=self.model, infer_type=infer_type)
 
         if self.serpapi_key is None:
             raise ValueError("Missing SerpAPI key.")

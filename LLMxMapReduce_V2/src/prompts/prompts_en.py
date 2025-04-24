@@ -63,7 +63,7 @@ The wording and content arrangement of the outline should not carry personal sub
 ## Format Requirements
 1. The output **Skeleton** must be in markdown format, with the topic as the first-level heading. The **Skeleton** should enclose with delimiters ```markdown\\n```.
 2. Each section description should cite appropriate paper bibkeys. If you believe that the content of a particular section can draw on certain abstracts, you should include the corresponding bibkeys at the end of the sentence.
-3. Each section must contain suitable sub-sections, and it is recommended to use markdown headings to represent the hierarchical structure.
+3. Each section must contain suitable sub-sections, and it is recommended to use markdown headings to represent the hierarchical structure. Don't add Reference section.
 4. Each group of reference paper bibkeys must be enclosed within a pair of brackets. Cite specific papers' bibkey rather than using general terms like \"all papers\" or \"all sections\". Cite the paper abstracts bibkeys, not the index themselves. If there are no suitable papers to cite in a description, write the sentences without any citation. 
 
 ## Format Example
@@ -123,7 +123,7 @@ Each outline section should have a systematic and detailed description. The desc
 ## Format Requirements
 1. The output **New Skeleton** must be in markdown format, with the topic as the first-level heading. The **New Skeleton** should enclose with delimiters ```markdown\\n```.
 2. Each section description should cite appropriate paper bibkeys. If you believe that the content of a particular section can draw on certain abstracts, you should include the corresponding bibkeys at the end of the sentence.
-3. Each section must contain suitable sub-sections, and it is recommended to use markdown headings to represent the hierarchical structure.
+3. Each section must contain suitable sub-sections, and it is recommended to use markdown headings to represent the hierarchical structure. Don't add Reference section.
 4. Each group of reference paper bibkeys must be enclosed within a pair of brackets. Cite specific papers' bibkey rather than using general terms like \"all papers\" or \"all sections\". Cite the papers that are mentioned in the descriptions of the initial outlines, not the index themselves. If there are no suitable papers to cite in a description, write the sentences without any citation. 
 
 ## Format Example
@@ -254,6 +254,7 @@ The final goal is to build up a comprehensive and critical domain analysis frame
 2. Each group of reference paper bibkeys must be enclosed within a pair of brackets. Cite specific papers' bibkey rather than using general terms like \"all papers\" or \"all sections\". Cite the papers that are mentioned in the descriptions of initial outline and paper digests, not the index themselves. If there are no suitable papers to cite in a description, write the sentences without any citation. 
 3. The suggestions should be actionable and closely aligned with the survey's objectives. If necessary, do not hesitate to propose significant changes to the outline, as a complete overhaul might be exactly what is required to enhance the quality and effectiveness of the survey. Don't just simply list all suggestions, but provide a clear-cut direction, with sufficient representativeness and conciseness. Each modification requires sufficient evidence and argumentation. Suggestion should have suitable citation to the paper bibkey.
 4. If there are formulas in the output, please use LaTeX format to represent them. For example, $y = x^2$ for inline formulas and $$y = x^2$$ for block formulas. Don't quote the formula with ```<FORMULA>```, replace it with $$<FORMULA>$$.
+5. Don't add Reference section.
 
 ## Format Example
 ```suggestion
@@ -307,6 +308,7 @@ To provide effective suggestions for refining the initial outline, please follow
 ## Format requirements:
 1. All suggestions must be quoted by one pair of ```suggestion\\n```. Don't give the modified outline example in the output. Don't allowed multiple ```suggestion\\n``` in the output. 
 2. If there are formulas in the output, please use LaTeX format to represent them. For example, $y = x^2$ for inline formulas and $$y = x^2$$ for block formulas. Don't quote the formula with ```<FORMULA>```, replace it with $$<FORMULA>$$.
+3. Don't add Reference section.
 
 ## Format Example
 ```suggestion
@@ -708,9 +710,9 @@ Write some detailed descriptions with citation bibkey about what content should 
 """
 
 # LLM_search prompts
-SEARCH_SYSTEM_PROMPT_WITH_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. The report should adhere to the following requirements: {abstract}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report. 
+SEARCH_SYSTEM_PROMPT_WITH_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. The report should adhere to the following requirements: {abstract}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report. The output queries must be quoted by ```markdown\\n```.
 """
-SEARCH_SYSTEM_PROMPT_WITHOUT_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report.
+SEARCH_SYSTEM_PROMPT_WITHOUT_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report. The output queries must be quoted by ```markdown\\n```.
 """
 SEARCH_USER_PROMPT = """Break down vague concepts in the current query into more specific subconcepts for more precise searches. For example, "foreign" can be further broken down into specific countries or regions that are representative within the reporting domain.
 

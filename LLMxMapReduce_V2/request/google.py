@@ -38,7 +38,6 @@ class GoogleRequest:
             for m in messages
         ]
             
-        # 调用生成接口
         response = self.client.models.generate_content(
             model=self.model,
             contents=contents,
@@ -50,7 +49,8 @@ class GoogleRequest:
         )
         
         text = getattr(response, "text", None)
+        token_usage = response.usage_metadata.total_token_count
         if not text:
             logger.error("GoogleRequest.completion: empty response.text")
             raise ValueError("Empty response from GoogleRequest")
-        return text
+        return text, token_usage

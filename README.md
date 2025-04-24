@@ -54,9 +54,9 @@ Please set your OPENAI_API_KEY and OPENAI_API_BASE in your environment variables
 ```bash
 export LD_LIBRARY_PATH=${HOME}/anaconda3/envs/llm_mr_v2/lib/python3.11/site-packages/nvidia/nvjitlink/lib:${LD_LIBRARY_PATH}
 export PYTHONPATH=$(pwd):${PYTHONPATH}
-export OPENAI_API_KEY=Your OpenAI Key
+export OPENAI_API_KEY=Your OpenAI Key. You need to set it when you choose the infer type as OpenAI.
 export OPENAI_API_BASE=Your OpenAI base url
-export GOOGLE_API_KEY=Your Google Cloud Key
+export GOOGLE_API_KEY=Your Google Cloud key. you need to set it when you choose the infer type as Google.
 export SERP_API_KEY= Get SERP API key from https://serpapi.com
 ```
 

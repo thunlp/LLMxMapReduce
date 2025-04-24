@@ -39,8 +39,8 @@ class AsyncCrawler:
     DEFAULT_MAX_LENGTH = 20000
     DEFAULT_MINIMAL_LENGTH = 350
 
-    def __init__(self, model="gemini-2.0-flash-thinking-exp-1219"):
-        self.request_pool = RequestWrapper(model=model)
+    def __init__(self, model="gemini-2.0-flash-thinking-exp-1219", infer_type="OpenAI"):
+        self.request_pool = RequestWrapper(model=model, infer_type=infer_type)
         
     async def run(
         self,
@@ -87,13 +87,38 @@ class AsyncCrawler:
         return await asyncio.gather(*tasks)
 
     async def _process_contents(self, results: List[dict]) -> List[dict]:
-        """并发处理爬取的内容并计算相似度"""
+        """从源头上控制创建的任务数量，限制并发处理爬取的内容并计算相似度"""
         sem_process = asyncio.Semaphore(self.MAX_CONCURRENT_PROCESSES)
-        processing_tasks = [
-            self.process_filtered_data(data, sem_process, drop_raw=False)
-            for data in results
-        ]
-        return await asyncio.gather(*processing_tasks)
+        task_queue = asyncio.Queue()
+
+        # 将任务放入队列
+        for data in results:
+            await task_queue.put(data)
+
+        # 定义 worker 函数
+        async def worker():
+            processed_results = []
+            while not task_queue.empty():
+                data = await task_queue.get()
+                try:
+                    result = await self.process_filtered_data(data, sem_process, drop_raw=False)
+                    processed_results.append(result)
+                finally:
+                    task_queue.task_done()
+            return processed_results
+
+        # 创建固定数量的 worker
+        workers = [asyncio.create_task(worker()) for _ in range(self.MAX_CONCURRENT_PROCESSES)]
+
+        # 等待所有任务完成
+        await task_queue.join()
+
+        # 收集所有 worker 的结果
+        all_results = []
+        for w in workers:
+            all_results.extend(await w)
+
+        return all_results
 
     async def crawl_and_collect_with_sem(self, url, topic, sem):
         async with sem:

@@ -70,7 +70,9 @@ class TreeNode:
     def number_index(self):
         index = self.index.copy()
         index.pop(0)
-        if len(index) == 1:
+        if len(index) == 0:
+            index_str = "0."
+        elif len(index) == 1:
             index_str = str(index[0]+1) + "."
         else:
             index_str = ".".join([str(i+1) for i in index])

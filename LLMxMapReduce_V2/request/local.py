@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 class LocalRequest:
     def __init__(self, port):
         self.url = f"http://localhost:{port}/infer"
+        logger.warning(f"Token counter is not supported in LocalRequest, each request will be counted as 1 token")
 
     @retry(
         wait=wait_random_exponential(multiplier=2, max=60),
@@ -45,7 +46,7 @@ class LocalRequest:
         except Exception as e:
             logger.error(f"Unexpected Error in LocalRequest.completion: {e}\n")
             raise
-        return answer
+        return answer, 1
 
     def _format_config_params(self, kwargs):
         config = {}
