@@ -696,9 +696,9 @@ RESIDUAL_MODIFY_OUTLINE_PROMPT="""你是一名专业的学术助手，负责帮�
 """
 
 # LLM_search prompts
-SEARCH_SYSTEM_PROMPT_WITH_ABSTRACT="""您是一名行业研究专家，负责就 {topic} 的主题撰写一份综合报告。报告应遵守以下要求：{abstract}。要收集必要的信息，您需要进行在线调研。请生成一组搜索查询，帮助您检索报告的相关数据和见解。
+SEARCH_SYSTEM_PROMPT_WITH_ABSTRACT="""您是一名行业研究专家，负责就 {topic} 的主题撰写一份综合报告。报告应遵守以下要求：{abstract}。要收集必要的信息，您需要进行在线调研。请生成一组搜索查询，帮助您检索报告的相关数据和见解。输出的内容必须被 ```markdown\n``` 引用。
 """
-SEARCH_SYSTEM_PROMPT_WITHOUT_ABSTRACT="""您是一名行业研究专家，负责就 {topic} 的主题撰写一份综合报告。要收集必要的信息，您需要进行在线调研。请生成一组搜索查询，帮助您检索报告的相关数据和见解。
+SEARCH_SYSTEM_PROMPT_WITHOUT_ABSTRACT="""您是一名行业研究专家，负责就 {topic} 的主题撰写一份综合报告。要收集必要的信息，您需要进行在线调研。请生成一组搜索查询，帮助您检索报告的相关数据和见解。输出的内容必须被 ```markdown\n``` 引用。
 """
 SEARCH_USER_PROMPT="""将当前查询中模糊的概念分解为更具体的子概念，以实现更精确的搜索。例如，“外国”可以进一步分解为在报告领域内具有代表性的特定国家或地区。
 

@@ -710,9 +710,9 @@ Write some detailed descriptions with citation bibkey about what content should 
 """
 
 # LLM_search prompts
-SEARCH_SYSTEM_PROMPT_WITH_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. The report should adhere to the following requirements: {abstract}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report. 
+SEARCH_SYSTEM_PROMPT_WITH_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. The report should adhere to the following requirements: {abstract}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report. The output queries must be quoted by ```markdown\\n```.
 """
-SEARCH_SYSTEM_PROMPT_WITHOUT_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report.
+SEARCH_SYSTEM_PROMPT_WITHOUT_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report. The output queries must be quoted by ```markdown\\n```.
 """
 SEARCH_USER_PROMPT = """Break down vague concepts in the current query into more specific subconcepts for more precise searches. For example, "foreign" can be further broken down into specific countries or regions that are representative within the reporting domain.
 
