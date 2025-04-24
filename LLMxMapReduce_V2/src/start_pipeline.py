@@ -83,7 +83,7 @@ def main():
         # get retrieve urls
         logger.info("---------Start to generate queries.-------------")
         retriever = LLM_search(model='gemini-2.0-flash-thinking-exp-1219', infer_type="OpenAI", engine='google')
-        queries = retriever.get_queries(topic=args.topic, description=args.description)[:10]
+        queries = retriever.get_queries(topic=args.topic, description=args.description)
         logger.info("---------Start to search pages.-------------")
         url_list = retriever.batch_web_search(queries=queries)
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')

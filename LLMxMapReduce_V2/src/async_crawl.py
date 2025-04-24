@@ -86,15 +86,6 @@ class AsyncCrawler:
         tasks = [self.crawl_and_collect_with_sem(url, topic, sem) for url in url_list]
         return await asyncio.gather(*tasks)
 
-    # async def _process_contents(self, results: List[dict]) -> List[dict]:
-    #     """并发处理爬取的内容并计算相似度"""
-    #     sem_process = asyncio.Semaphore(self.MAX_CONCURRENT_PROCESSES)
-    #     processing_tasks = [
-    #         self.process_filtered_data(data, sem_process, drop_raw=False)
-    #         for data in results
-    #     ]
-    #     return await asyncio.gather(*processing_tasks)
-
     async def _process_contents(self, results: List[dict]) -> List[dict]:
         """从源头上控制创建的任务数量，限制并发处理爬取的内容并计算相似度"""
         sem_process = asyncio.Semaphore(self.MAX_CONCURRENT_PROCESSES)

@@ -35,7 +35,6 @@ class GoogleRequest:
             for m in messages
         ]
             
-        # 调用生成接口
         response = self.client.models.generate_content(
             model=self.model,
             contents=contents,
