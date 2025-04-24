@@ -105,6 +105,7 @@ class SingleDigestNeuron(Neuron):
         )
         result = ""
         try:
+            # print(prompt)
             result = self.request_pool.completion(prompt)
             result = result.replace("['BIBKEY']", f"['{paper_bibkey}']")
             result = result.replace("[BIBKEY]", f"['{paper_bibkey}']")

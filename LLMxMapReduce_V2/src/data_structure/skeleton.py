@@ -1,6 +1,5 @@
-import ast
-import os
 import re
+import traceback
 from typing import Dict
 from .digest import Digest
 from .multi_key_dict import MultiKeyDict
@@ -119,7 +118,7 @@ class Skeleton:
             self.raw_skeleton = raw_outline
             # self.check_bibkeys()
         except Exception as e:
-            logger.warning(f"Error in parsing skeleton {provide_title}: {e}")
+            logger.warning(f"Error in parsing skeleton {provide_title}: {e}\n{traceback.format_exc()}")
             self.root = None
             raise e
         return self
