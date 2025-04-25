@@ -2,6 +2,7 @@ import os
 import logging
 from typing import Protocol
 from importlib import import_module
+
 logger = logging.getLogger(__name__)
 
 
@@ -24,24 +25,21 @@ class PromptsProtocol(Protocol):
     DIGEST_BASE_PROMPT: str
     DIGEST_FREE_PROMPT: str
 
-    # Search related prompts
-    SEARCH_SYSTEM_PROMPT_WITH_ABSTRACT: str
-    SEARCH_SYSTEM_PROMPT_WITHOUT_ABSTRACT: str
-    SEARCH_USER_PROMPT: str
-    QUERY_REFINE_STOP_FLAG: str
-    USER_CHECK_PROMPT: str
-    LLM_CHECK_PROMPT: str
-
     # Orchestra related prompts
     ORCHESTRA_PROMPT: str
     SUMMARY_PROMPT: str
     POLISH_PROMPT: str
     CHART_PROMPT: str
 
+    # Search related prompts
+    QUERY_EXPAND_PROMPT_WITH_ABSTRACT: str
+    QUERY_EXPAND_PROMPT_WITHOUT_ABSTRACT: str
+    LLM_CHECK_PROMPT: str
+    SNIPPET_FILTER_PROMPT: str
+
     # Crawl related prompts
-    CRAWL_FILTER_PROMPT_WITH_TOPIC: str
+    PAGE_REFINE_PROMPT: str
     SIMILARITY_PROMPT: str
-    GENERATE_TITLE_PROMPT: str
 
 
 class PromptManager:

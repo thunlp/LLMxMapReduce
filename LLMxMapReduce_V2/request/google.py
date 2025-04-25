@@ -23,7 +23,9 @@ from google import genai
 
 class GoogleRequest:
     def __init__(self, model: str):
-        self.client = genai.Client(api_key=os.environ.get("GOOGLE_API_KEY"))
+        self.client = genai.Client(
+            api_key=os.environ.get("GOOGLE_API_KEY"),
+            )
         self.model = model
 
     @retry(
@@ -43,7 +45,7 @@ class GoogleRequest:
             contents=contents,
             config=genai.types.GenerateContentConfig(
                 thinking_config=genai.types.ThinkingConfig(
-                thinking_budget=1024
+                thinking_budget=0
                 )
             )
         )

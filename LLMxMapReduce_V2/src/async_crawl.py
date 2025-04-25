@@ -3,45 +3,40 @@ import asyncio
 import nest_asyncio
 import time
 from crawl4ai import AsyncWebCrawler, CacheMode, CrawlerRunConfig
-from tenacity import (
-    retry,
-    stop_after_attempt,
-    wait_random_exponential,
-    retry_if_exception_type,
-)
-from openai import InternalServerError, RateLimitError, APIError
 import re
 import sys
 
 sys.path.append("survey_writer")
 from request import RequestWrapper
 from typing import List
-from prompts import (
-    CRAWL_FILTER_PROMPT_WITH_TOPIC,
-    SIMILARITY_PROMPT,
-    GENERATE_TITLE_PROMPT,
-)
+from prompts import PAGE_REFINE_PROMPT, SIMILARITY_PROMPT
 import logging
 
 logger = logging.getLogger(__name__)
-# Enable nested event loops (suitable for Jupyter or IPython environments).
+# Enable nested event loops (suitable for Jupyter or IPython environments)
 nest_asyncio.apply()
 
 
 class AsyncCrawler:
-    # 配置常量
+    # Configuration constants
     MAX_CONCURRENT_CRAWLS = 10
     MAX_CONCURRENT_PROCESSES = 10
 
-    # 文档处理相关的配置常量
+    # Document processing constants
     DEFAULT_SIMILARITY_THRESHOLD = 80
-    DEFAULT_MIN_LENGTH = 1000
+    DEFAULT_MIN_LENGTH = 350
     DEFAULT_MAX_LENGTH = 20000
-    DEFAULT_MINIMAL_LENGTH = 350
 
     def __init__(self, model="gemini-2.0-flash-thinking-exp-1219", infer_type="OpenAI"):
+        """
+        Initialize the AsyncCrawler.
+
+        Args:
+            model (str): Model identifier for text processing
+            infer_type (str): Inference type, e.g., "OpenAI"
+        """
         self.request_pool = RequestWrapper(model=model, infer_type=infer_type)
-        
+
     async def run(
         self,
         topic: str,
@@ -51,168 +46,291 @@ class AsyncCrawler:
     ):
         """
         Asynchronously crawls a list of URLs, processes the crawled data, and saves the results.
+        The process is split into four stages:
+        1. URL crawling
+        2. Content filtering and title generation
+        3. Similarity scoring
+        4. Result processing and saving
 
         Args:
-            topic (str): The topic or theme associated with the URLs. This is used for filtering and similarity scoring.
-            url_list (List[str]): A list of URLs to crawl. Each URL will be processed asynchronously.
-            crawl_output_file_path (str): The file path where the final processed results will be saved, which must be ended with '.jsonl'.
-            top_n (int, optional): The maximum number of top results to save based on similarity and content length.
-                                Defaults to 80.
+            topic (str): The topic or theme associated with the URLs
+            url_list (List[str]): A list of URLs to crawl
+            crawl_output_file_path (str): The file path where the final processed results will be saved
+            top_n (int, optional): Maximum number of top results to save. Defaults to 80
         """
         process_start_time = time.time()
+        stage_time = process_start_time
         logger.info(f"Starting crawling process for {len(url_list)} URLs")
 
-        # 第一阶段：并发爬取内容
+        # Stage 1: Concurrent URL crawling
         results = await self._crawl_urls(topic, url_list)
         logger.info(
-            f"Crawling completed in {time.time() - process_start_time:.2f} seconds"
+            f"Stage 1 - Crawling completed in {time.time() - stage_time:.2f} seconds, with {len(results)} results"
         )
+        stage_time = time.time()
 
-        # 第二阶段：并发处理和相似度计算
-        results = await self._process_contents(results)
+        # Stage 2: Concurrent content filtering and title generation
+        results = await self._process_filter_and_titles(results)
         logger.info(
-            f"Content processing completed in {time.time() - process_start_time:.2f} seconds"
+            f"Stage 2 - Content filtering and title generation completed in {time.time() - stage_time:.2f} seconds, with {len(results)} results"
         )
+        stage_time = time.time()
 
-        # 第三阶段：结果处理和保存
-        self.process_results(results, crawl_output_file_path, top_n=top_n)
+        # Stage 3: Concurrent similarity scoring
+        results = await self._process_similarity_scores(results)
+        logger.info(
+            f"Stage 3 - Similarity scoring completed in {time.time() - stage_time:.2f} seconds, with {len(results)} results"
+        )
+        stage_time = time.time()
+
+        # Stage 4: Result processing and saving
+        self._process_results(results, crawl_output_file_path, top_n=top_n)
+        logger.info(
+            f"Stage 4 - Results processing completed in {time.time() - stage_time:.2f} seconds, with {len(results)} results"
+        )
         logger.info(
             f"Total processing completed in {time.time() - process_start_time:.2f} seconds"
         )
 
-    async def _crawl_urls(self, topic: str, url_list: List[str]) -> List[dict]:
-        """并发爬取所有URL的内容"""
-        sem = asyncio.Semaphore(self.MAX_CONCURRENT_CRAWLS)
-        tasks = [self.crawl_and_collect_with_sem(url, topic, sem) for url in url_list]
-        return await asyncio.gather(*tasks)
-
-    async def _process_contents(self, results: List[dict]) -> List[dict]:
-        """从源头上控制创建的任务数量，限制并发处理爬取的内容并计算相似度"""
-        sem_process = asyncio.Semaphore(self.MAX_CONCURRENT_PROCESSES)
-        task_queue = asyncio.Queue()
-
-        # 将任务放入队列
-        for data in results:
-            await task_queue.put(data)
-
-        # 定义 worker 函数
-        async def worker():
-            processed_results = []
-            while not task_queue.empty():
-                data = await task_queue.get()
-                try:
-                    result = await self.process_filtered_data(data, sem_process, drop_raw=False)
-                    processed_results.append(result)
-                finally:
-                    task_queue.task_done()
-            return processed_results
-
-        # 创建固定数量的 worker
-        workers = [asyncio.create_task(worker()) for _ in range(self.MAX_CONCURRENT_PROCESSES)]
-
-        # 等待所有任务完成
-        await task_queue.join()
-
-        # 收集所有 worker 的结果
-        all_results = []
-        for w in workers:
-            all_results.extend(await w)
-
-        return all_results
-
-    async def crawl_and_collect_with_sem(self, url, topic, sem):
-        async with sem:
-            return await self.crawl_and_collect(url, topic)
-
-    async def crawl_and_collect(self, url, topic):
+    async def _process_similarity_score(self, data):
+        """
+        Calculate similarity score for a single piece of data.
+        """
         try:
-            raw_content = await self.simple_crawl(url)
-            if len(raw_content) < self.DEFAULT_MIN_LENGTH:
-                logger.info(
-                    f"for url={url}, content length is too short: {len(raw_content)}"
-                )
-                error_flag = True
+            # Calculate similarity score using SIMILARITY_PROMPT
+            prompt = SIMILARITY_PROMPT.format(
+                topic=data["topic"], content=data["filtered"]
+            )
+            res = self.request_pool.completion(prompt)
+
+            score = re.search(r"<SCORE>(\d+)</SCORE>", res)
+            if not score:
+                raise ValueError("Invalid similarity score format")
+
+            data["similarity"] = int(score.group(1).strip())
+
+        except Exception as e:
+            logger.info(f"Failed to process similarity score: {e}")
+            data["error"] = True
+            data["similarity"] = -1
+        return data
+
+    async def _process_filter_and_title(self, data):
+        """
+        Process title generation and content filtering for a single piece of data.
+        """
+        try:
+            # Generate title and filter content using PAGE_REFINE_PROMPT
+            prompt = PAGE_REFINE_PROMPT.format(
+                topic=data["topic"], raw_content=data["raw_content"]
+            )
+            res = self.request_pool.completion(prompt)
+            title = re.search(r"<TITLE>(.*?)</TITLE>", res, re.DOTALL)
+            content = re.search(r"<CONTENT>(.*?)</CONTENT>", res, re.DOTALL)
+
+            if not title or not content:
+                raise ValueError(f"Invalid response format, response: {res}")
+
+            data["title"] = title.group(1).strip()
+            data["filtered"] = content.group(1).strip()
+        except Exception as e:
+            logger.error(f"Failed to process filter and title: {e}")
+            data["title"] = "Error in filtering"
+            data["filtered"] = f"Error in filtering ({e})"
+            data["error"] = True
+        return data
+
+    async def _process_similarity_scores(self, results: List[dict]) -> List[dict]:
+        """
+        Calculate similarity scores for filtered results using pure producer-consumer pattern.
+        """
+        input_queue = asyncio.Queue()
+        output_queue = asyncio.Queue()
+        total_items = len(results)
+
+        # Producer: Add tasks to queue
+        for data in results:
+            await input_queue.put(data)
+
+        async def consumer():
+            while True:
+                try:
+                    data = input_queue.get_nowait()
+                    try:
+                        result = await self._process_similarity_score(data)
+                        await output_queue.put(result)
+                        logger.info(
+                            f"Processed similarity score, remaining: {input_queue.qsize()}/{total_items}, URL: {data.get('url', 'N/A')}"
+                        )
+                    finally:
+                        input_queue.task_done()
+                except asyncio.QueueEmpty:
+                    break
+
+        # Create and start consumers
+        consumers = [
+            asyncio.create_task(consumer())
+            for _ in range(self.MAX_CONCURRENT_PROCESSES)
+        ]
+
+        # Wait for all tasks to be processed
+        await input_queue.join()
+
+        # Collect results
+        results = []
+        while not output_queue.empty():
+            data = await output_queue.get()
+            if data["error"]:
+                logger.error(f"Error in processing data, skip: {data}")
             else:
-                error_flag = False
+                results.append(data)
+
+        return results
+
+    async def _process_filter_and_titles(self, results: List[dict]) -> List[dict]:
+        """
+        Process title generation and content filtering using pure producer-consumer pattern.
+        """
+        input_queue = asyncio.Queue()
+        output_queue = asyncio.Queue()
+        total_items = len(results)
+
+        # Producer: Add tasks to queue
+        for data in results:
+            await input_queue.put(data)
+
+        async def consumer():
+            while True:
+                try:
+                    data = input_queue.get_nowait()
+                    try:
+                        result = await self._process_filter_and_title(data)
+                        await output_queue.put(result)
+                        logger.info(
+                            f"Title and filter processing completed, remaining: {input_queue.qsize()}/{total_items}, URL: {data.get('url', 'N/A')}"
+                        )
+                    finally:
+                        input_queue.task_done()
+                except asyncio.QueueEmpty:
+                    break
+
+        # Create and start consumers
+        consumers = [
+            asyncio.create_task(consumer())
+            for _ in range(self.MAX_CONCURRENT_PROCESSES)
+        ]
+
+        # Wait for all tasks to be processed
+        await input_queue.join()
+
+        # Collect results
+        results = []
+        while not output_queue.empty():
+            data = await output_queue.get()
+            if data["error"]:
+                logger.error(f"Error in processing data, skip: {data}")
+            else:
+                results.append(data)
+
+        return results
+
+    async def _crawl_urls(self, topic: str, url_list: List[str]) -> List[dict]:
+        """
+        Crawl URLs using pure producer-consumer pattern.
+        """
+        input_queue = asyncio.Queue()
+        output_queue = asyncio.Queue()
+        total_items = len(url_list)
+
+        # Producer: Add URLs to queue
+        for url in url_list:
+            await input_queue.put((url, topic))
+
+        async def consumer():
+            while True:
+                try:
+                    url, topic = input_queue.get_nowait()
+                    try:
+                        result = await self._crawl_and_collect(url, topic)
+                        await output_queue.put(result)
+                        logger.info(
+                            f"URL crawling completed, remaining: {input_queue.qsize()}/{total_items}, URL: {url}"
+                        )
+                    finally:
+                        input_queue.task_done()
+                except asyncio.QueueEmpty:
+                    break
+
+        # Create and start consumers
+        consumers = [
+            asyncio.create_task(consumer()) for _ in range(self.MAX_CONCURRENT_CRAWLS)
+        ]
+
+        # Wait for all tasks to be processed
+        await input_queue.join()
+
+        # Collect results
+        results = []
+        while not output_queue.empty():
+            data = await output_queue.get()
+            if data["error"]:
+                logger.error(f"Error in processing data, skip: {data}")
+            else:
+                results.append(data)
+
+        return results
+
+    async def _crawl_and_collect(self, url: str, topic: str) -> dict:
+        """
+        Crawl a single URL and collect its content.
+
+        Args:
+            url (str): URL to crawl
+            topic (str): Associated topic for the URL
+
+        Returns:
+            dict: Dictionary containing crawled data and metadata
+        """
+        try:
+            raw_content = await self._simple_crawl(url)
             data = {
                 "topic": topic,
                 "url": url,
                 "raw_content": raw_content,
-                "error": error_flag,
+                "error": False,
             }
         except Exception as e:
+            logger.error(f"Crawling failed for URL={url}: {e}")
             data = {
                 "topic": topic,
                 "url": url,
-                "raw_content": f"Error: 爬取失败({e})",
+                "raw_content": f"Error: Crawling failed({e})",
                 "error": True,
             }
 
         return data
 
-    async def simple_crawl(self, url):
+    async def _simple_crawl(self, url: str) -> str:
+        """
+        Perform a simple crawl of a URL using AsyncWebCrawler.
+
+        Args:
+            url (str): URL to crawl
+
+        Returns:
+            str: Raw markdown content from the webpage
+        """
         crawler_run_config = CrawlerRunConfig(
-            page_timeout=180000, cache_mode=CacheMode.BYPASS  # 180s limit
+            page_timeout=180000, cache_mode=CacheMode.BYPASS  # 180s timeout
         )
 
         async with AsyncWebCrawler() as crawler:
             result = await crawler.arun(url=url, config=crawler_run_config)
             raw_markdown = result.markdown_v2.raw_markdown
-            # logger.info(f"First 500 chars:\n{raw_markdown[:500]}")
-            logger.info(f"raw_content_length={len(raw_markdown)}")
+            logger.info(f"Content length={len(raw_markdown)} for URL={url}")
             return raw_markdown
 
-    async def process_filtered_data(self, data, sem, drop_raw=False):
-        """对爬取的网页数据进行过滤和相似度计算"""
-        async with sem:
-            if not data["error"]:
-                try:
-                    # 过滤正文
-                    title, filtered_content, similarity_score = await asyncio.to_thread(
-                        self.filter_data, data["topic"], data["raw_content"]
-                    )
-                    data["title"] = title
-                    data["filtered"] = filtered_content
-                    data["similarity"] = similarity_score
-                except Exception as e:
-                    logger.info(f"处理数据失败: {e}")
-                    data['title'] = "Error in filtering"
-                    data["filtered"] = f"Error in filtering ({e})"
-                    data["similarity"] = -1  # 用于标记错误
-            if drop_raw:
-                data.pop("raw_content")
-        return data
-
-    @retry(
-        wait=wait_random_exponential(multiplier=2, max=60),
-        stop=stop_after_attempt(5),
-        retry=retry_if_exception_type((RateLimitError, InternalServerError, APIError, ValueError)),
-    )
-    def filter_data(self, topic, raw_content):
-        prompt = CRAWL_FILTER_PROMPT_WITH_TOPIC.format(
-            topic=topic, raw_content=raw_content
-        )
-        logger.info(f"Filtering...")
-        res = self.request_pool.completion(prompt)
-        print(f"res={res}")
-        title = re.search(r"<TITLE>(.*?)</TITLE>", res)
-        if not title:
-            raise ValueError("No valid TITLE found in response.")
-        title = title.group(1).strip()
-        
-        content = re.search(r"<CONTENT>(.*?)</CONTENT>", res)
-        if not content:
-            raise ValueError("No valid CONTENT found in response.")
-        content = content.group(1).strip()
-        
-        score = re.search(r"<SCORE>(\d+)</SCORE>", res)
-        if not score:
-            raise ValueError("No valid SCORE found in response.")
-        score = int(score.group(1).strip())
-        logger.info(f"Filtered. length={len(res)}")
-        return title, content, score
-
-    def process_results(
+    def _process_results(
         self,
         results,
         output_path,
@@ -220,44 +338,41 @@ class AsyncCrawler:
         similarity_threshold=DEFAULT_SIMILARITY_THRESHOLD,
         min_length=DEFAULT_MIN_LENGTH,
         max_length=DEFAULT_MAX_LENGTH,
-        minimal_length=DEFAULT_MINIMAL_LENGTH,
     ):
-        """处理爬取结果并保存到文件 - 串行执行版本
-        
-        Args:
-            results: 爬取的原始结果
-            output_path: 输出文件路径
-            top_n: 每个主题保留的最大文档数量
-            similarity_threshold: 相似度阈值
-            min_length: 最小文档长度
-            max_length: 最大文档长度
-            minimal_length: 允许的最小文档长度
         """
-        # 第一步：串行处理每篇论文数据
+        Process crawling results and save to file.
+
+        Args:
+            results: Raw crawling results
+            output_path: Output file path
+            top_n: Maximum number of documents to keep for each topic
+            similarity_threshold: Similarity threshold
+            min_length: Minimum document length
+            max_length: Maximum document length
+            minimal_length: Allowed minimum document length
+        """
+        # Step 1: Process each paper data serially
         processed_data = []
-        
         for data in results:
-            if not data["error"]:
-                try:
-                    # 构建论文数据
-                    paper_data = {
-                        "title": data['title'],
-                        "url": data["url"],
-                        "abstract": data["filtered"],
-                        "txt": data["filtered"],
-                        "similarity": data.get("similarity", 0)
-                    }
-                    processed_data.append((data["topic"], paper_data))
-                except Exception as e:
-                    logger.error(f"处理论文数据失败: {e}")
-                    continue
-        
-        # 第二步：按主题组织数据
+            try:
+                # Build paper data
+                paper_data = {
+                    "title": data["title"],
+                    "url": data["url"],
+                    "txt": data["filtered"],
+                    "similarity": data.get("similarity", 0),
+                }
+                processed_data.append((data["topic"], paper_data))
+            except Exception as e:
+                logger.error(f"Failed to process paper data: {e}")
+                continue
+
+        # Step 2: Organize data by topic
         topics = {}
         for topic, paper_data in processed_data:
             topics.setdefault(topic, []).append(paper_data)
-        
-        # 第三步：写入文件
+
+        # Step 3: Write to file
         with open(output_path, "w", encoding="utf-8") as outfile:
             for topic, papers in topics.items():
                 filtered_papers = self._filter_papers(
@@ -265,42 +380,57 @@ class AsyncCrawler:
                     similarity_threshold,
                     min_length,
                     max_length,
-                    minimal_length,
-                    top_n
+                    top_n,
                 )
-                
+
                 output_data = {"title": topic, "papers": filtered_papers}
                 json.dump(output_data, outfile, ensure_ascii=False)
                 outfile.write("\n")
-        
-        logger.info(f"处理完成的数据已保存到 {output_path}")
 
-    def _filter_papers(self, papers, similarity_threshold, min_length, max_length, minimal_length, top_n):
-        """根据条件筛选论文"""
-        # 按相似度和长度排序
-        sorted_papers = sorted(
-            papers, key=lambda x: (-x["similarity"], -len(x["txt"]))
-        )
+        logger.info(f"Processed data has been saved to {output_path}")
 
-        # 过滤长度过短的文档
-        valid_papers = [p for p in sorted_papers if len(p["txt"]) >= minimal_length]
+    def _filter_papers(
+        self,
+        papers,
+        similarity_threshold,
+        min_length,
+        max_length,
+        top_n,
+    ):
+        """
+        Filter papers based on criteria.
 
-        # 筛选满足相似度和长度要求的文档
-        filtered_papers = [
-            p for p in valid_papers
-            if p["similarity"] >= similarity_threshold
-            and min_length <= len(p["txt"]) <= max_length
+        Args:
+            papers: List of papers to filter
+            similarity_threshold: Minimum similarity score required
+            min_length: Minimum document length
+            max_length: Maximum document length
+            minimal_length: Absolute minimum length allowed
+            top_n: Maximum number of papers to return
+
+        Returns:
+            List of filtered papers
+        """
+        # Sort by similarity and length
+        sorted_papers = sorted(papers, key=lambda x: (-x["similarity"], -len(x["txt"])))
+
+        # Filter documents that are too short
+        valid_length_papers = [
+            p for p in sorted_papers if min_length <= len(p["txt"]) <= max_length
         ]
 
-        # 如果满足条件的文档不足，补充其他文档
-        if len(filtered_papers) < top_n:
-            remaining_papers = [p for p in valid_papers if p not in filtered_papers]
-            filtered_papers.extend(remaining_papers[: top_n - len(filtered_papers)])
+        # Filter documents by similarity and length requirements
+        valid_similarity_papers = [
+            p for p in valid_length_papers if p["similarity"] >= similarity_threshold
+        ]
 
-        return filtered_papers[:top_n]
+        # Add additional documents if needed to reach top_n
+        if len(valid_similarity_papers) < top_n:
+            remaining_papers = [
+                p for p in valid_length_papers if p not in valid_similarity_papers
+            ]
+            valid_similarity_papers.extend(
+                remaining_papers[: top_n - len(valid_similarity_papers)]
+            )
 
-    def extract_markdown_content(self, text):
-        match = re.search(r"```markdown(.*?)```", text, re.DOTALL)
-        if match:
-            return match.group(1).strip()
-        return None
+        return valid_similarity_papers

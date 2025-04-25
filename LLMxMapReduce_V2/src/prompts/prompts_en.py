@@ -710,19 +710,24 @@ Write some detailed descriptions with citation bibkey about what content should 
 """
 
 # LLM_search prompts
-SEARCH_SYSTEM_PROMPT_WITH_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. The report should adhere to the following requirements: {abstract}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report. The output queries must be quoted by ```markdown\\n```.
-"""
-SEARCH_SYSTEM_PROMPT_WITHOUT_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report. The output queries must be quoted by ```markdown\\n```.
-"""
-SEARCH_USER_PROMPT = """Break down vague concepts in the current query into more specific subconcepts for more precise searches. For example, "foreign" can be further broken down into specific countries or regions that are representative within the reporting domain.
+QUERY_EXPAND_PROMPT_WITH_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. The report should adhere to the following requirements: {abstract}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report. Break down vague concepts in the current query into more specific subconcepts for more precise searches. For example, "foreign" can be further broken down into specific countries or regions that are representative within the reporting domain. The output queries must be quoted by ```markdown\\n```.
 
 Output Format:
 ```markdown
-query_1;
-query_2;
-...
+query_content;
+query_content;
 ```
 """
+
+QUERY_EXPAND_PROMPT_WITHOUT_ABSTRACT = """You are an industry research expert tasked with writing a comprehensive report on the topic of {topic}. To gather the necessary information, you will need to conduct online research. Please generate a set of search queries that will help you retrieve relevant data and insights for your report. Break down vague concepts in the current query into more specific subconcepts for more precise searches. For example, "foreign" can be further broken down into specific countries or regions that are representative within the reporting domain. The output queries must be quoted by ```markdown\\n```.
+
+Output Format:
+```markdown
+query_content;
+query_content;
+```
+"""
+
 QUERY_REFINE_STOP_FLAG = "No modifications needed"
 
 USER_CHECK_PROMPT = """The queries you have decomposed are: {queries}\n{user_comment}\nPlease return only the queries, separated by commas, as a simple string. Do not include any additional text or explanations.
@@ -730,30 +735,29 @@ USER_CHECK_PROMPT = """The queries you have decomposed are: {queries}\n{user_com
 LLM_CHECK_PROMPT = """The queries you have decomposed are: {queries}\nPlease rigorously review the output queries to ensure each one is closely related to the report's topic, covers non-overlapping domains, and can be further broken down into specific technologies, companies, or experts relevant to the industry. If any queries fail to meet these criteria, provide your analysis and suggest modifications. Retain queries that are already appropriate without deletion.\n\nIf modifications are needed, format your response as follows:\n\n"AI's assessment: ...\nThis round's output queries: query_1,query_2,...,query_n"\n\nWhere "This round's output queries:" is followed by the revised queries.\n\nIf no modifications are necessary, format your response as follows:\n\n"AI's assessment: No modifications needed.\nThis round's output queries: query_1,query_2,...,query_n"\n\nWhere "This round's output queries:" is followed by the unaltered queries.
 """
 
+SNIPPET_FILTER_PROMPT="""Please infer the degree of relevance between this web page and the topic based on the following topic and the web page snippet retrieved from the Internet.
+
+Topic: {topic}
+Web page snippet: {snippet}
+
+Please comprehensively consider the above two dimensions. First, provide the reason for the score, and then give the score. The scoring range is from 0 to 100. 0 means completely irrelevant, and 100 means completely relevant. Please be as strict as possible when scoring.
+
+Note that the score needs to be enclosed in <SCORE></SCORE>. For example, <SCORE>78</SCORE>
+
+Example response:
+Reason:...
+Similarity score: <SCORE>89</SCORE> 
+"""
+
 # crawl4ai prompts
-CRAWL_FILTER_PROMPT_WITH_TOPIC = """Analyze and process the following webpage content related to "{topic}". First filter out the main body text, removing irrelevant content like hyperlinks, image links and advertisements. Then evaluate the filtered content's quality and relevance.
+PAGE_REFINE_PROMPT = """Analyze and process the following web page content related to '{topic}'. Output the main body text, removing image links, website URLs, advertisements, meaningless repeated characters, etc. Summarization of the content is prohibited, and all information related to the topic should be retained.
 
-Please provide your analysis in the following format:
-
-1. First provide the filtered main content, preserving only relevant text and title. Don't do any summary.
-
-2. Then evaluate the filtered content based on these criteria:
-   - Relevance to "{topic}": How well does the content align with or expand upon the topic?
-   - Content quality and usability: Consider factors like:
-     * Text length and completeness
-     * Absence of garbled characters
-     * Overall writing quality
-     * Value as a reference source
-
-Raw webpage content:
+Original web page content:
 {raw_content}
 
-Use these tags to enclose your response:
-- Title: <TITLE>your_title</TITLE>
-- Filtered content: <CONTENT>filtered_text</CONTENT>
-- Quality score: <SCORE>0-100</SCORE>
-
-Your response should keep all informative content without any urls and summary.
+[Output requirements]
+- Title: <TITLE>Your title</TITLE>
+- Filtered text: <CONTENT>Filtered text</CONTENT> 
 """
 
 SIMILARITY_PROMPT = """Evaluate the quality of the following content retrieved from the internet based on the given topic, and give a suitable title about the content. Provide a critical and strict assessment.
@@ -775,11 +779,4 @@ Example response:
 Rationale: ...  
 Relevance score: <SCORE>89</SCORE>
 Title: <TITLE>Title</TITLE>
-"""
-GENERATE_TITLE_PROMPT = """Generate a concise title based on the following content:\n{text}\nEnsure the title is clear and summarizes the main idea of the content. The title is not allowed to be too long. The Return the title nested within a markdown code block, like this:
-
-```markdown
-Suitable Title based on the Content
-```
-Provide only one line of title. Do not include any additional content.
 """

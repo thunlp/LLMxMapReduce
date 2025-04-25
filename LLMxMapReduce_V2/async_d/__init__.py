@@ -1,9 +1,13 @@
 import gevent
 import sys
+import logging
 import trio # do not delete this line, it will be effected by monkey patch that will cause fault
 from gevent import monkey
 monkey.patch_all()
-print("Monkey patching gevent in async_d")
+
+logger = logging.getLogger(__name__)
+logger.info("Monkey patching gevent in async_d")
+
 gevent.get_hub().exception_stream = sys.stderr
 
 import json
