@@ -167,7 +167,9 @@ class Content:
     def all_content(self):
         if self.root:
             all_section = self.root.all_section
-            return "\n".join([section.titled_content(with_index=True) for section in all_section])
+            all_content = "\n".join([section.titled_content(with_index=True) for section in all_section])
+            all_content.replace("# 0. ", "# ")
+            return all_content
 
     @property
     def section_dict(self):

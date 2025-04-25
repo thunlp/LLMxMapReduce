@@ -82,17 +82,17 @@ def main():
         logger.info("set --topic, start to auto retrieve pages from Internet")
         # get retrieve urls
         logger.info("---------Start to generate queries.-------------")
-        retriever = LLM_search(model='gemini-2.0-flash-thinking-exp-1219', infer_type="OpenAI", engine='google')
+        retriever = LLM_search(model='gemini-2.5-flash-preview-04-17', infer_type="Google", engine='google')
         queries = retriever.get_queries(topic=args.topic, description=args.description)
         logger.info("---------Start to search pages.-------------")
-        url_list = retriever.batch_web_search(queries=queries)
+        url_list = retriever.batch_web_search(queries=queries, topic=args.topic, top_n=int(args.top_n * 1.2))
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         # get references
         crawl_output_path = f"output/{args.topic}_{timestamp}_crawl_result.jsonl"
         if not os.path.exists(os.path.dirname(crawl_output_path)):
             os.mkdir(os.path.dirname(crawl_output_path))
 
-        crawler = AsyncCrawler(model="gemini-2.0-flash-thinking-exp-1219", infer_type="OpenAI")
+        crawler = AsyncCrawler(model="gemini-2.5-flash-preview-04-17", infer_type="Google")
         asyncio.run(
             crawler.run(
                 topic=args.topic,
