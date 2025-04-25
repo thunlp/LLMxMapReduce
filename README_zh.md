@@ -65,6 +65,13 @@ export SERP_API_KEY=从https://serpapi.com获取SERP API密钥
 export PROMPT_LANGUAGE="zh"
 ```
 
+## 模型部署
+⚠️ 我们强烈建议使用 Gemini Flash 模型。使用其他任何模型时可能会出现未知错误。此项目对 API 消耗和并发量有较高要求，不建议使用本地部署的模型。
+
+生成过程中使用的模型在  `./LLMxMapReduce_V2/config/model_config.json` 文件中设置。目前我们支持 OpenAI API 和 Google API，你可以在 `infer_type` 键中指定使用的 API。同时，你还需要在 `model` 键中指定模型名称。
+
+此外，爬取过程也需要进行大语言模型（LLM）推理。你可以在 `./LLMxMapReduce_V2/src/start_pipeline.py` 文件中以类似的方式进行更改。
+
 ## 启动 LLMxMapReduce_V2 流程
 按照说明生成报告。生成的 Markdown 文件位于 ./output/md。
 ```bash
