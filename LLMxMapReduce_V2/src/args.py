@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument("--parallel_num", type=int, default=1, help="Number of data to process concurrently in pipeline")
     
     parser.add_argument("--digest_group_mode", type=str, choices=["random", "llm"], default="llm", help="Group paper to digest mode")
-    parser.add_argument("--skeleton_group_size", type=int, default=2, help="Number of digest to generate a skeleton")
+    parser.add_argument("--skeleton_group_size", type=int, default=3, help="Number of digest to generate a skeleton")
     
     parser.add_argument("--block_count", type=int, default=0, help="Number of max iteration blocks")
     parser.add_argument("--output_each_block", type=bool, default=False, help="Whether to output each block")

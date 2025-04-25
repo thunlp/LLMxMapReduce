@@ -58,7 +58,7 @@ class LLM_search:
         model: str = "claude-3-5-haiku-20241022",
         infer_type: str = "OpenAI",
         engine: Literal["google", "baidu", "bing"] = "google",
-        count: int = 20,
+        each_query_result: int = 10,
         filter_date: Optional[str] = None,
         max_workers: int = 10,
     ):
@@ -66,7 +66,7 @@ class LLM_search:
         self.serpapi_key = os.getenv("SERP_API_KEY")
         self.model = model
         self.engine = engine
-        self.count = count
+        self.each_query_result = each_query_result
         self.filter_date = filter_date
         self.max_workers = max_workers
         self.request_pool = RequestWrapper(model=model, infer_type=infer_type)
@@ -177,17 +177,17 @@ class LLM_search:
 
         if self.engine == "google":
             params["google_domain"] = "google.com"
-            params["num"] = self.count
+            params["num"] = self.each_query_result
             if self.filter_date is not None:
                 params["tbs"] = f"cdr:1,cd_min:{self.filter_date}"
 
         elif self.engine == "baidu":
-            params["rn"] = self.count
+            params["rn"] = self.each_query_result
             if self.filter_date is not None:
                 params["gpc"] = f"cdr:1,cd_min:{self.filter_date}"
 
         elif self.engine == "bing":
-            params["count"] = self.count
+            params["count"] = self.each_query_result
             if self.filter_date is not None:
                 params["filters"] = f"cdr:1,cd_min:{self.filter_date}"
 
