@@ -3,62 +3,62 @@
     "hidden": {
         "group": {
             "neuron": {
-                "model": "gemini-2.5-flash-preview-04-17",
-                "infer_type": "Google"
+                "model": "gemini-2.0-flash-thinking-exp-01-21",
+                "infer_type": "OpenAI"
             }
         },
         "skeleton": {
             "single": {
-                "model": "gemini-2.5-flash-preview-04-17",
-                "infer_type": "Google"
+                "model": "gemini-2.0-flash-thinking-exp-01-21",
+                "infer_type": "OpenAI"
             },
             "concat": {
-                "model": "gemini-2.5-flash-preview-04-17",
-                "infer_type": "Google"
+                "model": "gemini-2.0-flash-thinking-exp-01-21",
+                "infer_type": "OpenAI"
             }
         },
         "digest": {
             "single": {
-                "model": "gemini-2.5-flash-preview-04-17",
-                "infer_type": "Google"
+                "model": "gemini-2.0-flash-thinking-exp-01-21",
+                "infer_type": "OpenAI"
             },
             "merge": {
-                "model": "gemini-2.5-flash-preview-04-17",
-                "infer_type": "Google"
+                "model": "gemini-2.0-flash-thinking-exp-01-21",
+                "infer_type": "OpenAI"
             }
         },
         "skeleton_refinement": {
             "cluster": {
-                    "model": "gemini-2.5-flash-preview-04-17",
-                    "infer_type": "Google"
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
+                    "infer_type": "OpenAI"
             },
             "convolution": {
                 "modify": {
-                    "model": "gemini-2.5-flash-preview-04-17",
-                    "infer_type": "Google"
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
+                    "infer_type": "OpenAI"
                 },
                 "convolution_kernel": {
-                    "model": "gemini-2.5-flash-preview-04-17",
-                    "infer_type": "Google"
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
+                    "infer_type": "OpenAI"
                 },
                 "eval": {
-                    "model": "gemini-2.5-flash-preview-04-17",
-                    "infer_type": "Google",
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
+                    "infer_type": "OpenAI",
                     "max_score": 10
                 }
             },
             "refine": {
                 "modify": {
-                    "model": "gemini-2.5-flash-preview-04-17",
-                    "infer_type": "Google"
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
+                    "infer_type": "OpenAI"
                 },
                 "refine": {
-                    "model": "gemini-2.5-flash-preview-04-17",
-                    "infer_type": "Google"
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
+                    "infer_type": "OpenAI"
                 },
                 "eval": {
-                    "model": "gemini-2.5-flash-preview-04-17",
-                    "infer_type": "Google",
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
+                    "infer_type": "OpenAI",
                     "max_score": 10
                 }
             }
@@ -66,16 +66,16 @@
     },
     "decode": {
         "orchestra": {
-            "model": "gemini-2.5-flash-preview-04-17",
-            "infer_type": "Google"
+            "model": "gemini-2.0-flash-thinking-exp-01-21",
+            "infer_type": "OpenAI"
         },
         "polish": {
             "model": "o3-mini",
             "infer_type": "OpenAI"
         },
         "chart": {
-            "model": "gemini-2.5-flash-preview-04-17",
-            "infer_type": "Google"
+            "model": "gemini-2.0-flash-thinking-exp-01-21",
+            "infer_type": "OpenAI"
         }
     }
 }

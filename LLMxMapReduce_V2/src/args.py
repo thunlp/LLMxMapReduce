@@ -6,7 +6,7 @@ def parse_args():
     
     parser.add_argument("--topic", type=str, help="Your research topic")
     parser.add_argument("--description", type=str, help="Description about your research topic. It will be used to retrieve pages.")
-    parser.add_argument("--top_n", type=int, default=100, help="Number of top n references to retrieve")
+    parser.add_argument("--top_n", type=int, default=10, help="Number of top n references to retrieve")
     
     parser.add_argument("--input_file", type=str, help="Path to the input file")
     parser.add_argument("--output_file", type=str, required=True, help="Path to the output file")
@@ -16,7 +16,7 @@ def parse_args():
     parser.add_argument("--parallel_num", type=int, default=1, help="Number of data to process concurrently in pipeline")
     
     parser.add_argument("--digest_group_mode", type=str, choices=["random", "llm"], default="llm", help="Group paper to digest mode")
-    parser.add_argument("--skeleton_group_size", type=int, default=2, help="Number of digest to generate a skeleton")
+    parser.add_argument("--skeleton_group_size", type=int, default=3, help="Number of digest to generate a skeleton")
     
     parser.add_argument("--block_count", type=int, default=0, help="Number of max iteration blocks")
     parser.add_argument("--output_each_block", type=bool, default=False, help="Whether to output each block")

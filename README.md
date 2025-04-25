@@ -65,6 +65,13 @@ We provide both English and Chinese version of prompt. Default version is Englis
 export PROMPT_LANGUAGE="zh"
 ```
 
+## Model Set
+⚠️ We strongly recommend using the Gemini Flash models. There may be unknown errors when using any other models. This project has high requirements for API consumption and concurrent volume, so it's not recommended to use locally deployed models.
+
+The models used in the generation process are configured in the `./LLMxMapReduce_V2/config/model_config.json` file. Currently, we support both the OpenAI API and the Google API. You can specify the API to be used in the `infer_type` key. Additionally, you need to specify the model name in the `model` key.
+
+Moreover, the crawling process also requires large language model (LLM) inference. You can make changes in a similar manner in the `./LLMxMapReduce_V2/src/start_pipeline.py` file. 
+
 ## Start LLMxMapReduce_V2 pipeline
 Follow the instructions and generate a report. The generated Markdown file is at ./output/md. 
 ```bash

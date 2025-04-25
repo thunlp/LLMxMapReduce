@@ -1,7 +1,9 @@
 from request import RequestWrapper
 
 
-request_pool = RequestWrapper(model="gemini-2.5-flash-preview-04-17", infer_type="Google")
+request_pool = RequestWrapper(
+    model="gemini-2.0-flash-thinking-exp-01-21", infer_type="OpenAI"
+)
 
 prompt = "What is the capital of France?"
 
