@@ -31,8 +31,8 @@ class DigestNode(TreeNode):
 
 
 class Digest:
-    TOKEN_RATIO = 3.6875
-    MAX_TOKEN = 800000
+    TOKEN_RATIO = 64
+    MAX_TOKEN = 1024
     MAX_LENGTH = int(
         MAX_TOKEN * TOKEN_RATIO
     )  # arxiv average length / token = 3.2, window size = 120,000, Prompt length 15k characters, assert max output length 16k token

@@ -174,7 +174,7 @@ class LLM_search:
         params = {
             'q': query.lstrip('\"').rstrip('\"'),
             'mkt': mkt,
-            'count': self.count,
+            'count': self.each_query_result,
         }
         headers = {
             'Ocp-Apim-Subscription-Key': self.bing_subscription_key
