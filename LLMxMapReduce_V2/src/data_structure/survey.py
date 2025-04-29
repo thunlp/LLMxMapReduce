@@ -19,7 +19,7 @@ class Survey:
 
         self.papers = {}
         self.digests = MultiKeyDict()
-        for paper in json_data["papers"]:
+        for paper in json_data["papers"][:3]:
             if paper.get("txt", ""):
                 paper["bibkey"] = proc_title_to_str(paper["title"])
                 self.papers[paper["bibkey"]] = paper
