@@ -22,6 +22,8 @@ class DecodePipeline(Sequential):
         worker_num = worker_num * 10
         self.config = config
         self.output_file = output_file
+        if not os.path.dirname(output_file):
+            self.output_file = os.path.join(os.getcwd(), os.path.basename(output_file))
         self.dict_semaphore = Semaphore(1)
         self.executing_survey = {}  # title: survey
 
@@ -42,12 +44,12 @@ class DecodePipeline(Sequential):
             queue_size=worker_num,
             discard_none_output=True,
         )
+        self.cite_node = Node(
+            self.change_bibkey_to_index, worker_num=worker_num, queue_size=worker_num
+        )
         self.chart_module = FigureModule(self.config)
         self.chart_node = Node(
             self.chart_module, worker_num=worker_num, queue_size=worker_num
-        )
-        self.cite_node = Node(
-            self.change_bibkey_to_index, worker_num=worker_num, queue_size=worker_num
         )
         self.save_node = Node(
             self.save_survey,
@@ -115,6 +117,7 @@ class DecodePipeline(Sequential):
         bibkeys = list(survey.papers.keys())
         bibkey_count_dict = {bibkey: 0 for bibkey in bibkeys}
         for content_section in survey.content.root.all_section:
+
             def replace_bibkey(match):
                 bibkey_str = match.group(1)
                 bibkey_list = str2list(bibkey_str)
@@ -134,7 +137,9 @@ class DecodePipeline(Sequential):
                 else:
                     return ""
 
-            content_section.content = remove_illegal_bibkeys(content_section.content, legal_bibkeys=bibkeys)
+            content_section.content = remove_illegal_bibkeys(
+                content_section.content, legal_bibkeys=bibkeys
+            )
             content_section.content = cite_reg.sub(
                 replace_bibkey, content_section.content
             )
@@ -145,7 +150,6 @@ class DecodePipeline(Sequential):
 
         ref_sec = "## References\n"
         for i, paper in enumerate(survey.papers.values()):
-            print(str(paper))
             ref_sec += f"[{i+1}] {paper['title']} {paper.get('url', '')}\n\n"
         survey.ref_str = ref_sec
 
