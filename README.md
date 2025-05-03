@@ -1,39 +1,31 @@
-# $\text{LLM}\times \text{MapReduce}$: Simplified Long-Sequence Processing using Large Language Models
+# LLMxMapReduce: Simplified Long-Sequence Processing using Large Language Models
 
-<p align="center">
- <a href="#-introduction"> 📖Introduction </a> •
- <a href="#%EF%B8%8F-getting-started">⚡️Getting Started</a> •
- <a href="#-experiment-results">📊Experiment Results</a> •
- <a href="#-citation">📝 Citation</a>
-</p>
-<p align="center">
- <a href="https://arxiv.org/abs/2410.09342">📃V1 Paper</a> •
- <a href="https://arxiv.org/abs/2504.05732">📃V2 Paper</a> •
- <a href="https://huggingface.co/datasets/R0k1e/SurveyEval">📚 SurveyEval</a> •
- <a href="README_zh.md">📃Chinese README</a>
-</p>
-</div>
+<a href='https://surveygo.modelbest.cn/'><img src='https://img.shields.io/badge/Demo-Page-pink'></a> <a href='https://arxiv.org/abs/2410.09342'><img src='https://img.shields.io/badge/V1-Paper-Green'></a> <a href='https://arxiv.org/abs/2504.05732'><img src='https://img.shields.io/badge/V2-Paper-blue'></a> <a href='https://huggingface.co/datasets/R0k1e/SurveyEval'><img src='https://img.shields.io/badge/SurveyEval-Benchmark-yellow'></a> <a href='README_zh.md'><img src='https://img.shields.io/badge/Chinese-Readme-red'></a>
 
 # 🎉 News
-* 20250409: Introducing the $\text{LLM}\times \text{MapReduce}$-V2 framework to support long-to-long generation! Released V2 [paper](https://arxiv.org/abs/2504.05732) on arXiv.
-* 20250221: Added support for both OpenAI API and OpenAI-compatible APIs (e.g., vLLM). 🚀
-* 20241012: Released our V1 [paper](https://arxiv.org/abs/2410.09342) on arXiv. 🎇
-* 20240912: Introducing the $\text{LLM}\times \text{MapReduce}$ framework, which delivers strong performance on long-sequence benchmarks and is compatible with various open-source LLMs. 🎊
+- [x] **`2025.04.22`** Release [SurveyGO](https://surveygo.modelbest.cn/), an online writting system driven by LLMxMapReduce-V2.
+- [x] **`2025.04.09`** Release the paper of LLMxMapReduce-V2 in [arXiv](https://arxiv.org/abs/2504.05732).
+- [x] **`2025.02.21`** Add support for both OpenAI API and OpenAI-compatible APIs (e.g., vLLM).
+- [x] **`2024.10.12`** Release the paper of LLMxMapReduce-V1 in [arXiv](https://arxiv.org/abs/2410.09342).
+- [x] **`2024.09.12`** Release the code for LLMxMapReduce-V1.
+
+# 📚 Overview
+**LLMxMapReduce** is a divide-and-conquer framework designed to enhance modern large language models (LLMs) in understanding and generating long sequences. Developed collaboratively by **AI9STARS**, **OpenBMB**, and **THUNLP**, this framework draws inspiration from the classic MapReduce algorithm introduced in the field of big data. Our goal is to build an LLM-driven distributed computing system capable of efficiently processing long sequences. Here are the main versions of LLMxMapReduce:
+
+* [**LLMxMapReduce-V1**](https://github.com/thunlp/LLMxMapReduce/blob/main/LLMxMapReduce_V1): Utilizes a structured information protocol and in-context confidence calibration to enhance long-sequence understanding, enabling [MiniCPM3-4B](https://github.com/OpenBMB/MiniCPM) to outperform 70B-scale models in long-context evaluations.
+* [**LLMxMapReduce-V2**](https://github.com/thunlp/LLMxMapReduce/tree/main/LLMxMapReduce_V2): Introduces an entropy-driven convolutional test-time scaling mechanism to improve the integration of extremely large volumes of information, powering the online [SurveyGO](https://surveygo.modelbest.cn/) system.
 
 # 📖 Introduction
-The $\text{LLM}\times \text{MapReduce}$-V2 was jointly proposed by the THUNLP group from Tsinghua University, OpenBMB, and the 9#AISoft team. 
-
-$\text{LLM}\times \text{MapReduce}$-V1 Readme could be seen [here](LLMxMapReduce_V1/README.md).
 
 
-Long-form generation is crucial for a wide range of practical applications, typically categorized into short-to-long and long-to-long generation. While short-to-long generations have received considerable attention, generating long texts from extremely long resources remains relatively underexplored. The primary challenge in long-to-long generation lies in effectively integrating and analyzing relevant information from extensive inputs, which remains difficult for current large language models (LLMs). In this paper, we propose $\text{LLM}\times \text{MapReduce}$-V2, a novel test-time scaling strategy designed to enhance the ability of LLMs to process extremely long inputs. Drawing inspiration from convolutional neural networks, which iteratively integrate local features into higher-level global representations, $\text{LLM}\times \text{MapReduce}$-V2 utilizes stacked convolutional scaling layers to progressively expand the understanding of input materials. Both quantitative and qualitative experimental results demonstrate that our approach substantially enhances the ability of LLMs to process long inputs and generate coherent, informative long-form articles, outperforming several representative baselines.
+Long-form generation is crucial for a wide range of practical applications, typically categorized into short-to-long and long-to-long generation. While short-to-long generations have received considerable attention, generating long texts from extremely long resources remains relatively underexplored. The primary challenge in long-to-long generation lies in effectively integrating and analyzing relevant information from extensive inputs, which remains difficult for current large language models (LLMs). In this paper, we propose LLMxMapReduce-V2, a novel test-time scaling strategy designed to enhance the ability of LLMs to process extremely long inputs. Drawing inspiration from convolutional neural networks, which iteratively integrate local features into higher-level global representations, LLMxMapReduce-V2 utilizes stacked convolutional scaling layers to progressively expand the understanding of input materials. Both quantitative and qualitative experimental results demonstrate that our approach substantially enhances the ability of LLMs to process long inputs and generate coherent, informative long-form articles, outperforming several representative baselines.
 
 <div align="center">
   <img src="assets/main_pic.jpg" alt="$\text{LLM}\times \text{MapReduce}$-V2 framework">
 </div>
 
 # ⚡️ Getting Started
-The following steps are about $\text{LLM}\times \text{MapReduce}$-V2. If you want to use $\text{LLM}\times \text{MapReduce}$-V1, you need to refer to [here](LLMxMapReduce_V1/README.md).
+The following steps are about LLMxMapReduce-V2. If you want to use LLMxMapReduce-V1, you need to refer to [here](LLMxMapReduce_V1/README.md).
 
 To get started, ensure all dependencies listed in requirements.txt are installed. You can do this by running:
 ```bash
@@ -98,7 +90,7 @@ The input data should have following components at least:
 You could use to use [this script](LLMxMapReduce_V2/scripts/output_to_md.py) to convert data from `.jsonl` to multiple `.md` files.
 
 # 📃 Evaluation
-The following steps are about $\text{LLM}\times \text{MapReduce}$-V2. If you want to use $\text{LLM}\times \text{MapReduce}$-V1, you need to refer to [here](LLMxMapReduce_V1/README.md).
+The following steps are about LLMxMapReduce-V2. If you want to use LLMxMapReduce-V1, you need to refer to [here](LLMxMapReduce_V1/README.md).
 
 Follow the steps below to set up the evaluation:
 ## 1. Download the Dataset
@@ -113,7 +105,7 @@ bash scripts/eval_all.sh output_data_file_path.jsonl
 Aware that the evaluation process is token-consuming, you need to make sure you have enough balance.
 
 # 📊 Experiment Results
-Our experiments demonstrate the improved performance of LLM using the $\text{LLM}\times \text{MapReduce}$-V2 framework on SurveyEval. Detailed results are provided below.
+Our experiments demonstrate the improved performance of LLM using the LLMxMapReduce-V2 framework on SurveyEval. Detailed results are provided below.
 
 | **Methods**           | **Struct.** | **Fait.** | **Rele.** | **Lang.** | **Crit.** | **Num.** | **Dens.** | **Prec.** | **Recall** |
 |-----------------------|-------------|-----------|-----------|-----------|-----------|----------|-----------|-----------|------------|
@@ -121,11 +113,6 @@ Our experiments demonstrate the improved performance of LLM using the $\text{LLM
 | + Skeleton            | **98.95**   | **97.03** | **100.00**| 95.95     | **41.01** | **135.15**| 72.96     | **62.60** | **65.11**  |
 | AutoSurvey            | 86.00       | 93.10     | **100.00**| 92.90     | 68.39     | 423.35   | 31.97     | 50.12     | 51.73      |
 | LLMxMapReduce_V2       | **95.00**   | **97.22** | **100.00**| **94.34** | **71.99** | **474.90**| **52.23** | **95.50** | **95.80**  |
-
-# 📑ToDo
-
-- [ ] Support Autonomous Terminate
-- [ ] Opensource crawler for searching papers
 
 # 📝 Citation
 If you have used the content of this repository, please cite the paper and leave your star :).
