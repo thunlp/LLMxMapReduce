@@ -42,12 +42,7 @@ class GoogleRequest:
             
         response = self.client.models.generate_content(
             model=self.model,
-            contents=contents,
-            config=genai.types.GenerateContentConfig(
-                thinking_config=genai.types.ThinkingConfig(
-                thinking_budget=0
-                )
-            )
+            contents=contents
         )
         
         text = getattr(response, "text", None)

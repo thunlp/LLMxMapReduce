@@ -71,7 +71,7 @@ cd LLMxMapReduce_V2
 bash scripts/pipeline_start.sh TOPIC output_file_path.jsonl
 ```
 
-If you wish to use your own data, you need to set the `--input_file` in scripts.
+If you wish to use your own data, you need to set the `--input_file` and don't set `--topic` in scripts.
 
 The input data should have following components at least:
 ```json
