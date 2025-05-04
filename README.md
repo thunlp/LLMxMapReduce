@@ -119,7 +119,7 @@ If you have used the content of this repository, please cite the paper and leave
 
 ```
 @misc{wang2025llmtimesmapreducev2entropydrivenconvolutionaltesttime,
-      title={$\text{LLM}\times \text{MapReduce}$-V2: Entropy-Driven Convolutional Test-Time Scaling for Generating Long-Form Articles from Extremely Long Resources}, 
+      title={LLM$\times$MapReduce-V2: Entropy-Driven Convolutional Test-Time Scaling for Generating Long-Form Articles from Extremely Long Resources}, 
       author={Haoyu Wang and Yujia Fu and Zhu Zhang and Shuo Wang and Zirui Ren and Xiaorong Wang and Zhili Li and Chaoqun He and Bo An and Zhiyuan Liu and Maosong Sun},
       year={2025},
       eprint={2504.05732},
@@ -129,7 +129,7 @@ If you have used the content of this repository, please cite the paper and leave
 }
 
 @misc{zhou2024llmtimesmapreducesimplifiedlongsequenceprocessing,
-      title={$\text{LLM}\times \text{MapReduce}$: Simplified Long-Sequence Processing using Large Language Models}, 
+      title={LLM$\times$MapReduce: Simplified Long-Sequence Processing using Large Language Models}, 
       author={Zihan Zhou and Chong Li and Xinyi Chen and Shuo Wang and Yu Chao and Zhili Li and Haoyu Wang and Rongqiao An and Qi Shi and Zhixing Tan and Xu Han and Xiaodong Shi and Zhiyuan Liu and Maosong Sun},
       year={2024},
       eprint={2410.09342},
