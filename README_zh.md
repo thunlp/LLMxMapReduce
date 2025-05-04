@@ -1,6 +1,6 @@
 # $\text{LLM}\times\text{MapReduce}$: 使用大语言模型简化长序列处理
 
-<a href='https://surveygo.modelbest.cn/'><img src='https://img.shields.io/badge/Demo-Page-pink'></a> <a href='https://arxiv.org/abs/2410.09342'><img src='https://img.shields.io/badge/V1-Paper-Green'></a> <a href='https://arxiv.org/abs/2504.05732'><img src='https://img.shields.io/badge/V2-Paper-blue'></a> <a href='https://huggingface.co/datasets/R0k1e/SurveyEval'><img src='https://img.shields.io/badge/SurveyEval-Benchmark-yellow'></a> <a href='README_zh.md'><img src='https://img.shields.io/badge/Chinese-Readme-red'></a>
+<a href='https://surveygo.modelbest.cn/'><img src='https://img.shields.io/badge/Demo-Page-pink'></a> <a href='https://arxiv.org/abs/2410.09342'><img src='https://img.shields.io/badge/V1-Paper-Green'></a> <a href='https://arxiv.org/abs/2504.05732'><img src='https://img.shields.io/badge/V2-Paper-blue'></a> <a href='https://huggingface.co/datasets/R0k1e/SurveyEval'><img src='https://img.shields.io/badge/SurveyEval-Benchmark-yellow'></a> <a href='README.md'><img src='https://img.shields.io/badge/English-Readme-red'></a>
 
 # 🎉 新闻
 - [x] **`2025.04.22`** 发布 [SurveyGO](https://surveygo.modelbest.cn/)，一个由 LLMxMapReduce-V2 驱动的在线写作系统。
