@@ -10,8 +10,9 @@ from src.exceptions import (
     BibkeyNotFoundError,
     StructureNotCorrespondingError,
     MdNotFoundError,
+    GroupEmptyError,
 )
-from src.utils.process_str import list2str,str2list
+from src.utils.process_str import list2str, str2list
 from src.prompts import GROUP_PROMPT
 import logging
 
@@ -38,7 +39,9 @@ class GroupModule(Module):
             survey.digests[bibkeys] = digest
 
         survey.digest_batch_size = self.digest_batch
-        logger.info(f"Group Survey Finished: {survey.title}, Digest Count: {len(survey.digests)}")
+        logger.info(
+            f"Group Refenrence Finished: {survey.title}, Digest Count: {len(survey.digests)}"
+        )
         return survey
 
     def _random_group_papers(self, papers, step):
@@ -50,6 +53,11 @@ class GroupModule(Module):
         for i in range(0, len(papers), step):
             yield papers[i : i + step]
 
+    @retry(
+        stop=stop_after_attempt(5),
+        after=after_log(logger, logging.WARNING),
+        retry=retry_if_exception_type(GroupEmptyError),
+    )
     def _llm_group_papers(self, papers, step, survey_title):
 
         def regroup_result(result, rest_bibkeys, batch_size):
@@ -69,11 +77,11 @@ class GroupModule(Module):
 
             # Step 3: Combine groups to make their length equal to batch_size
             combined_groups = []
-            while len(remaining_groups) > 1:
+            while len(remaining_groups) > 0:
                 group1 = remaining_groups.pop(0)
-                for i in range(len(remaining_groups) - 1, -1, -1):
+                for i in range(1, len(remaining_groups) - 1):
                     group2 = remaining_groups[i]
-                    if len(group1) + len(group2) == batch_size:
+                    if len(group1) + len(group2) <= batch_size:
                         final_result.append(group1 + group2)
                         remaining_groups.pop(i)
                         break
@@ -91,7 +99,6 @@ class GroupModule(Module):
             random.shuffle(rest_bibkeys)
             for i in range(0, len(rest_bibkeys), batch_size):
                 final_result.append(rest_bibkeys[i : i + batch_size])
-
             return final_result
 
         papers_info = [(paper["title"], paper["bibkey"]) for paper in papers]
@@ -100,6 +107,11 @@ class GroupModule(Module):
             result, [bibkey for _, bibkey in papers_info]
         )
         grouped_result = regroup_result(parsed_result, rest_bibkeys, step)
+        grouped_result = []
+        if len(grouped_result) == 0:
+            raise GroupEmptyError(
+                f"Group Reference Error: {survey_title} grouped_result is empty"
+            )
         for group in grouped_result:
             yield [paper for paper in papers if paper["bibkey"] in group]
         return

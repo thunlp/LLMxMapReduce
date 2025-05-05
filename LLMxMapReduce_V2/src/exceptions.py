@@ -7,6 +7,9 @@ class BibkeyNotFoundError(Exception):
 class StructureNotCorrespondingError(Exception):
     pass
 
+class GroupEmptyError(Exception):
+    pass
+
 class MdNotFoundError(Exception):
     
     def __init__(self, raw_content):
