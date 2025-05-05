@@ -45,6 +45,12 @@ class EncodePipeline(Sequential):
                         self.processed_count += 1
                 
                 survey = Survey(json.loads(line))
+                if len(survey.papers) == 0:
+                    logger.error(
+                        f"Survey {survey.survey_id} has no papers, "
+                        f"skipping this survey."
+                    )
+                    continue
                 yield survey
             else:
                 logger.info("All data in input file has been loaded.")

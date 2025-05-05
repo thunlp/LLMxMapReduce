@@ -38,7 +38,7 @@ class GroupModule(Module):
             survey.digests[bibkeys] = digest
 
         survey.digest_batch_size = self.digest_batch
-        logger.info(f"Group Survey Finished: {survey.title}")
+        logger.info(f"Group Survey Finished: {survey.title}, Digest Count: {len(survey.digests)}")
         return survey
 
     def _random_group_papers(self, papers, step):
