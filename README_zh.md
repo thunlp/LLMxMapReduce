@@ -1,6 +1,6 @@
 # $\text{LLM}\times\text{MapReduce}$: 使用大语言模型简化长序列处理
 
-<a href='https://surveygo.modelbest.cn/'><img src='https://img.shields.io/badge/Demo-Page-pink'></a> <a href='https://arxiv.org/abs/2410.09342'><img src='https://img.shields.io/badge/V1-Paper-Green'></a> <a href='https://arxiv.org/abs/2504.05732'><img src='https://img.shields.io/badge/V2-Paper-blue'></a> <a href='https://huggingface.co/datasets/R0k1e/SurveyEval'><img src='https://img.shields.io/badge/SurveyEval-Benchmark-yellow'></a> <a href='README_zh.md'><img src='https://img.shields.io/badge/Chinese-Readme-red'></a>
+<a href='https://surveygo.modelbest.cn/'><img src='https://img.shields.io/badge/Demo-Page-pink'></a> <a href='https://arxiv.org/abs/2410.09342'><img src='https://img.shields.io/badge/V1-Paper-Green'></a> <a href='https://arxiv.org/abs/2504.05732'><img src='https://img.shields.io/badge/V2-Paper-blue'></a> <a href='https://huggingface.co/datasets/R0k1e/SurveyEval'><img src='https://img.shields.io/badge/SurveyEval-Benchmark-yellow'></a> <a href='README.md'><img src='https://img.shields.io/badge/English-Readme-red'></a>
 
 # 🎉 新闻
 - [x] **`2025.04.22`** 发布 [SurveyGO](https://surveygo.modelbest.cn/)，一个由 LLMxMapReduce-V2 驱动的在线写作系统。
@@ -112,11 +112,6 @@ bash scripts/eval_all.sh 输出数据文件路径.jsonl
 | + Skeleton            | **98.95**   | **97.03** | **100.00**| 95.95     | **41.01** | **135.15**| 72.96     | **62.60** | **65.11**  |
 | AutoSurvey            | 86.00       | 93.10     | **100.00**| 92.90     | 68.39     | 423.35   | 31.97     | 50.12     | 51.73      |
 | LLMxMapReduce_V2       | **95.00**   | **97.22** | **100.00**| **94.34** | **71.99** | **474.90**| **52.23** | **95.50** | **95.80**  |
-
-# 📑待办事项
-
-- [ ] 支持自主终止
-- [ ] 开源论文搜索爬虫
 
 # 📝 引用
 如果您使用了本仓库的内容，请引用以下论文并给我们一个星标 :)。
