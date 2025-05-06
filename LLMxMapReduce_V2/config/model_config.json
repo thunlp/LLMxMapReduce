@@ -3,61 +3,61 @@
     "hidden": {
         "group": {
             "neuron": {
-                "model": "deepseek-chat",
+                "model": "gemini-2.0-flash-thinking-exp-01-21",
                 "infer_type": "OpenAI"
             }
         },
         "skeleton": {
             "single": {
-                "model": "deepseek-chat",
+                "model": "gemini-2.0-flash-thinking-exp-01-21",
                 "infer_type": "OpenAI"
             },
             "concat": {
-                "model": "deepseek-chat",
+                "model": "gemini-2.0-flash-thinking-exp-01-21",
                 "infer_type": "OpenAI"
             }
         },
         "digest": {
             "single": {
-                "model": "deepseek-chat",
+                "model": "gemini-2.0-flash-thinking-exp-01-21",
                 "infer_type": "OpenAI"
             },
             "merge": {
-                "model": "deepseek-chat",
+                "model": "gemini-2.0-flash-thinking-exp-01-21",
                 "infer_type": "OpenAI"
             }
         },
         "skeleton_refinement": {
             "cluster": {
-                    "model": "deepseek-chat",
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
                     "infer_type": "OpenAI"
             },
             "convolution": {
                 "modify": {
-                    "model": "deepseek-chat",
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
                     "infer_type": "OpenAI"
                 },
                 "convolution_kernel": {
-                    "model": "deepseek-chat",
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
                     "infer_type": "OpenAI"
                 },
                 "eval": {
-                    "model": "deepseek-chat",
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
                     "infer_type": "OpenAI",
                     "max_score": 10
                 }
             },
             "refine": {
                 "modify": {
-                    "model": "deepseek-chat",
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
                     "infer_type": "OpenAI"
                 },
                 "refine": {
-                    "model": "deepseek-chat",
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
                     "infer_type": "OpenAI"
                 },
                 "eval": {
-                    "model": "deepseek-chat",
+                    "model": "gemini-2.0-flash-thinking-exp-01-21",
                     "infer_type": "OpenAI",
                     "max_score": 10
                 }
@@ -66,15 +66,15 @@
     },
     "decode": {
         "orchestra": {
-            "model": "deepseek-chat",
+            "model": "gemini-2.0-flash-thinking-exp-01-21",
             "infer_type": "OpenAI"
         },
         "polish": {
-            "model": "deepseek-chat",
+            "model": "o3-mini",
             "infer_type": "OpenAI"
         },
         "chart": {
-            "model": "deepseek-chat",
+            "model": "gemini-2.0-flash-thinking-exp-01-21",
             "infer_type": "OpenAI"
         }
     }

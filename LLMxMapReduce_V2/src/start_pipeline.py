@@ -82,7 +82,7 @@ def main():
         logger.info("set --topic, start to auto retrieve pages from Internet")
         # get retrieve urls
         logger.info("---------Start to generate queries.-------------")
-        retriever = LLM_search(model='deepseek-chat', infer_type="OpenAI", engine='google', each_query_result=10)
+        retriever = LLM_search(model='gemini-2.0-flash-thinking-exp-01-21', infer_type="OpenAI", engine='google', each_query_result=10)
         queries = retriever.get_queries(topic=args.topic, description=args.description)
         logger.info("---------Start to search pages.-------------")
         url_list = retriever.batch_web_search(queries=queries, topic=args.topic, top_n=int(args.top_n * 1.2))
@@ -92,7 +92,7 @@ def main():
         if not os.path.exists(os.path.dirname(crawl_output_path)):
             os.mkdir(os.path.dirname(crawl_output_path))
 
-        crawler = AsyncCrawler(model="deepseek-chat", infer_type="OpenAI")
+        crawler = AsyncCrawler(model="gemini-2.0-flash-thinking-exp-01-21", infer_type="OpenAI")
         asyncio.run(
             crawler.run(
                 topic=args.topic,
