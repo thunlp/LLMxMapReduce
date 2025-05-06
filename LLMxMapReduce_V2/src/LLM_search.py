@@ -63,8 +63,6 @@ class LLM_search:
         max_workers: int = 10,
     ):
 
-        self.bing_subscription_key = os.getenv('BING_SEARCH_V7_SUBSCRIPTION_KEY')
-        self.bing_endpoint = os.getenv('BING_SEARCH_V7_ENDPOINT') + "v7.0/search"
         self.model = model
         self.engine = engine
         self.each_query_result = each_query_result
@@ -72,8 +70,16 @@ class LLM_search:
         self.max_workers = max_workers
         self.request_pool = RequestWrapper(model=model, infer_type=infer_type)
 
-        if self.bing_subscription_key is None:
-            raise ValueError("Missing Bing Search key.")
+        self.bing_subscription_key = os.getenv('BING_SEARCH_V7_SUBSCRIPTION_KEY')
+        self.bing_endpoint = os.getenv('BING_SEARCH_V7_ENDPOINT', "https://api.bing.microsoft.com/v7.0/search")
+        self.serpapi_key = os.getenv("SERP_API_KEY")
+        
+        if self.serpapi_key is not None:
+            logger.info("Using SERPAPI for web search.")
+        elif self.bing_subscription_key is not None:
+            logger.info("Using Bing Search API for web search.")
+        else:
+            raise ValueError("No valid search engine key provided, please check your environment variables, SERPAPI_KEY or BING_SEARCH_V7_SUBSCRIPTION_KEY.")
 
     def _initialize_chat(self, topic: str, abstract: str = "") -> list:
         """Initialize chat messages for query generation"""
@@ -148,28 +154,17 @@ class LLM_search:
         self,
         query: str,
     ):
-        """
-        Perform a web search for a single query using the configured search engine.
-
-        Args:
-            query (str): The search query string
-
-        Returns:
-            dict: Search results containing title, URL, date, source, and snippet for each result.
-                Example structure:
-                {
-                    "0": {
-                        "title": "Article title",
-                        "url": "https://example.com",
-                        "date": "23 hours ago",
-                        "source": "Source name",
-                        "snippet": "Article snippet",
-                        "snippet_highlighted_words": ["keyword"]
-                    },
-                    ...
-                }
-        """
-
+        if self.serpapi_key is not None:
+            return self._serpapi_web_search(query)
+        elif self.bing_subscription_key is not None:
+            return self._bing_web_search(query)
+        else:
+            raise ValueError("No valid search engine key provided, please check your environment variables, SERPAPI_KEY or BING_SEARCH_V7_SUBSCRIPTION_KEY.")
+ 
+    def _bing_web_search(
+        self,
+        query: str,
+    ):
         mkt = 'zh-CN'
         params = {
             'q': query.lstrip('\"').rstrip('\"'),
@@ -210,6 +205,103 @@ class LLM_search:
         except Exception as e:
             logger.error(f"Error during Bing search: {e}")
             raise e
+    
+    def _serpapi_web_search(
+        self,
+        query: str,
+    ):
+        """
+        Perform a web search for a single query using the configured search engine.
+
+        Args:
+            query (str): The search query string
+
+        Returns:
+            dict: Search results containing title, URL, date, source, and snippet for each result.
+                Example structure:
+                {
+                    "0": {
+                        "title": "Article title",
+                        "url": "https://example.com",
+                        "date": "23 hours ago",
+                        "source": "Source name",
+                        "snippet": "Article snippet",
+                        "snippet_highlighted_words": ["keyword"]
+                    },
+                    ...
+                }
+        """
+
+        params = {
+            "engine": self.engine,
+            "q": query.lstrip('"').rstrip('"'),
+            "api_key": self.serpapi_key,
+        }
+
+        if self.engine == "google":
+            params["google_domain"] = "google.com"
+            params["num"] = self.each_query_result
+            if self.filter_date is not None:
+                params["tbs"] = f"cdr:1,cd_min:{self.filter_date}"
+
+        elif self.engine == "baidu":
+            params["rn"] = self.each_query_result
+            if self.filter_date is not None:
+                params["gpc"] = f"cdr:1,cd_min:{self.filter_date}"
+
+        elif self.engine == "bing":
+            params["count"] = self.each_query_result
+            if self.filter_date is not None:
+                params["filters"] = f"cdr:1,cd_min:{self.filter_date}"
+
+        response = requests.get("https://serpapi.com/search.json", params=params)
+
+        if response.status_code == 200:
+            results = response.json()
+        else:
+            raise ValueError(response.json())
+
+        if "organic_results" not in results.keys():
+            if self.filter_date is not None:
+                raise Exception(
+                    f"No results found for query: '{query}' with filtering on date={self.filter_date}. Use a less restrictive query or do not filter on year."
+                )
+            else:
+                raise Exception(
+                    f"No results found for query: '{query}'. Use a less restrictive query."
+                )
+        if len(results["organic_results"]) == 0:
+            date_filter_message = (
+                f" with filter date={self.filter_date}"
+                if self.filter_date is not None
+                else ""
+            )
+            return f"No results found for '{query}'{date_filter_message}. Try with a more general query, or remove the date filter."
+
+        web_snippets = {}
+        if "organic_results" in results:
+            for idx, page in enumerate(results["organic_results"]):
+                redacted_version = {
+                    "title": page["title"],
+                    "url": page["link"],
+                }
+
+                if "date" in page:
+                    redacted_version["date"] = page["date"]
+
+                if "source" in page:
+                    redacted_version["source"] = page["source"]
+
+                if "snippet" in page:
+                    redacted_version["snippet"] = page["snippet"]
+
+                if "snippet_highlighted_words" in page:
+                    redacted_version["snippet_highlighted_words"] = list(
+                        set(page["snippet_highlighted_words"])
+                    )
+
+                web_snippets[idx] = redacted_version
+        return web_snippets
 
 
     def snippet_filter(self, topic, snippet):
