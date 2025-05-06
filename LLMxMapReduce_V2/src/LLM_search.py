@@ -63,7 +63,8 @@ class LLM_search:
         max_workers: int = 10,
     ):
 
-        self.serpapi_key = os.getenv("SERP_API_KEY")
+        self.bing_subscription_key = os.getenv('BING_SEARCH_V7_SUBSCRIPTION_KEY')
+        self.bing_endpoint = os.getenv('BING_SEARCH_V7_ENDPOINT') + "v7.0/search"
         self.model = model
         self.engine = engine
         self.each_query_result = each_query_result
@@ -71,8 +72,8 @@ class LLM_search:
         self.max_workers = max_workers
         self.request_pool = RequestWrapper(model=model, infer_type=infer_type)
 
-        if self.serpapi_key is None:
-            raise ValueError("Missing SerpAPI key.")
+        if self.bing_subscription_key is None:
+            raise ValueError("Missing Bing Search key.")
 
     def _initialize_chat(self, topic: str, abstract: str = "") -> list:
         """Initialize chat messages for query generation"""
@@ -169,76 +170,47 @@ class LLM_search:
                 }
         """
 
+        mkt = 'zh-CN'
         params = {
-            "engine": self.engine,
-            "q": query.lstrip('"').rstrip('"'),
-            "api_key": self.serpapi_key,
+            'q': query.lstrip('\"').rstrip('\"'),
+            'mkt': mkt,
+            'count': self.each_query_result,
+        }
+        headers = {
+            'Ocp-Apim-Subscription-Key': self.bing_subscription_key
         }
 
-        if self.engine == "google":
-            params["google_domain"] = "google.com"
-            params["num"] = self.each_query_result
-            if self.filter_date is not None:
-                params["tbs"] = f"cdr:1,cd_min:{self.filter_date}"
-
-        elif self.engine == "baidu":
-            params["rn"] = self.each_query_result
-            if self.filter_date is not None:
-                params["gpc"] = f"cdr:1,cd_min:{self.filter_date}"
-
-        elif self.engine == "bing":
-            params["count"] = self.each_query_result
-            if self.filter_date is not None:
-                params["filters"] = f"cdr:1,cd_min:{self.filter_date}"
-
-        response = requests.get("https://serpapi.com/search.json", params=params)
-
-        if response.status_code == 200:
-            results = response.json()
-        else:
-            raise ValueError(response.json())
-
-        if "organic_results" not in results.keys():
-            if self.filter_date is not None:
-                raise Exception(
-                    f"No results found for query: '{query}' with filtering on date={self.filter_date}. Use a less restrictive query or do not filter on year."
-                )
+        try:
+            response = requests.get(self.bing_endpoint, headers=headers, params=params)
+            response.raise_for_status()
+            if response.status_code == 200:
+                results = response.json()
             else:
-                raise Exception(
-                    f"No results found for query: '{query}'. Use a less restrictive query."
-                )
-        if len(results["organic_results"]) == 0:
-            date_filter_message = (
-                f" with filter date={self.filter_date}"
-                if self.filter_date is not None
-                else ""
-            )
-            return f"No results found for '{query}'{date_filter_message}. Try with a more general query, or remove the date filter."
+                raise ValueError(response.json())
 
-        web_snippets = {}
-        if "organic_results" in results:
-            for idx, page in enumerate(results["organic_results"]):
+            print(f"查询结果 : {results}")  # 使用 f-string 格式化字符串
+            if "webPages" not in results or "value" not in results["webPages"]:
+                raise Exception(f"No results found for query: '{query}'")
+
+            web_snippets = {}
+            for idx, page in enumerate(results["webPages"]["value"]):
                 redacted_version = {
-                    "title": page["title"],
-                    "url": page["link"],
+                    'title': page.get('name', ''),
+                    'url': page.get('url', ''),
+                    'snippet': page.get('snippet', ''),
                 }
-
-                if "date" in page:
-                    redacted_version["date"] = page["date"]
-
-                if "source" in page:
-                    redacted_version["source"] = page["source"]
-
-                if "snippet" in page:
-                    redacted_version["snippet"] = page["snippet"]
-
-                if "snippet_highlighted_words" in page:
-                    redacted_version["snippet_highlighted_words"] = list(
-                        set(page["snippet_highlighted_words"])
-                    )
-
+                if 'dateLastCrawled' in page:
+                    redacted_version['date'] = page['dateLastCrawled']
+                if 'displayUrl' in page:
+                    redacted_version['source'] = page['displayUrl']
                 web_snippets[idx] = redacted_version
-        return web_snippets
+
+            return web_snippets
+
+        except Exception as e:
+            logger.error(f"Error during Bing search: {e}")
+            raise e
+
 
     def snippet_filter(self, topic, snippet):
         """Calculate similarity score between topic and snippet
