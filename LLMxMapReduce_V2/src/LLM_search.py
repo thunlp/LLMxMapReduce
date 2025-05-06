@@ -63,7 +63,6 @@ class LLM_search:
         max_workers: int = 10,
     ):
 
-        self.serpapi_key = os.getenv("SERP_API_KEY")
         self.model = model
         self.engine = engine
         self.each_query_result = each_query_result
@@ -71,8 +70,16 @@ class LLM_search:
         self.max_workers = max_workers
         self.request_pool = RequestWrapper(model=model, infer_type=infer_type)
 
-        if self.serpapi_key is None:
-            raise ValueError("Missing SerpAPI key.")
+        self.bing_subscription_key = os.getenv('BING_SEARCH_V7_SUBSCRIPTION_KEY')
+        self.bing_endpoint = os.getenv('BING_SEARCH_V7_ENDPOINT', "https://api.bing.microsoft.com/v7.0/search")
+        self.serpapi_key = os.getenv("SERP_API_KEY")
+        
+        if self.serpapi_key is not None:
+            logger.info("Using SERPAPI for web search.")
+        elif self.bing_subscription_key is not None:
+            logger.info("Using Bing Search API for web search.")
+        else:
+            raise ValueError("No valid search engine key provided, please check your environment variables, SERPAPI_KEY or BING_SEARCH_V7_SUBSCRIPTION_KEY.")
 
     def _initialize_chat(self, topic: str, abstract: str = "") -> list:
         """Initialize chat messages for query generation"""
@@ -144,6 +151,62 @@ class LLM_search:
         return queries
 
     def web_search(
+        self,
+        query: str,
+    ):
+        if self.serpapi_key is not None:
+            return self._serpapi_web_search(query)
+        elif self.bing_subscription_key is not None:
+            return self._bing_web_search(query)
+        else:
+            raise ValueError("No valid search engine key provided, please check your environment variables, SERPAPI_KEY or BING_SEARCH_V7_SUBSCRIPTION_KEY.")
+ 
+    def _bing_web_search(
+        self,
+        query: str,
+    ):
+        mkt = 'zh-CN'
+        params = {
+            'q': query.lstrip('\"').rstrip('\"'),
+            'mkt': mkt,
+            'count': self.each_query_result,
+        }
+        headers = {
+            'Ocp-Apim-Subscription-Key': self.bing_subscription_key
+        }
+
+        try:
+            response = requests.get(self.bing_endpoint, headers=headers, params=params)
+            response.raise_for_status()
+            if response.status_code == 200:
+                results = response.json()
+            else:
+                raise ValueError(response.json())
+
+            print(f"查询结果 : {results}")  # 使用 f-string 格式化字符串
+            if "webPages" not in results or "value" not in results["webPages"]:
+                raise Exception(f"No results found for query: '{query}'")
+
+            web_snippets = {}
+            for idx, page in enumerate(results["webPages"]["value"]):
+                redacted_version = {
+                    'title': page.get('name', ''),
+                    'url': page.get('url', ''),
+                    'snippet': page.get('snippet', ''),
+                }
+                if 'dateLastCrawled' in page:
+                    redacted_version['date'] = page['dateLastCrawled']
+                if 'displayUrl' in page:
+                    redacted_version['source'] = page['displayUrl']
+                web_snippets[idx] = redacted_version
+
+            return web_snippets
+
+        except Exception as e:
+            logger.error(f"Error during Bing search: {e}")
+            raise e
+    
+    def _serpapi_web_search(
         self,
         query: str,
     ):
@@ -239,6 +302,7 @@ class LLM_search:
 
                 web_snippets[idx] = redacted_version
         return web_snippets
+
 
     def snippet_filter(self, topic, snippet):
         """Calculate similarity score between topic and snippet
