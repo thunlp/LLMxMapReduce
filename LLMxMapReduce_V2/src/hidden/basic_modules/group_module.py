@@ -107,7 +107,6 @@ class GroupModule(Module):
             result, [bibkey for _, bibkey in papers_info]
         )
         grouped_result = regroup_result(parsed_result, rest_bibkeys, step)
-        grouped_result = []
         if len(grouped_result) == 0:
             raise GroupEmptyError(
                 f"Group Reference Error: {survey_title} grouped_result is empty"
