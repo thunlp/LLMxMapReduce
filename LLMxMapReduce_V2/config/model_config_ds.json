@@ -1,0 +1,81 @@
+{
+    "encode": {},
+    "hidden": {
+        "group": {
+            "neuron": {
+                "model": "ep-20250326192434-95gld",
+                "infer_type": "OpenAI"
+            }
+        },
+        "skeleton": {
+            "single": {
+                "model": "ep-20250326192434-95gld",
+                "infer_type": "OpenAI"
+            },
+            "concat": {
+                "model": "ep-20250326192434-95gld",
+                "infer_type": "OpenAI"
+            }
+        },
+        "digest": {
+            "single": {
+                "model": "ep-20250326192434-95gld",
+                "infer_type": "OpenAI"
+            },
+            "merge": {
+                "model": "ep-20250326192434-95gld",
+                "infer_type": "OpenAI"
+            }
+        },
+        "skeleton_refinement": {
+            "cluster": {
+                    "model": "ep-20250326192434-95gld",
+                    "infer_type": "OpenAI"
+            },
+            "convolution": {
+                "modify": {
+                    "model": "ep-20250326192434-95gld",
+                    "infer_type": "OpenAI"
+                },
+                "convolution_kernel": {
+                    "model": "ep-20250326192434-95gld",
+                    "infer_type": "OpenAI"
+                },
+                "eval": {
+                    "model": "ep-20250326192434-95gld",
+                    "infer_type": "OpenAI",
+                    "max_score": 10
+                }
+            },
+            "refine": {
+                "modify": {
+                    "model": "ep-20250326192434-95gld",
+                    "infer_type": "OpenAI"
+                },
+                "refine": {
+                    "model": "ep-20250326192434-95gld",
+                    "infer_type": "OpenAI"
+                },
+                "eval": {
+                    "model": "ep-20250326192434-95gld",
+                    "infer_type": "OpenAI",
+                    "max_score": 10
+                }
+            }
+        }
+    },
+    "decode": {
+        "orchestra": {
+            "model": "ep-20250326192434-95gld",
+            "infer_type": "OpenAI"
+        },
+        "polish": {
+            "model": "ep-20250326192358-crtzv",
+            "infer_type": "OpenAI"
+        },
+        "chart": {
+            "model": "ep-20250326192434-95gld",
+            "infer_type": "OpenAI"
+        }
+    }
+}
