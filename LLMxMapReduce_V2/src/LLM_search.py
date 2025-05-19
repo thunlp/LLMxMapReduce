@@ -7,6 +7,7 @@ import requests
 import sys
 import logging
 from tenacity import retry, stop_after_attempt, before_log, retry_if_exception_type
+import time
 
 sys.path.append("survey_writer")
 from request import RequestWrapper
@@ -34,10 +35,10 @@ class LLM_search:
 
     Parameters:
     -----------
-    model : str, optional, default='claude-3-5-haiku-20241022'
+    model : str, optional, default='gemini-2.0-flash-thinking-exp-01-21'
         The specific LLM model to use for query decomposition and refinement.
 
-    engine : Literal['google', 'baidu', 'bing'], optional, default='google'
+    engine : Literal['google', 'baidu', 'bing', 'serper'], optional, default='google'
         The search engine to use for performing web searches.
 
     count : int, optional, default=20
@@ -55,9 +56,9 @@ class LLM_search:
 
     def __init__(
         self,
-        model: str = "claude-3-5-haiku-20241022",
+        model: str = "gemini-2.0-flash-thinking-exp-01-21",
         infer_type: str = "OpenAI",
-        engine: Literal["google", "baidu", "bing"] = "google",
+        engine: Literal["google", "baidu", "bing", "serper"] = "google",
         each_query_result: int = 10,
         filter_date: Optional[str] = None,
         max_workers: int = 10,
@@ -73,14 +74,17 @@ class LLM_search:
         self.bing_subscription_key = os.getenv('BING_SEARCH_V7_SUBSCRIPTION_KEY')
         self.bing_endpoint = os.getenv('BING_SEARCH_V7_ENDPOINT', "https://api.bing.microsoft.com/v7.0/search")
         self.serpapi_key = os.getenv("SERP_API_KEY")
+        self.serper_api_key = os.getenv("SERPER_API_KEY")
         
         if self.serpapi_key is not None:
             logger.info("Using SERPAPI for web search.")
         elif self.bing_subscription_key is not None:
             logger.info("Using Bing Search API for web search.")
+        elif self.serper_api_key is not None:
+            logger.info("Using Serper.dev API for web search.")
         else:
-            raise ValueError("No valid search engine key provided, please check your environment variables, SERPAPI_KEY or BING_SEARCH_V7_SUBSCRIPTION_KEY.")
-
+            raise ValueError("No valid search engine key provided, please check your environment variables, SERP_API_KEY, BING_SEARCH_V7_SUBSCRIPTION_KEY, or SERPER_API_KEY.")
+    
     def _initialize_chat(self, topic: str, abstract: str = "") -> list:
         """Initialize chat messages for query generation"""
         if abstract:
@@ -158,8 +162,10 @@ class LLM_search:
             return self._serpapi_web_search(query)
         elif self.bing_subscription_key is not None:
             return self._bing_web_search(query)
+        elif self.serper_api_key is not None:
+            return self._serper_web_search(query)
         else:
-            raise ValueError("No valid search engine key provided, please check your environment variables, SERPAPI_KEY or BING_SEARCH_V7_SUBSCRIPTION_KEY.")
+            raise ValueError("No valid search engine key provided, please check your environment variables, SERP_API_KEY, BING_SEARCH_V7_SUBSCRIPTION_KEY, or SERPER_API_KEY.")
  
     def _bing_web_search(
         self,
@@ -303,6 +309,148 @@ class LLM_search:
                 web_snippets[idx] = redacted_version
         return web_snippets
 
+    def _serper_web_search(
+        self,
+        query: str,
+    ):
+        """
+        Perform a web search for a single query using Serper.dev API.
+
+        Args:
+            query (str): The search query string
+
+        Returns:
+            dict: Search results containing title, URL, date, source, and snippet for each result.
+                Example structure:
+                {
+                    "0": {
+                        "title": "Article title",
+                        "url": "https://example.com",
+                        "date": "23 hours ago", 
+                        "source": "example.com",
+                        "snippet": "Article snippet"
+                    },
+                    ...
+                }
+        """
+        url = "https://google.serper.dev/search"
+        
+        payload = {
+            "q": query.lstrip('"').rstrip('"'),
+            "num": self.each_query_result
+        }
+        
+        if self.filter_date is not None:
+            # Serper supports time parameter: Last hour, day, week, month, or year
+            # For specific date filtering, we would need to process results later
+            payload["timeRange"] = "year"
+            
+        headers = {
+            'X-API-KEY': self.serper_api_key,
+            'Content-Type': 'application/json'
+        }
+        
+        # 初始化results变量
+        results = None
+        
+        # 重试次数
+        max_retries = 3
+        # 退避因子 (每次重试增加的延迟)
+        backoff_factor = 0.5
+        # 当前重试次数
+        retry_count = 0
+        
+        while retry_count <= max_retries:
+            try:
+                # 设置更长的超时时间 (连接超时, 读取超时)
+                response = requests.post(
+                    url, 
+                    json=payload, 
+                    headers=headers,
+                    timeout=(10, 30)  # 连接超时10秒，读取超时30秒
+                )
+                response.raise_for_status()
+                
+                if response.status_code == 200:
+                    results = response.json()
+                    break  # 成功跳出循环
+                else:
+                    raise ValueError(response.json())
+            
+            except requests.exceptions.SSLError as e:
+                retry_count += 1
+                if retry_count > max_retries:
+                    logger.error(f"SSL错误: 无法安全连接到Serper.dev: {e}")
+                    raise Exception(f"搜索引擎连接安全问题，请检查网络设置或稍后再试: {e}")
+                
+                # 指数退避延迟
+                sleep_time = backoff_factor * (2 ** (retry_count - 1))
+                logger.warning(f"SSL连接错误，{sleep_time}秒后重试 ({retry_count}/{max_retries})...")
+                time.sleep(sleep_time)
+                continue
+                
+            except requests.exceptions.ConnectionError as e:
+                retry_count += 1
+                if retry_count > max_retries:
+                    logger.error(f"连接错误: 无法连接到Serper.dev: {e}")
+                    raise Exception(f"搜索引擎连接失败，请检查网络连接: {e}")
+                
+                sleep_time = backoff_factor * (2 ** (retry_count - 1))
+                logger.warning(f"连接错误，{sleep_time}秒后重试 ({retry_count}/{max_retries})...")
+                time.sleep(sleep_time)
+                continue
+                
+            except requests.exceptions.Timeout as e:
+                retry_count += 1
+                if retry_count > max_retries:
+                    logger.error(f"超时错误: Serper.dev请求超时: {e}")
+                    raise Exception(f"搜索引擎响应超时，请稍后再试: {e}")
+                
+                sleep_time = backoff_factor * (2 ** (retry_count - 1))
+                logger.warning(f"请求超时，{sleep_time}秒后重试 ({retry_count}/{max_retries})...")
+                time.sleep(sleep_time)
+                continue
+                
+            except Exception as e:
+                logger.error(f"Serper.dev搜索过程中发生错误: {e}")
+                raise e
+        
+        try:
+            # 处理搜索结果
+            if "organic" not in results:
+                raise Exception(f"No results found for query: '{query}'")
+                
+            if len(results["organic"]) == 0:
+                date_filter_message = (
+                    f" with filter date={self.filter_date}"
+                    if self.filter_date is not None
+                    else ""
+                )
+                return f"No results found for '{query}'{date_filter_message}. Try with a more general query, or remove the date filter."
+                
+            web_snippets = {}
+            for idx, page in enumerate(results["organic"]):
+                redacted_version = {
+                    "title": page.get("title", ""),
+                    "url": page.get("link", ""),
+                    "snippet": page.get("snippet", ""),
+                }
+                
+                if "date" in page:
+                    redacted_version["date"] = page["date"]
+                    
+                if "source" in page:
+                    redacted_version["source"] = page["source"]
+                elif "displayLink" in page:
+                    redacted_version["source"] = page["displayLink"]
+                    
+                web_snippets[idx] = redacted_version
+                
+            return web_snippets
+            
+        except Exception as e:
+            logger.error(f"处理Serper.dev搜索结果时发生错误: {e}")
+            raise e
 
     def snippet_filter(self, topic, snippet):
         """Calculate similarity score between topic and snippet
