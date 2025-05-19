@@ -467,9 +467,20 @@ def get_task_output(task_id):
 
 
 if __name__ == '__main__':
+    # 添加命令行参数解析
+    import argparse
+    parser = argparse.ArgumentParser(description='启动LLMxMapReduce Web演示服务')
+    parser.add_argument('--language', type=str, default=None, help='提示语言，例如 "zh" 表示中文, "en" 表示英文')
+    args = parser.parse_args()
+    
     # 设置环境变量
     os.environ['PYTHONPATH'] = f"{os.getcwd()}:{os.environ.get('PYTHONPATH', '')}"
-    # os.environ['PROMPT_LANGUAGE'] = "zh"
+    
+    # 根据命令行参数设置语言
+    if args.language:
+        os.environ['PROMPT_LANGUAGE'] = args.language
+        logger.info(f"设置提示语言为: {args.language}")
+    
     os.environ['OPENAI_API_KEY'] = "8fe0e1fa-3fb5-4d82-b73e-7eb21480628a"
     os.environ['OPENAI_API_BASE'] = "https://ark.cn-beijing.volces.com/api/v3"
     os.environ['SERPER_API_KEY'] = "769aed5f5ca7b1ad747d71b57224eb53135d0069"
