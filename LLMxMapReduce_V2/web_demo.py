@@ -5,6 +5,7 @@ import uuid
 import threading
 import sys
 from datetime import datetime
+from logging.handlers import RotatingFileHandler
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -22,13 +23,42 @@ from async_d import Monitor, PipelineAnalyser, Pipeline
 import asyncio
 
 # 配置日志
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-# 抑制httpx和openai的日志
-httpx_logger = logging.getLogger("httpx")
-httpx_logger.setLevel(logging.WARNING)
-openai_logger = logging.getLogger("openai")
-openai_logger.setLevel(logging.WARNING)
+def setup_logging():
+    # 创建日志目录
+    log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+    os.makedirs(log_dir, exist_ok=True)
+    
+    # 设置根日志记录器
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
+    
+    # 控制台处理器
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    console_handler.setFormatter(console_format)
+    root_logger.addHandler(console_handler)
+    
+    # 文件处理器 (with rotation)
+    log_file = os.path.join(log_dir, 'web_demo.log')
+    file_handler = RotatingFileHandler(
+        log_file, maxBytes=10*1024*1024, backupCount=5, encoding='utf-8'
+    )
+    file_handler.setLevel(logging.INFO)
+    file_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    file_handler.setFormatter(file_format)
+    root_logger.addHandler(file_handler)
+    
+    # 抑制httpx和openai的日志
+    httpx_logger = logging.getLogger("httpx")
+    httpx_logger.setLevel(logging.WARNING)
+    openai_logger = logging.getLogger("openai")
+    openai_logger.setLevel(logging.WARNING)
+    
+    return logging.getLogger(__name__)
+
+# 初始化日志
+logger = setup_logging()
 
 
 app = Flask(__name__)
@@ -50,7 +80,8 @@ class EntirePipeline(Pipeline):
             conv_result_num=10, 
             top_k=6,
             self_refine_count=3, 
-            self_refine_best_of=3
+            self_refine_best_of=3,
+            output_file=None
         ):
         with open(config_file, "r") as f:
             self.config = json.load(f)
@@ -74,7 +105,7 @@ class EntirePipeline(Pipeline):
             worker_num=self.parallel_num,
         )
         self.decode_pipeline = DecodePipeline(
-            self.config["decode"], None, worker_num=self.parallel_num
+            self.config["decode"], output_file, worker_num=self.parallel_num
         )
 
         all_nodes = [self.encode_pipeline, self.hidden_pipeline, self.decode_pipeline]
@@ -221,7 +252,8 @@ def run_pipeline_task(task_id, params):
             conv_result_num=conv_result_num,
             top_k=top_k,
             self_refine_count=self_refine_count,
-            self_refine_best_of=self_refine_best_of
+            self_refine_best_of=self_refine_best_of,
+            output_file=output_file
         )
         
         # 设置输出文件
@@ -321,6 +353,8 @@ def start_pipeline():
     try:
         # 获取请求参数
         data = request.json
+        
+        logger.info(f"收到pipeline请求: {data}")
         
         # 生成任务ID
         task_id = str(uuid.uuid4())
@@ -435,10 +469,15 @@ def get_task_output(task_id):
 if __name__ == '__main__':
     # 设置环境变量
     os.environ['PYTHONPATH'] = f"{os.getcwd()}:{os.environ.get('PYTHONPATH', '')}"
-    os.environ['PROMPT_LANGUAGE'] = "zh"
+    # os.environ['PROMPT_LANGUAGE'] = "zh"
     os.environ['OPENAI_API_KEY'] = "8fe0e1fa-3fb5-4d82-b73e-7eb21480628a"
     os.environ['OPENAI_API_BASE'] = "https://ark.cn-beijing.volces.com/api/v3"
     os.environ['SERPER_API_KEY'] = "769aed5f5ca7b1ad747d71b57224eb53135d0069"
     
+    # 记录启动信息
+    logger.info("Web服务器启动中...")
+    
     # 启动Flask应用
-    app.run(host='0.0.0.0', port=5000, debug=True) 
+    app.run(host='0.0.0.0', port=5000, debug=True)
+    
+    logger.info("Web服务器已关闭") 
