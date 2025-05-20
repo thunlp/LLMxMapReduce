@@ -88,7 +88,8 @@ class EntirePipeline(Pipeline):
 
         self.parallel_num = parallel_num
         self.encode_pipeline = EncodePipeline(
-            self.config["encode"], data_num
+            self.config["encode"], 
+            int(data_num) if data_num is not None else None
         )
         self.hidden_pipeline = HiddenPipeline(
             self.config["hidden"],
@@ -193,7 +194,9 @@ def run_pipeline_task(task_id, params):
         config_file = params.get('config_file', 'config/model_config.json')  # 使用正斜杠
         search_model = params.get('search_model', 'gemini-2.0-flash-thinking-exp-01-21')  
         block_count = int(params.get('block_count', 0))  
-        data_num = params.get('data_num', None) 
+        data_num = params.get('data_num', None)
+        if data_num is not None:
+            data_num = int(data_num)
         top_n = int(params.get('top_n', 100))
         input_file = params.get('input_file')
         
@@ -489,6 +492,6 @@ if __name__ == '__main__':
     logger.info("Web服务器启动中...")
     
     # 启动Flask应用
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
     
     logger.info("Web服务器已关闭") 
