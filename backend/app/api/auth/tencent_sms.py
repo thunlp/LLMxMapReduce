@@ -1,4 +1,3 @@
-import os
 from tencentcloud.common import credential
 from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentCloudSDKException
 from tencentcloud.sms.v20210111 import sms_client, models

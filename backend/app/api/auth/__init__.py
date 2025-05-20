@@ -16,9 +16,9 @@ logger = logging.getLogger(__name__)
 # 实际应用中应从环境变量或配置文件中读取这些敏感信息
 SMS_SECRET_ID = os.environ.get("TENCENT_SECRET_ID", "您的SecretId")
 SMS_SECRET_KEY = os.environ.get("TENCENT_SECRET_KEY", "您的SecretKey")
-SMS_SDK_APP_ID = os.environ.get("TENCENT_SMS_SDK_APP_ID", "1400078787")  # 示例ID，请替换为您的实际ID
-SMS_SIGN_NAME = os.environ.get("TENCENT_SMS_SIGN_NAME", "腾讯云")  # 示例签名，请替换为您的实际签名
-SMS_TEMPLATE_ID = os.environ.get("TENCENT_SMS_TEMPLATE_ID", "2433692")  # 您提供的模板ID
+SMS_SDK_APP_ID = os.environ.get("TENCENT_SMS_SDK_APP_ID", "1400078787")  # ID
+SMS_SIGN_NAME = os.environ.get("TENCENT_SMS_SIGN_NAME", "腾讯云")  # 签名
+SMS_TEMPLATE_ID = os.environ.get("TENCENT_SMS_TEMPLATE_ID", "2433692")  # 短信模板ID
 
 # 初始化短信发送工具
 sms_client = TencentSMS(
