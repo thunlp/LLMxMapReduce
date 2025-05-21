@@ -42,9 +42,9 @@ class TencentSMS:
             # 确保手机号格式正确（添加国家码前缀）
             if not phone_number.startswith('+'):
                 # 如果没有+号前缀，检查是否有国家码
-                if phone_number.startswith('86') or phone_number.startswith('0086'):
+                if phone_number.startswith('86'):
                     # 提取手机号部分（去掉国家码）
-                    pure_number = phone_number[2:] if phone_number.startswith('86') else phone_number[4:]
+                    pure_number = phone_number[2:]
                     phone_number = f"+86{pure_number}"
                 else:
                     # 默认添加中国国家码

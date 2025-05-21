@@ -1,9 +1,9 @@
 from flask import Blueprint, request
 from datetime import datetime, timezone
 from flask_jwt_extended import get_jwt_identity
-from backend.app import db
-from backend.app.models import User, Task
-from backend.app.utils.helpers import api_response, jwt_required_custom
+from app import db
+from app.models import User, Task
+from app.utils.helpers import api_response, jwt_required_custom
 
 task_bp = Blueprint('task', __name__)
 

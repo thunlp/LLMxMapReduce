@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token, get_jwt_identity
-from backend.app import db
-from backend.app.models import User, VerificationCode
-from backend.app.utils.helpers import generate_verification_code, api_response, jwt_required_custom
-from tencent_sms import TencentSMS
+from app import db
+from app.models import User, VerificationCode
+from app.utils.helpers import generate_verification_code, api_response, jwt_required_custom
+from app.api.auth.tencent_sms import TencentSMS
 import os
 import logging
 
@@ -19,6 +19,7 @@ SMS_SECRET_KEY = os.environ.get("TENCENT_SECRET_KEY", "您的SecretKey")
 SMS_SDK_APP_ID = os.environ.get("TENCENT_SMS_SDK_APP_ID", "1400078787")  # ID
 SMS_SIGN_NAME = os.environ.get("TENCENT_SMS_SIGN_NAME", "腾讯云")  # 签名
 SMS_TEMPLATE_ID = os.environ.get("TENCENT_SMS_TEMPLATE_ID", "2433692")  # 短信模板ID
+
 
 # 初始化短信发送工具
 sms_client = TencentSMS(

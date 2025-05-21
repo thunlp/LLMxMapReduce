@@ -27,9 +27,9 @@ def create_app(test_config=None):
     CORS(app)
     
     # 注册蓝图
-    from backend.app.api.auth import auth_bp
-    from backend.app.api.redemption import redemption_bp
-    from backend.app.api.task import task_bp
+    from app.api.auth import auth_bp
+    from app.api.redemption import redemption_bp
+    from app.api.task import task_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(redemption_bp, url_prefix='/api/redemption')
