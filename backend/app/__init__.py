@@ -3,6 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 import os
+from dotenv import load_dotenv
+
+# 加载.env文件
+dotenv_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '.env')
+load_dotenv(dotenv_path)
 
 # 初始化数据库
 db = SQLAlchemy()

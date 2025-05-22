@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+import sys
+import os
+
+# 将父目录添加到sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 from app import create_app, db
 from app.models import User, RedemptionCode
 from flask_jwt_extended import create_access_token
@@ -9,10 +15,10 @@ def setup_test_data():
     app = create_app()
     with app.app_context():
         # 创建测试用户
-        test_user = User.query.filter_by(phone="13800138000").first()
+        test_user = User.query.filter_by(phone="13829816170").first()
         if not test_user:
             test_user = User(
-                phone="13800138000",
+                phone="13829816170",
                 remaining_uses=0  # 初始设为0次使用机会
             )
             db.session.add(test_user)
