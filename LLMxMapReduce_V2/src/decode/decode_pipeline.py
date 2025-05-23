@@ -14,6 +14,9 @@ from .orchestra_module import OrchestraModule
 from .figure_module import FigureModule
 from src.utils.process_str import str2list, remove_illegal_bibkeys
 
+# 首先定义logger
+logger = logging.getLogger(__name__)
+
 # 导入数据库管理器
 try:
     from src.database import mongo_manager
@@ -21,8 +24,6 @@ try:
 except ImportError as e:
     logger.warning(f"数据库模块不可用，将仅使用文件存储: {str(e)}")
     DATABASE_AVAILABLE = False
-
-logger = logging.getLogger(__name__)
 
 
 class DecodePipeline(Sequential):

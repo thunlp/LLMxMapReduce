@@ -50,21 +50,6 @@ from src.async_crawl import AsyncCrawler
 from async_d import Monitor, PipelineAnalyser, Pipeline
 import asyncio
 
-# 导入数据库支持
-try:
-    from src.database import mongo_manager
-    DATABASE_AVAILABLE = True
-    logger.info("数据库模块加载成功")
-except ImportError as e:
-    DATABASE_AVAILABLE = False
-    logger.warning(f"数据库模块不可用，将仅使用文件存储: {str(e)}")
-
-# 全局pipeline实例和相关变量
-global_pipeline = None
-pipeline_monitor = None
-# 保留文件存储作为备选方案
-global_output_file = "output/global_pipeline_output.jsonl"
-
 # 配置日志
 def setup_logging():
     # 创建日志目录
@@ -103,6 +88,20 @@ def setup_logging():
 # 初始化日志
 logger = setup_logging()
 
+# 导入数据库支持
+try:
+    from src.database import mongo_manager
+    DATABASE_AVAILABLE = True
+    logger.info("数据库模块加载成功")
+except ImportError as e:
+    DATABASE_AVAILABLE = False
+    logger.warning(f"数据库模块不可用，将仅使用文件存储: {str(e)}")
+
+# 全局pipeline实例和相关变量
+global_pipeline = None
+pipeline_monitor = None
+# 保留文件存储作为备选方案
+global_output_file = "output/global_pipeline_output.jsonl"
 
 app = Flask(__name__)
 CORS(app)  
