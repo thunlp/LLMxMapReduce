@@ -272,6 +272,9 @@ def run_pipeline_task(task_id, params):
         
         # 启动管道
         pipeline.start()
+
+        # 将pipeline对象添加到tasks字典中
+        tasks[task_id]['pipeline'] = pipeline
         
         if topic:
             # 如果指定了主题，先进行检索和爬取
@@ -315,6 +318,32 @@ def run_pipeline_task(task_id, params):
         else:
             raise ValueError("必须指定topic或input_file参数")
         
+        # 关键修改：等待pipeline实际完成
+        logger.info(f"[任务 {task_id}] 数据已输入管道，开始监控pipeline执行状态")
+        
+        # 监控pipeline完成状态
+        while pipeline.is_start:
+            # 检查所有节点是否都已完成
+            all_nodes_finished = all([not node.is_start for node in pipeline.all_nodes.values()])
+            if all_nodes_finished:
+                logger.info(f"[任务 {task_id}] 检测到所有节点已完成，正在停止pipeline")
+                # 手动调用end方法来停止pipeline
+                pipeline.end()
+                break
+            
+            # 每5秒检查一次状态
+            import time
+            time.sleep(5)
+            
+            # 记录当前节点状态（用于调试）
+            node_status = []
+            for node_name, node in pipeline.all_nodes.items():
+                status = "运行中" if node.is_start else "已完成"
+                node_status.append(f"{node_name}: {status}")
+            logger.debug(f"[任务 {task_id}] 节点状态: {', '.join(node_status)}")
+        
+        logger.info(f"[任务 {task_id}] Pipeline执行完成")
+        
         # 记录结束时间
         end_time = datetime.now()
         tasks[task_id]['end_time'] = end_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -328,6 +357,10 @@ def run_pipeline_task(task_id, params):
         tasks[task_id]['status'] = 'completed'
         tasks[task_id]['output_file'] = output_file
         logger.info(f"[任务 {task_id}] 任务已完成，执行时间: {execution_time}")
+
+        # 清理pipeline实例
+        if 'pipeline' in tasks[task_id]:
+            del tasks[task_id]['pipeline']
         
     except Exception as e:
         # 记录完整的异常堆栈信息
@@ -349,6 +382,10 @@ def run_pipeline_task(task_id, params):
         tasks[task_id]['status'] = 'failed'
         tasks[task_id]['error'] = str(e)
 
+        # 清理pipeline实例
+        if 'pipeline' in tasks[task_id]:
+            del tasks[task_id]['pipeline']
+        
 
 @app.route('/api/start_pipeline', methods=['POST'])
 def start_pipeline():
@@ -414,18 +451,79 @@ def get_task_status(task_id):
         }), 404
     
     task = tasks[task_id]
+    task_info = {}
+    for key, value in task.items():
+        if key != 'pipeline':  # 排除pipeline对象，因为pipeline对象不可序列化
+            task_info[key] = value
+    
     return jsonify({
         'success': True,
-        'task': task
+        'task': task_info
     })
+
+
+
+@app.route('/api/task/<task_id>/pipeline_status', methods=['GET'])
+def get_pipeline_status(task_id):
+    """获取pipeline详细状态"""
+    if task_id not in tasks:
+        return jsonify({
+            'success': False,
+            'error': '任务不存在'
+        }), 404
+    
+    task = tasks[task_id]
+    
+    # 构建基本响应
+    response = {
+        'success': True,
+        'task_id': task_id,
+        'status': task['status'],
+        'pipeline_running': False,
+        'nodes': []
+    }
+    
+    # 如果任务还在运行且有pipeline实例，获取详细状态
+    if 'pipeline' in task:
+        pipeline = task['pipeline']
+        response['pipeline_running'] = pipeline.is_start
+        
+        # 获取各个节点的状态
+        for node_name, node in pipeline.all_nodes.items():
+            node_info = {
+                'name': node_name,
+                'is_running': node.is_start,
+                'status': '运行中' if node.is_start else '已完成'
+            }
+            
+            # 如果是Node类型，添加更多详细信息
+            if hasattr(node, 'src_queue'):
+                node_info.update({
+                    'queue_size': node.src_queue.qsize(),
+                    'max_queue_size': node.src_queue.maxsize,
+                    'executing_count': len(node.executing_data_queue) if hasattr(node, 'executing_data_queue') else 0,
+                    'worker_count': getattr(node, 'worker_num', 0)
+                })
+            
+            response['nodes'].append(node_info)
+    
+    return jsonify(response)
 
 
 @app.route('/api/tasks', methods=['GET'])
 def get_all_tasks():
     """获取所有任务"""
+    tasks_infos = []
+    for task in tasks.values():
+        task_info = {}
+        for key, value in task.items():
+            if key != 'pipeline':  # 排除pipeline对象
+                task_info[key] = value
+        tasks_infos.append(task_info)
+
     return jsonify({
         'success': True,
-        'tasks': list(tasks.values())
+        'tasks': tasks_infos
     })
 
 
@@ -484,9 +582,10 @@ if __name__ == '__main__':
         os.environ['PROMPT_LANGUAGE'] = args.language
         logger.info(f"设置提示语言为: {args.language}")
     
-    os.environ['OPENAI_API_KEY'] = "8fe0e1fa-3fb5-4d82-b73e-7eb21480628a"
+    os.environ['OPENAI_API_KEY'] = "7891b3e1-51cf-4979-9eae-ecdf4e411d5e"
     os.environ['OPENAI_API_BASE'] = "https://ark.cn-beijing.volces.com/api/v3"
     os.environ['SERPER_API_KEY'] = "769aed5f5ca7b1ad747d71b57224eb53135d0069"
+
     
     # 记录启动信息
     logger.info("Web服务器启动中...")

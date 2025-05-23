@@ -1,3 +1,29 @@
+#!/usr/bin/env python3
+"""
+LLMxMapReduce Web Demo 客户端测试工具
+
+这个工具提供两种监控模式：
+
+1. 简单模式（默认）：
+   - 只显示基本的任务状态（pending, preparing, processing, completed, failed）
+   - 适合一般用户使用
+
+2. 详细模式（--detailed_status）：
+   - 显示详细的Pipeline状态信息
+   - 包括各个节点的运行状态、队列情况、执行中任务数等
+   - 适合开发者和调试使用
+
+使用示例：
+  # 简单模式
+  python test_client.py --topic "人工智能的发展" --block_count 1
+
+  # 详细模式  
+  python test_client.py --topic "人工智能的发展" --block_count 1 --detailed_status
+
+  # 使用输入文件
+  python test_client.py --input_file "data/input.jsonl" --detailed_status
+"""
+
 import requests
 import argparse
 import json
@@ -39,7 +65,20 @@ def setup_logging():
 logger = setup_logging()
 
 def parse_args():
-    parser = argparse.ArgumentParser(description='Web Demo客户端测试工具')
+    parser = argparse.ArgumentParser(
+        description='LLMxMapReduce Web Demo 客户端测试工具',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+监控模式：
+  默认：简单模式，只显示基本任务状态
+  --detailed_status：详细模式，显示Pipeline各节点状态
+
+使用示例：
+  python test_client.py --topic "人工智能发展" --block_count 1
+  python test_client.py --topic "机器学习" --detailed_status --top_n 50
+  python test_client.py --input_file "data.jsonl" --detailed_status
+        """
+    )
     parser.add_argument('--server', type=str, default='http://localhost:5000', help='服务器地址')
     parser.add_argument('--topic', type=str, help='搜索主题')
     parser.add_argument('--description', type=str, default='', help='主题描述')
@@ -50,6 +89,7 @@ def parse_args():
     parser.add_argument('--output_file', type=str, help='输出文件路径')
     parser.add_argument('--top_n', type=int, default=100, help='检索结果数量')
     parser.add_argument('--input_file', type=str, help='输入文件路径（替代topic）')
+    parser.add_argument('--detailed_status', action='store_true', help='启用详细的Pipeline状态监控（显示各节点状态、队列信息等）')
     return parser.parse_args()
 
 def start_pipeline(args):
@@ -112,7 +152,8 @@ def start_pipeline(args):
         print(f"请求异常: {str(e)}")
         return None
 
-def check_task_status(server, task_id):
+def check_task_status(server, task_id, show_detailed=False):
+    """检查任务状态，可选显示详细的pipeline状态"""
     logger.info(f"检查任务状态: {task_id}")
     try:
         response = requests.get(f"{server}/api/task/{task_id}")
@@ -124,6 +165,30 @@ def check_task_status(server, task_id):
                 status = task['status']
                 logger.info(f"任务 {task_id} 状态: {status}")
                 print(f"任务状态: {status}")
+                
+                # 如果启用了详细状态显示，获取pipeline状态
+                if show_detailed and status in ['preparing', 'searching_web', 'crawling', 'processing']:
+                    try:
+                        pipeline_response = requests.get(f"{server}/api/task/{task_id}/pipeline_status")
+                        if pipeline_response.status_code == 200:
+                            pipeline_info = pipeline_response.json()
+                            pipeline_running = pipeline_info.get('pipeline_running', False)
+                            print(f"  Pipeline运行状态: {'运行中' if pipeline_running else '已停止'}")
+                            
+                            nodes = pipeline_info.get('nodes', [])
+                            if nodes:
+                                print("  节点状态:")
+                                for node in nodes:
+                                    node_status = f"    - {node['name']}: {node['status']}"
+                                    if 'queue_size' in node:
+                                        node_status += f" (队列: {node['queue_size']}/{node['max_queue_size']}, "
+                                        node_status += f"执行中: {node['executing_count']}/{node['worker_count']})"
+                                    print(node_status)
+                        else:
+                            print("  无法获取pipeline详细状态")
+                    except Exception as e:
+                        logger.warning(f"获取pipeline详细状态失败: {str(e)}")
+                        print(f"  获取pipeline详细状态失败: {str(e)}")
                 
                 if status == 'completed':
                     logger.info(f"任务 {task_id} 已完成!")
@@ -158,6 +223,66 @@ def check_task_status(server, task_id):
         print(f"检查任务状态异常: {str(e)}")
         return False
 
+def monitor_detailed_pipeline_status(server, task_id):
+    """详细监控pipeline状态，类似于test_pipeline_status的功能"""
+    logger.info(f"开始详细监控pipeline状态: {task_id}")
+    print(f"\n开始详细监控Pipeline状态...")
+    print(f"任务ID: {task_id}")
+    
+    while True:
+        try:
+            # 获取基本任务状态
+            response = requests.get(f"{server}/api/task/{task_id}")
+            if response.status_code == 200:
+                task_info = response.json()['task']
+                status = task_info['status']
+                print(f"\n当前任务状态: {status}")
+                
+                # 获取详细的pipeline状态
+                pipeline_response = requests.get(f"{server}/api/task/{task_id}/pipeline_status")
+                if pipeline_response.status_code == 200:
+                    pipeline_info = pipeline_response.json()
+                    pipeline_running = pipeline_info.get('pipeline_running', False)
+                    print(f"Pipeline运行状态: {'运行中' if pipeline_running else '已停止'}")
+                    
+                    nodes = pipeline_info.get('nodes', [])
+                    if nodes:
+                        print("节点状态:")
+                        for node in nodes:
+                            node_status = f"  - {node['name']}: {node['status']}"
+                            if 'queue_size' in node:
+                                node_status += f" (队列: {node['queue_size']}/{node['max_queue_size']}, "
+                                node_status += f"执行中: {node['executing_count']}/{node['worker_count']})"
+                            print(node_status)
+                else:
+                    print("无法获取pipeline详细状态")
+                
+                # 检查是否完成
+                if status in ['completed', 'failed']:
+                    print(f"\n任务已结束，最终状态: {status}")
+                    if status == 'completed':
+                        print(f"输出文件: {task_info.get('output_file', '未知')}")
+                        print(f"执行时间: {task_info.get('execution_time', '未知')}")
+                        logger.info(f"任务 {task_id} 完成，输出文件: {task_info.get('output_file', '未知')}")
+                        return True
+                    elif status == 'failed':
+                        error_msg = task_info.get('error', '未知错误')
+                        print(f"错误信息: {error_msg}")
+                        logger.error(f"任务 {task_id} 失败: {error_msg}")
+                        return True
+            else:
+                print(f"获取任务状态失败: {response.text}")
+                logger.error(f"获取任务 {task_id} 状态失败: {response.status_code}")
+                return False
+            
+            # 等待10秒后再次检查
+            time.sleep(10)
+            
+        except Exception as e:
+            logger.exception(f"监控pipeline状态异常: {str(e)}")
+            print(f"监控过程中出现错误: {str(e)}")
+            return False
+
 def main():
     args = parse_args()
     
@@ -177,20 +302,26 @@ def main():
     
     # 监控任务状态
     logger.info("开始监控任务状态...")
-    print("开始监控任务状态...")
-    completed = False
-    try:
-        while not completed:
-            completed = check_task_status(args.server, task_id)
-            if not completed:
-                logger.info("等待10秒后重新检查...")
-                print("等待10秒后重新检查...")
-                time.sleep(10)
-    except KeyboardInterrupt:
-        logger.info("监控已停止，但任务仍在后台运行")
-        print("\n监控已停止，但任务仍在后台运行")
-        print(f"您可以稍后通过以下命令查询任务状态:")
-        print(f"  curl {args.server}/api/task/{task_id}")
+    if args.detailed_status:
+        print("启用详细状态监控模式...")
+        completed = monitor_detailed_pipeline_status(args.server, task_id)
+    else:
+        print("使用简单状态监控模式...")
+        print("(如需详细状态，请使用 --detailed_status 参数)")
+        completed = False
+        try:
+            while not completed:
+                completed = check_task_status(args.server, task_id, args.detailed_status)
+                if not completed:
+                    logger.info("等待10秒后重新检查...")
+                    print("等待10秒后重新检查...")
+                    time.sleep(10)
+        except KeyboardInterrupt:
+            logger.info("监控已停止，但任务仍在后台运行")
+            print("\n监控已停止，但任务仍在后台运行")
+            print(f"您可以稍后通过以下命令查询任务状态:")
+            print(f"  curl {args.server}/api/task/{task_id}")
+            completed = False  # 设置为False，避免后续尝试获取结果
     
     # 如果任务完成且成功，尝试获取结果
     if completed:
