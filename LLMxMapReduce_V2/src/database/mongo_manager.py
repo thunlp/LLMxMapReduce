@@ -135,17 +135,20 @@ class MongoManager:
         def _save_operation():
             collection = self._db[self.collection_name]
             
+            # 确保survey_data中包含正确的task_id
+            survey_data_with_task_id = survey_data.copy()
+            survey_data_with_task_id["task_id"] = task_id
+            
             document = {
                 "task_id": task_id,
                 "title": survey_data.get("title", ""),
-                "survey_data": survey_data,
+                "survey_data": survey_data_with_task_id,  # 使用包含task_id的副本
                 "created_at": datetime.now(),
                 "status": "completed",
                 "metadata": {
-                    "survey_type": survey_data.get("survey_type", "general"),
                     "cite_ratio": survey_data.get("cite_ratio", 0),
-                    "content_sections": len(survey_data.get("content", {}).get("sections", [])),
-                    "references_count": len(survey_data.get("papers", {}))
+                    "content_length": len(survey_data.get("content", "")),
+                    "references_count": len(survey_data.get("papers", []))
                 }
             }
             

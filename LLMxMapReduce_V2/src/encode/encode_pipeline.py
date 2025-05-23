@@ -45,7 +45,7 @@ class EncodePipeline(Sequential):
                         self.processed_count += 1
                 
                 data = json.loads(line)
-                task_id = data.get('task_id')
+                task_id = data.get('task_id') # 添加task_id字段
                 survey = Survey(data, task_id=task_id)
                 
                 if len(survey.papers) == 0:
