@@ -14,18 +14,42 @@ from .orchestra_module import OrchestraModule
 from .figure_module import FigureModule
 from src.utils.process_str import str2list, remove_illegal_bibkeys
 
+# 导入数据库管理器
+try:
+    from src.database import mongo_manager
+    DATABASE_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"数据库模块不可用，将仅使用文件存储: {str(e)}")
+    DATABASE_AVAILABLE = False
+
 logger = logging.getLogger(__name__)
 
 
 class DecodePipeline(Sequential):
-    def __init__(self, config, output_file, worker_num=10):
+    def __init__(self, config, output_file=None, worker_num=10, use_database=True):
         worker_num = worker_num * 10
         self.config = config
         self.output_file = output_file
-        if not os.path.dirname(output_file):
-            self.output_file = os.path.join(os.getcwd(), os.path.basename(output_file))
+        self.use_database = use_database and DATABASE_AVAILABLE
+        
+        # 如果使用文件存储，确保输出文件路径正确
+        if self.output_file and not os.path.dirname(self.output_file):
+            self.output_file = os.path.join(os.getcwd(), os.path.basename(self.output_file))
+        
         self.dict_semaphore = Semaphore(1)
         self.executing_survey = {}  # title: survey
+
+        # 如果启用数据库，尝试连接
+        if self.use_database:
+            try:
+                if mongo_manager.connect():
+                    logger.info("DecodePipeline: 数据库连接成功，将使用数据库存储")
+                else:
+                    logger.warning("DecodePipeline: 数据库连接失败，回退到文件存储")
+                    self.use_database = False
+            except Exception as e:
+                logger.warning(f"DecodePipeline: 数据库初始化失败，回退到文件存储: {str(e)}")
+                self.use_database = False
 
         self.register_node = Node(
             self.register_survey,
@@ -156,8 +180,39 @@ class DecodePipeline(Sequential):
         return survey
 
     def save_survey(self, survey):
-        os.makedirs(os.path.dirname(self.output_file), exist_ok=True)
-        with FileObject(self.output_file, "a") as survey_file:
-            survey_file.write(json.dumps(survey.to_dict(), ensure_ascii=False))
-            survey_file.write("\n")
-            logger.info(f"Survey {survey.title} saved.")
+        """保存survey，优先使用数据库，文件存储作为备选方案"""
+        survey_data = survey.to_dict()
+        saved_to_database = False
+        
+        # 尝试保存到数据库
+        if self.use_database and survey.task_id:
+            try:
+                if mongo_manager.save_survey(survey.task_id, survey_data):
+                    logger.info(f"Survey保存到数据库成功: task_id={survey.task_id}, title={survey.title}")
+                    saved_to_database = True
+                else:
+                    logger.warning(f"Survey保存到数据库失败: task_id={survey.task_id}, title={survey.title}")
+            except Exception as e:
+                logger.error(f"数据库保存异常: task_id={survey.task_id}, error={str(e)}")
+        
+        # 如果数据库保存失败或未启用数据库，使用文件存储
+        if not saved_to_database and self.output_file:
+            try:
+                os.makedirs(os.path.dirname(self.output_file), exist_ok=True)
+                with FileObject(self.output_file, "a") as survey_file:
+                    survey_file.write(json.dumps(survey_data, ensure_ascii=False))
+                    survey_file.write("\n")
+                    logger.info(f"Survey保存到文件成功: file={self.output_file}, title={survey.title}")
+            except Exception as e:
+                logger.error(f"文件保存失败: file={self.output_file}, title={survey.title}, error={str(e)}")
+        
+        # 如果两种方式都失败，记录警告
+        if not saved_to_database and not self.output_file:
+            logger.warning(f"Survey未能保存（数据库和文件都不可用）: title={survey.title}")
+
+    def set_output_file(self, output_file):
+        """设置输出文件路径（向后兼容）"""
+        self.output_file = output_file
+        if output_file and not os.path.dirname(output_file):
+            self.output_file = os.path.join(os.getcwd(), os.path.basename(output_file))
+        logger.info(f"输出文件路径已设置: {self.output_file}")

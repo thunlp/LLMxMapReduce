@@ -12,15 +12,20 @@ from flask_cors import CORS
 import glob
 
 """
-LLMxMapReduce Web演示服务 - 全局Pipeline版本
+LLMxMapReduce Web演示服务 - 数据库优化版本
 
 架构说明：
 1. 使用全局唯一的pipeline实例，避免重复创建
-2. 所有任务共享同一个pipeline配置，确保一致性
-3. 任务以真正的流水线方式并行处理，发挥pipeline优势
-4. 爬虫模块独立处理主题相关逻辑
-5. 所有任务结果写入全局输出文件，通过结果提取机制分离各任务结果
-6. 适用于需要高吞吐量的处理场景
+2. 使用MongoDB存储survey结果，替代文件存储
+3. 基于task_id的高效结果查询，消除文件扫描瓶颈
+4. 支持真正的并发处理，提供生产级性能
+5. 保持文件存储作为备选方案，确保向后兼容性
+
+数据库优势：
+- O(1)复杂度的结果查询（基于索引）
+- 并发安全的写入操作
+- 更好的容错和恢复能力
+- 便于数据管理和统计
 
 API接口：
 - POST /api/start_pipeline: 启动新任务
@@ -29,11 +34,8 @@ API接口：
 - GET /api/global_pipeline_status: 获取全局pipeline状态
 - GET /api/tasks: 获取所有任务列表
 - GET /api/output/<task_id>: 获取任务输出结果
-
-流水线工作原理：
-- 多个任务可以同时在pipeline的不同阶段处理
-- encode阶段处理任务A的同时，hidden阶段可处理任务B，decode阶段可处理任务C
-- 大大提高了整体处理吞吐量
+- GET /api/database/stats: 获取数据库统计信息
+- GET /api/database/health: 数据库健康检查
 """
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -48,10 +50,19 @@ from src.async_crawl import AsyncCrawler
 from async_d import Monitor, PipelineAnalyser, Pipeline
 import asyncio
 
+# 导入数据库支持
+try:
+    from src.database import mongo_manager
+    DATABASE_AVAILABLE = True
+    logger.info("数据库模块加载成功")
+except ImportError as e:
+    DATABASE_AVAILABLE = False
+    logger.warning(f"数据库模块不可用，将仅使用文件存储: {str(e)}")
+
 # 全局pipeline实例和相关变量
 global_pipeline = None
 pipeline_monitor = None
-# 全局输出文件路径，所有任务的结果都写入这里
+# 保留文件存储作为备选方案
 global_output_file = "output/global_pipeline_output.jsonl"
 
 # 配置日志
@@ -113,12 +124,16 @@ class EntirePipeline(Pipeline):
             top_k=6,
             self_refine_count=3, 
             self_refine_best_of=3,
-            output_file=None
+            use_database=True,
+            fallback_output_file=None
         ):
         with open(config_file, "r") as f:
             self.config = json.load(f)
 
         self.parallel_num = parallel_num
+        self.use_database = use_database and DATABASE_AVAILABLE
+        self.fallback_output_file = fallback_output_file
+        
         self.encode_pipeline = EncodePipeline(
             self.config["encode"], 
             int(data_num) if data_num is not None else None
@@ -137,8 +152,13 @@ class EntirePipeline(Pipeline):
             self_refine_best_of,
             worker_num=self.parallel_num,
         )
+        
+        # 创建decode_pipeline，支持数据库存储
         self.decode_pipeline = DecodePipeline(
-            self.config["decode"], output_file, worker_num=self.parallel_num
+            self.config["decode"], 
+            output_file=self.fallback_output_file,  # 作为备选方案
+            worker_num=self.parallel_num,
+            use_database=self.use_database
         )
 
         all_nodes = [self.encode_pipeline, self.hidden_pipeline, self.decode_pipeline]
@@ -146,12 +166,14 @@ class EntirePipeline(Pipeline):
         super().__init__(
             all_nodes, head=self.encode_pipeline, tail=self.decode_pipeline
         )
+        
+        logger.info(f"EntirePipeline初始化完成: 数据库存储={'启用' if self.use_database else '禁用'}")
 
     def _connect_nodes(self):
         self.encode_pipeline >> self.hidden_pipeline >> self.decode_pipeline
         
     def set_output_file(self, output_file):
-        """设置输出文件路径"""
+        """设置备用输出文件路径（向后兼容）"""
         if output_file is None:
             # 如果未提供输出文件路径，生成一个默认路径
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -159,7 +181,8 @@ class EntirePipeline(Pipeline):
             os.makedirs(os.path.dirname(output_file), exist_ok=True)
             logger.info(f"未提供输出文件路径，使用默认路径: {output_file}")
         
-        self.decode_pipeline.output_file = output_file
+        self.fallback_output_file = output_file
+        self.decode_pipeline.set_output_file(output_file)
 
 
 async def process_topic(topic, description, output_file, config_file, search_model, 
@@ -213,11 +236,23 @@ async def process_topic(topic, description, output_file, config_file, search_mod
 
 
 def init_global_pipeline():
-    """初始化全局pipeline"""
+    """初始化全局pipeline（数据库优先模式）"""
     global global_pipeline, pipeline_monitor
     
     if global_pipeline is None:
-        logger.info("正在初始化全局pipeline...")
+        logger.info("正在初始化全局pipeline（数据库优先模式）...")
+        
+        # 初始化数据库连接
+        if DATABASE_AVAILABLE:
+            try:
+                if mongo_manager.connect():
+                    logger.info("数据库连接成功，将使用数据库存储")
+                else:
+                    logger.warning("数据库连接失败，将使用文件存储作为备选方案")
+            except Exception as e:
+                logger.warning(f"数据库初始化失败，将使用文件存储作为备选方案: {str(e)}")
+        else:
+            logger.info("数据库模块不可用，将使用文件存储")
         
         # 使用默认配置
         config_file = '/home/ubuntu/projects/dev/LLMxMapReduce/LLMxMapReduce_V2/config/model_config_ds.json'  
@@ -241,10 +276,10 @@ def init_global_pipeline():
             if not found:
                 raise ValueError(f"找不到配置文件: {config_file}")
         
-        # 确保全局输出目录存在
+        # 确保全局输出目录存在（文件存储备选方案）
         os.makedirs(os.path.dirname(global_output_file), exist_ok=True)
         
-        # 创建全局pipeline实例，使用默认配置
+        # 创建全局pipeline实例，优先使用数据库存储
         global_pipeline = EntirePipeline(
             config_file=config_file,
             data_num=1,
@@ -259,7 +294,8 @@ def init_global_pipeline():
             top_k=6,
             self_refine_count=3,
             self_refine_best_of=3,
-            output_file=global_output_file  # 固定使用全局输出文件
+            use_database=DATABASE_AVAILABLE,  # 根据数据库可用性决定
+            fallback_output_file=global_output_file  # 备选文件输出
         )
         
         # 配置分析器和监控器
@@ -272,7 +308,21 @@ def init_global_pipeline():
         
         # 启动pipeline
         global_pipeline.start()
-        logger.info(f"全局pipeline已启动并正在运行，输出文件: {global_output_file}")
+        
+        # 记录启动信息
+        storage_mode = "数据库存储" if DATABASE_AVAILABLE else "文件存储"
+        logger.info(f"全局pipeline已启动并正在运行")
+        logger.info(f"存储模式: {storage_mode}")
+        if not DATABASE_AVAILABLE:
+            logger.info(f"备选输出文件: {global_output_file}")
+        
+        # 输出数据库状态信息
+        if DATABASE_AVAILABLE:
+            try:
+                stats = mongo_manager.get_stats()
+                logger.info(f"数据库状态: 共有 {stats['total_surveys']} 个综述记录，成功率: {stats['success_rate']:.2%}")
+            except Exception as e:
+                logger.warning(f"无法获取数据库状态: {str(e)}")
 
 
 def extract_task_results(task_id, final_output_file):
@@ -320,8 +370,80 @@ def extract_task_results(task_id, final_output_file):
         return False
 
 
+def check_survey_completed_in_database(task_id):
+    """从数据库检查任务是否完成"""
+    try:
+        if not DATABASE_AVAILABLE:
+            return False
+        
+        survey_record = mongo_manager.get_survey(task_id)
+        if survey_record and survey_record.get('status') == 'completed':
+            logger.info(f"[任务 {task_id}] 在数据库中找到已完成的综述")
+            return True
+        
+        return False
+    except Exception as e:
+        logger.error(f"[任务 {task_id}] 数据库查询失败: {str(e)}")
+        return False
+
+
+def start_task_monitoring_database(task_id):
+    """启动数据库模式的任务监控"""
+    def monitor_task():
+        logger.info(f"[任务 {task_id}] 开始监控任务完成状态（数据库模式）")
+        
+        start_monitor_time = time.time()
+        check_interval = 30  # 30秒检查间隔（数据库查询更高效）
+        timeout = 3600  # 1小时超时
+        
+        while time.time() - start_monitor_time < timeout:
+            # 检查数据库中是否存在已完成的任务
+            if check_survey_completed_in_database(task_id):
+                logger.info(f"[任务 {task_id}] 检测到任务已完成")
+                break
+            
+            logger.debug(f"[任务 {task_id}] 任务尚未完成，继续等待...")
+            time.sleep(check_interval)
+        else:
+            # 超时
+            logger.warning(f"[任务 {task_id}] 监控超时，任务可能未完成")
+        
+        # 清理临时文件
+        try:
+            temp_files = glob.glob(f"*.{task_id}.tmp")
+            for temp_file in temp_files:
+                if os.path.exists(temp_file):
+                    os.remove(temp_file)
+                    logger.info(f"[任务 {task_id}] 已清理临时文件: {temp_file}")
+        except Exception as e:
+            logger.warning(f"[任务 {task_id}] 清理临时文件时出现错误: {str(e)}")
+        
+        # 更新任务状态
+        end_time = datetime.now()
+        if 'start_time' in tasks[task_id]:
+            start_time = datetime.strptime(tasks[task_id]['start_time'], '%Y-%m-%d %H:%M:%S')
+            execution_time = end_time - start_time
+            tasks[task_id]['execution_time'] = str(execution_time)
+            tasks[task_id]['execution_seconds'] = execution_time.total_seconds()
+        
+        tasks[task_id]['end_time'] = end_time.strftime('%Y-%m-%d %H:%M:%S')
+        
+        if check_survey_completed_in_database(task_id):
+            tasks[task_id]['status'] = 'completed'
+            logger.info(f"[任务 {task_id}] 任务已完成，执行时间: {tasks[task_id].get('execution_time', 'unknown')}")
+        else:
+            tasks[task_id]['status'] = 'failed'
+            tasks[task_id]['error'] = '任务超时或处理失败'
+            logger.error(f"[任务 {task_id}] 任务处理超时或失败")
+    
+    # 启动监控线程
+    monitor_thread = threading.Thread(target=monitor_task)
+    monitor_thread.daemon = True
+    monitor_thread.start()
+
+
 def check_survey_exists_in_file(expected_title, file_path):
-    """检查文件中是否存在指定标题的综述"""
+    """检查文件中是否存在指定标题的综述（备选方案）"""
     try:
         if not os.path.exists(file_path):
             return False
@@ -340,7 +462,7 @@ def check_survey_exists_in_file(expected_title, file_path):
 
 
 def start_task_monitoring_with_extraction(task_id, final_output_file):
-    """启动任务监控线程，包含结果提取功能（基于内容检测）"""
+    """启动任务监控线程，包含结果提取功能（基于内容检测）- 文件模式备选方案"""
     def monitor_task():
         logger.info(f"[任务 {task_id}] 开始监控全局输出文件: {global_output_file}")
         
@@ -417,7 +539,7 @@ def start_task_monitoring_with_extraction(task_id, final_output_file):
 
 
 def modify_input_file_with_unique_title(input_file_path, unique_title, task_id):
-    """修改输入文件中的Survey标题为唯一标题"""
+    """修改输入文件，添加task_id和唯一标题"""
     try:
         # 读取原始文件
         with open(input_file_path, 'r', encoding='utf-8') as f:
@@ -426,7 +548,7 @@ def modify_input_file_with_unique_title(input_file_path, unique_title, task_id):
         # 创建临时文件路径
         temp_file_path = f"{input_file_path}.{task_id}.tmp"
         
-        # 修改每一行的title字段并写入临时文件
+        # 修改每一行的title字段并添加task_id
         with open(temp_file_path, 'w', encoding='utf-8') as f:
             for line in lines:
                 try:
@@ -434,7 +556,8 @@ def modify_input_file_with_unique_title(input_file_path, unique_title, task_id):
                     if 'title' in data:
                         original_title = data['title']
                         data['title'] = unique_title
-                        logger.info(f"[任务 {task_id}] 将Survey标题从 '{original_title}' 修改为 '{unique_title}'")
+                        data['task_id'] = task_id  # 添加task_id字段
+                        logger.info(f"[任务 {task_id}] 将Survey标题从 '{original_title}' 修改为 '{unique_title}'，添加task_id")
                     f.write(json.dumps(data, ensure_ascii=False) + '\n')
                 except json.JSONDecodeError:
                     # 如果无法解析JSON，保持原样
@@ -537,7 +660,7 @@ def run_pipeline_task(task_id, params):
         logger.info(f"[任务 {task_id}] 将修改后的数据输入全局pipeline: {modified_input_file}")
         
         # 启动任务监控（必须在put之前启动）
-        start_task_monitoring_with_extraction(task_id, output_file)
+        start_task_monitoring_database(task_id)
         
         # 将修改后的数据输入全局pipeline（非阻塞）
         global_pipeline.put(modified_input_file)
@@ -761,7 +884,7 @@ def get_all_tasks():
 
 @app.route('/api/output/<task_id>', methods=['GET'])
 def get_task_output(task_id):
-    """获取任务输出结果"""
+    """获取任务输出结果 - 数据库优先，文件备选"""
     if task_id not in tasks:
         return jsonify({
             'success': False,
@@ -776,26 +899,134 @@ def get_task_output(task_id):
             'error': f"任务尚未完成，当前状态：{task['status']}"
         }), 400
     
+    # 优先尝试从数据库获取结果
+    if DATABASE_AVAILABLE:
+        try:
+            survey_record = mongo_manager.get_survey(task_id)
+            if survey_record and survey_record.get('survey_data'):
+                logger.info(f"从数据库获取任务结果: {task_id}")
+                return jsonify({
+                    'success': True,
+                    'content': json.dumps(survey_record['survey_data'], ensure_ascii=False, indent=2),
+                    'source': 'database',
+                    'metadata': {
+                        'created_at': survey_record.get('created_at'),
+                        'title': survey_record.get('title'),
+                        'status': survey_record.get('status')
+                    }
+                })
+        except Exception as e:
+            logger.warning(f"从数据库获取任务结果失败: {task_id}, error: {str(e)}")
+    
+    # 备选方案：从文件获取结果
     output_file = task.get('output_file')
     if not output_file or not os.path.exists(output_file):
         return jsonify({
             'success': False,
-            'error': '输出文件不存在'
+            'error': '输出结果不存在（数据库和文件都无法找到）'
         }), 404
     
     try:
         with open(output_file, 'r', encoding='utf-8') as f:
             content = f.read()
         
+        logger.info(f"从文件获取任务结果: {task_id}")
         return jsonify({
             'success': True,
-            'content': content
+            'content': content,
+            'source': 'file',
+            'output_file': output_file
         })
     
     except Exception as e:
         return jsonify({
             'success': False,
             'error': f"读取输出文件失败: {str(e)}"
+        }), 500
+
+
+@app.route('/api/database/stats', methods=['GET'])
+def get_database_stats():
+    """获取数据库统计信息"""
+    if not DATABASE_AVAILABLE:
+        return jsonify({
+            'success': False,
+            'error': '数据库不可用'
+        }), 503
+    
+    try:
+        stats = mongo_manager.get_stats()
+        return jsonify({
+            'success': True,
+            'stats': stats
+        })
+    except Exception as e:
+        logger.error(f"获取数据库统计信息失败: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
+@app.route('/api/database/health', methods=['GET'])
+def database_health_check():
+    """数据库健康检查"""
+    if not DATABASE_AVAILABLE:
+        return jsonify({
+            'success': False,
+            'status': 'unavailable',
+            'message': '数据库模块未加载'
+        }), 503
+    
+    try:
+        is_healthy = mongo_manager.health_check()
+        if is_healthy:
+            return jsonify({
+                'success': True,
+                'status': 'healthy',
+                'message': '数据库连接正常'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'status': 'unhealthy',
+                'message': '数据库连接失败'
+            }), 503
+    except Exception as e:
+        logger.error(f"数据库健康检查失败: {str(e)}")
+        return jsonify({
+            'success': False,
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
+
+@app.route('/api/database/surveys', methods=['GET'])
+def list_database_surveys():
+    """获取数据库中的survey列表"""
+    if not DATABASE_AVAILABLE:
+        return jsonify({
+            'success': False,
+            'error': '数据库不可用'
+        }), 503
+    
+    try:
+        status = request.args.get('status')
+        limit = int(request.args.get('limit', 100))
+        skip = int(request.args.get('skip', 0))
+        
+        surveys = mongo_manager.list_surveys(status=status, limit=limit, skip=skip)
+        
+        return jsonify({
+            'success': True,
+            'surveys': surveys,
+            'count': len(surveys)
+        })
+    except Exception as e:
+        logger.error(f"获取数据库survey列表失败: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
         }), 500
 
 

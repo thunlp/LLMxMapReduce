@@ -44,13 +44,22 @@ class EncodePipeline(Sequential):
                             break
                         self.processed_count += 1
                 
-                survey = Survey(json.loads(line))
+                data = json.loads(line)
+                task_id = data.get('task_id')
+                survey = Survey(data, task_id=task_id)
+                
                 if len(survey.papers) == 0:
                     logger.error(
-                        f"Survey {survey.survey_id} has no papers, "
+                        f"Survey {survey.title} has no papers, "
                         f"skipping this survey."
                     )
                     continue
+                    
+                if task_id:
+                    logger.info(f"Survey加载成功: title={survey.title}, task_id={task_id}")
+                else:
+                    logger.warning(f"Survey加载缺少task_id: title={survey.title}")
+                    
                 yield survey
             else:
                 logger.info("All data in input file has been loaded.")

@@ -11,8 +11,9 @@ from src.utils.process_str import proc_title_to_str
 
     
 class Survey:
-    def __init__(self, json_data):
+    def __init__(self, json_data, task_id=None):
         self.title = json_data["title"]
+        self.task_id = task_id # 添加task_id 字段，不会影响原本的代码
         self.origin_outline = json_data.get("outline", [])
         self.origin_outline = "\n".join(self.origin_outline)
         self.origin_content = json_data.get("txt", "")
@@ -105,7 +106,7 @@ class Survey:
             digest = digest.to_dict()
             digests.append(digest)
             
-        return {
+        result_dict = {
             "title": self.title,
             "cost_time": readable_time,
             "block_cycle_count": self.block_cycle_count,
@@ -131,6 +132,11 @@ class Survey:
             "origin_content": self.origin_content,
             "origin_outline": self.origin_outline,
         }
+        
+        if self.task_id:
+            result_dict["task_id"] = self.task_id
+            
+        return result_dict
 
     def update_digests(self, digest_list: List):
         self.digests = MultiKeyDict()
