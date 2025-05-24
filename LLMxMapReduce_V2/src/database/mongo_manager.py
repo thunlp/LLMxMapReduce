@@ -11,25 +11,30 @@ MongoDB数据库管理模块
 import os
 import logging
 import time
+import threading
 from datetime import datetime
 from typing import Optional, Dict, List, Any
 from pymongo import MongoClient, ASCENDING
-from pymongo.errors import ConnectionFailure, PyMongoError
-import json
+from pymongo.errors import ConnectionFailure
 
 logger = logging.getLogger(__name__)
 
 
 class MongoManager:
-    """MongoDB管理类，单例模式"""
+    """MongoDB管理类，线程安全的单例模式"""
     
     _instance = None
+    _instance_lock = threading.Lock()  # 用于单例创建的锁
+    _connection_lock = threading.Lock()  # 用于连接操作的锁
     _client = None
     _db = None
     
     def __new__(cls, *args, **kwargs):
+        # 双重检查锁定（Double-Checked Locking）模式
         if cls._instance is None:
-            cls._instance = super(MongoManager, cls).__new__(cls)
+            with cls._instance_lock:
+                if cls._instance is None:
+                    cls._instance = super(MongoManager, cls).__new__(cls)
         return cls._instance
     
     def __init__(self, 
@@ -37,41 +42,45 @@ class MongoManager:
                  database_name: str = "llm_mapreduce",
                  collection_name: str = "surveys"):
         
-        if hasattr(self, '_initialized'):
-            return
-        
-        self.connection_string = connection_string or os.environ.get(
-            'MONGODB_CONNECTION_STRING', 
-            'mongodb://localhost:27017/'
-        )
-        self.database_name = database_name
-        self.collection_name = collection_name
-        self.max_retries = 3
-        self.retry_delay = 1
-        
-        self._initialized = True
-        logger.info(f"初始化MongoDB管理器: {self.database_name}.{self.collection_name}")
+        # 使用锁保护初始化过程
+        with self._instance_lock:
+            if hasattr(self, '_initialized'):
+                return
+            
+            self.connection_string = connection_string or os.environ.get(
+                'MONGODB_CONNECTION_STRING', 
+                'mongodb://localhost:27017/'
+            )
+            self.database_name = database_name
+            self.collection_name = collection_name
+            self.max_retries = 3
+            self.retry_delay = 1
+            
+            self._initialized = True
+            logger.info(f"初始化MongoDB管理器: {self.database_name}.{self.collection_name}")
     
     def connect(self) -> bool:
-        """建立MongoDB连接"""
+        """建立MongoDB连接 - 线程安全版本"""
         try:
-            if self._client is None:
-                logger.info(f"连接到MongoDB: {self.connection_string}")
-                self._client = MongoClient(
-                    self.connection_string,
-                    serverSelectionTimeoutMS=5000,  # 5秒超时
-                    connectTimeoutMS=5000,
-                    maxPoolSize=50,
-                    minPoolSize=5
-                )
+            # 使用连接锁保护整个连接过程
+            with self._connection_lock:
+                if self._client is None:
+                    logger.info(f"连接到MongoDB: {self.connection_string}")
+                    self._client = MongoClient(
+                        self.connection_string,
+                        serverSelectionTimeoutMS=5000,  # 5秒超时
+                        connectTimeoutMS=5000,
+                        maxPoolSize=50,
+                        minPoolSize=5
+                    )
+                    
+                    # 测试连接
+                    self._client.admin.command('ping')
+                    logger.info("MongoDB连接成功")
                 
-                # 测试连接
-                self._client.admin.command('ping')
-                logger.info("MongoDB连接成功")
-            
-            if self._db is None:
-                self._db = self._client[self.database_name]
-                self._create_indexes()
+                if self._db is None:
+                    self._db = self._client[self.database_name]
+                    self._create_indexes()
             
             return True
             
@@ -105,12 +114,13 @@ class MongoManager:
             logger.error(f"创建索引失败: {str(e)}")
     
     def disconnect(self):
-        """断开MongoDB连接"""
-        if self._client:
-            self._client.close()
-            self._client = None
-            self._db = None
-            logger.info("MongoDB连接已断开")
+        """断开MongoDB连接 - 线程安全版本"""
+        with self._connection_lock:
+            if self._client:
+                self._client.close()
+                self._client = None
+                self._db = None
+                logger.info("MongoDB连接已断开")
     
     def _retry_operation(self, operation, *args, **kwargs):
         """重试机制装饰器"""
