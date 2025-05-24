@@ -41,7 +41,6 @@ API接口：
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src'))
 
-from src.args import parse_args
 from src.decode.decode_pipeline import DecodePipeline
 from src.encode.encode_pipeline import EncodePipeline
 from src.hidden.hidden_pipeline import HiddenPipeline
