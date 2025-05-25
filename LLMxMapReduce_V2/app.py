@@ -21,7 +21,6 @@ from src.config_manager import get_config
 from src.task_manager import get_task_manager
 from src.pipeline_processor import PipelineTaskManager
 from src.api_service import api_bp, set_pipeline_manager
-from src.args import parse_args
 from src.decode.decode_pipeline import DecodePipeline
 from src.encode.encode_pipeline import EncodePipeline
 from src.hidden.hidden_pipeline import HiddenPipeline
