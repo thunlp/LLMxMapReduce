@@ -99,6 +99,7 @@ class EntirePipeline(Pipeline):
         self.config = config
         
         # 初始化各个阶段
+        # ! 三个管道的默认并发为1，不知道提高并发系统有没有风险
         self.encode_pipeline = EncodePipeline(
             self.model_config["encode"],
             data_num=1  # 全局pipeline模式，每次处理一个任务
@@ -107,23 +108,23 @@ class EntirePipeline(Pipeline):
         self.hidden_pipeline = HiddenPipeline(
             self.model_config["hidden"],
             output_each_block=config.output_each_block,
-            digest_group_mode=config.digest_group_mode,
+            group_mode=config.digest_group_mode,
             skeleton_group_size=config.skeleton_group_size,
             block_count=config.block_count,
-            conv_layer=config.conv_layer,
-            conv_kernel_width=config.conv_kernel_width,
-            conv_result_num=config.conv_result_num,
+            convolution_layer=config.conv_layer,
+            convolution_kernel_size=config.conv_kernel_width,
+            convolution_result_num=config.conv_result_num,
             top_k=config.top_k,
             self_refine_count=config.self_refine_count,
             self_refine_best_of=config.self_refine_best_of,
-            worker_num=config.parallel_num,
+            worker_num=config.parallel_num, 
         )
         
         self.decode_pipeline = DecodePipeline(
             self.model_config["decode"],
             output_file=None,  # 全局pipeline模式，不使用固定输出文件
             worker_num=config.parallel_num,
-            use_database=True  # 优先使用数据库存储
+            use_database=True  # 优先使用数据库存储，这里默认选择mongodb
         )
         
         # 构建pipeline
