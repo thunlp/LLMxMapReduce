@@ -34,8 +34,10 @@ class MongoConfig:
 @dataclass
 class PipelineConfig:
     """Pipeline配置"""
-    config_file: str = 'config/model_config_ds.json'
-    parallel_num: int = 3
+    config_file: str = 'config/model_config_ds.json'  # 默认使用deepseek模型
+    top_n: int = 50
+    data_num: int = 1
+    parallel_num: int = 1
     output_each_block: bool = False
     digest_group_mode: str = 'llm'
     skeleton_group_size: int = 3
@@ -46,8 +48,8 @@ class PipelineConfig:
     top_k: int = 6
     self_refine_count: int = 3
     self_refine_best_of: int = 3
-    check_interval: int = 30  # 任务检查间隔
-    timeout: int = 3600  # 任务超时时间
+    check_interval: int = 60  # 任务检查间隔
+    timeout: int = 10800  # 任务超时时间, 3个小时
 
 
 @dataclass
@@ -124,7 +126,7 @@ class AppConfig:
         self.search_model = os.getenv('SEARCH_MODEL', self.search_model)
     
     def load_from_file(self, config_file: str):
-        """从配置文件加载配置"""
+        """从配置文件(json)加载配置"""
         try:
             with open(config_file, 'r', encoding='utf-8') as f:
                 config_data = json.load(f)
@@ -161,7 +163,7 @@ class AppConfig:
         
         # 检查配置文件是否存在
         if not os.path.exists(self.pipeline.config_file):
-            # 尝试其他可能的路径
+            # 尝试其他可能的路径（启发式）
             possible_paths = [
                 self.pipeline.config_file,
                 os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', self.pipeline.config_file),
@@ -198,6 +200,8 @@ class AppConfig:
             },
             'pipeline': {
                 'config_file': self.pipeline.config_file,
+                'top_n': self.pipeline.top_n,
+                'data_num': self.pipeline.data_num,
                 'parallel_num': self.pipeline.parallel_num,
                 'output_each_block': self.pipeline.output_each_block,
                 'digest_group_mode': self.pipeline.digest_group_mode,
