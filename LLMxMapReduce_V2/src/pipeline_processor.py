@@ -58,7 +58,7 @@ class TopicSearchProcessor(TaskProcessor):
             # 提取参数
             topic = params.get('topic')
             description = params.get('description', '')
-            top_n = int(params.get('top_n', 100))
+            top_n = int(params.get('top_n', 50))
             
             # 更新状态：生成查询
             task_manager.update_task_status(task_id, TaskStatus.SEARCHING)
@@ -72,40 +72,73 @@ class TopicSearchProcessor(TaskProcessor):
                 each_query_result=10
             )
             
-            # 生成查询
-            queries = retriever.get_queries(topic=topic, description=description)
+            # 生成查询 - 添加详细的错误处理
+            try:
+                queries = retriever.get_queries(topic=topic, description=description)
+                if not queries:
+                    raise ValueError("生成的查询列表为空")
+                logger.info(f"[任务 {task_id}] 查询生成成功，共生成 {len(queries)} 个查询")
+            except Exception as e:
+                error_msg = f"查询生成失败: {str(e)}"
+                logger.error(f"[任务 {task_id}] {error_msg}")
+                task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
+                return None
             
             # 更新状态：搜索网页
             task_manager.update_task_status(task_id, TaskStatus.SEARCHING_WEB)
             logger.info(f"[任务 {task_id}] 开始搜索网页")
             
-            # 搜索网页
-            url_list = retriever.batch_web_search(
-                queries=queries,
-                topic=topic,
-                top_n=int(top_n * 1.2)
-            )
+            # 搜索网页 - 添加详细的错误处理
+            try:
+                url_list = retriever.batch_web_search(
+                    queries=queries,
+                    topic=topic,
+                    top_n=int(top_n * 1.2)
+                )
+                if not url_list:
+                    raise ValueError("搜索到的URL列表为空")
+                logger.info(f"[任务 {task_id}] 网页搜索成功，共找到 {len(url_list)} 个URL")
+            except Exception as e:
+                error_msg = f"网页搜索失败: {str(e)}"
+                logger.error(f"[任务 {task_id}] {error_msg}")
+                task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
+                return None
             
             # 更新状态：爬取内容
             task_manager.update_task_status(task_id, TaskStatus.CRAWLING)
             logger.info(f"[任务 {task_id}] 开始爬取网页内容")
             
-            # 执行爬取
-            # 现在将爬虫结果保存到 MongoDB 中，而不是本地文件
-            crawler = AsyncCrawler(model=self.search_model, infer_type="OpenAI")
-            await crawler.run(
-                topic=topic,
-                url_list=url_list,
-                task_id=task_id,  # 传递 task_id
-                top_n=top_n
-            )
-            
-            logger.info(f"[任务 {task_id}] 爬取完成，结果已保存到 MongoDB")
-            return task_id  # 返回 task_id 而不是文件路径
+            # 执行爬取 - 添加详细的错误处理
+            try:
+                crawler = AsyncCrawler(model=self.search_model, infer_type="OpenAI")
+                await crawler.run(
+                    topic=topic,
+                    url_list=url_list,
+                    task_id=task_id,
+                    top_n=top_n
+                )
+                
+                # 验证爬取结果是否保存成功
+                crawl_results = mongo_manager.get_crawl_results(task_id)
+                if not crawl_results or not crawl_results.get('papers'):
+                    raise ValueError("爬取结果为空或保存失败")
+                
+                papers_count = len(crawl_results.get('papers', []))
+                logger.info(f"[任务 {task_id}] 爬取完成，成功获取 {papers_count} 篇论文")
+                
+            except Exception as e:
+                error_msg = f"网页爬取失败: {str(e)}"
+                logger.error(f"[任务 {task_id}] {error_msg}")
+                task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
+                return None
+
+            logger.info(f"[任务 {task_id}] 主题搜索和爬取阶段完成")
+            return task_id  
             
         except Exception as e:
-            logger.error(f"[任务 {task_id}] 处理失败: {str(e)}")
-            task_manager.update_task_status(task_id, TaskStatus.FAILED, str(e))
+            error_msg = f"主题搜索处理器异常: {str(e)}"
+            logger.error(f"[任务 {task_id}] {error_msg}")
+            task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
             return None
 
 
@@ -121,8 +154,8 @@ class PipelineTaskManager:
     
     def __init__(self, 
                  global_pipeline,
-                 check_interval: int = 30,
-                 timeout: int = 3600):
+                 check_interval: int = 60,
+                 timeout: int = 86400):
         """
         初始化任务管理器
         
@@ -157,8 +190,6 @@ class PipelineTaskManager:
         original_topic = params.get('topic', 'unnamed_survey')
         unique_survey_title = f"{original_topic}_{task_id}_{timestamp}"
         
-        # 不再需要准备输出文件路径，因为数据现在存储在 MongoDB 中
-        
         # 扩展参数
         extended_params = params.copy()
         extended_params.update({
@@ -169,7 +200,7 @@ class PipelineTaskManager:
         # 创建任务
         self.task_manager.create_task(task_id, extended_params)
         
-        # 保存额外字段
+        # 保存额外字段 - 这些字段用于后续的pipeline处理和结果标识
         self.task_manager.update_task_field(task_id, 'original_topic', original_topic)
         self.task_manager.update_task_field(task_id, 'expected_survey_title', unique_survey_title)
         
@@ -196,8 +227,9 @@ class PipelineTaskManager:
             
             params = task['params']
             
-            # 更新状态
+            # 更新状态：准备中
             self.task_manager.update_task_status(task_id, TaskStatus.PREPARING)
+            logger.info(f"[任务 {task_id}] 开始准备任务")
             
             # 处理输入数据
             input_data = None
@@ -209,90 +241,82 @@ class PipelineTaskManager:
                 )
                 
                 if not result_task_id:
-                    raise ValueError("主题处理失败")
+                    # TopicSearchProcessor已经更新了失败状态，这里直接返回
+                    return
                 
                 # 从 MongoDB 获取爬虫结果
                 crawl_results = mongo_manager.get_crawl_results(task_id)
                 if not crawl_results:
-                    raise ValueError(f"未找到爬虫结果: task_id={task_id}")
+                    error_msg = f"未找到爬虫结果: task_id={task_id}"
+                    logger.error(f"[任务 {task_id}] {error_msg}")
+                    self.task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
+                    return
                 
                 input_data = crawl_results
+                logger.info(f"[任务 {task_id}] 成功获取爬虫数据，论文数量: {len(crawl_results.get('papers', []))}")
                     
             elif params.get('input_file'):
-                # 从文件读取数据（向后兼容）
+                # 向后兼容：从文件读取数据（正式场景下不应该被激发）
+                logger.warning(f"[任务 {task_id}] 使用向后兼容的文件输入模式")
                 input_file_path = params['input_file']
                 path_validator = get_path_validator()
                 if not path_validator.validate_input_path(input_file_path):
-                    raise ValueError(f"输入文件路径不安全或不存在: {input_file_path}")
+                    error_msg = f"输入文件路径不安全或不存在: {input_file_path}"
+                    logger.error(f"[任务 {task_id}] {error_msg}")
+                    self.task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
+                    return
                 
                 # 读取文件内容
-                with open(input_file_path, 'r', encoding='utf-8') as f:
-                    papers = []
-                    for line in f:
-                        try:
-                            data = json.loads(line.strip())
-                            if 'papers' in data:
-                                papers.extend(data['papers'])
-                        except json.JSONDecodeError:
-                            continue
-                    
-                    input_data = {
-                        'task_id': task_id,
-                        'topic': params.get('topic', 'unknown'),
-                        'papers': papers
-                    }
+                try:
+                    with open(input_file_path, 'r', encoding='utf-8') as f:
+                        papers = []
+                        for line in f:
+                            try:
+                                data = json.loads(line.strip())
+                                if 'papers' in data:
+                                    papers.extend(data['papers'])
+                            except json.JSONDecodeError:
+                                continue
+                        
+                        input_data = {
+                            'task_id': task_id,
+                            'topic': params.get('topic', 'unknown'),
+                            'papers': papers
+                        }
+                        logger.info(f"[任务 {task_id}] 从文件读取数据完成，论文数量: {len(papers)}")
+                except Exception as e:
+                    error_msg = f"读取输入文件失败: {str(e)}"
+                    logger.error(f"[任务 {task_id}] {error_msg}")
+                    self.task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
+                    return
             else:
-                raise ValueError("必须指定topic或input_file参数")
+                error_msg = "必须指定topic或input_file参数"
+                logger.error(f"[任务 {task_id}] {error_msg}")
+                self.task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
+                return
             
-            # 准备 pipeline 输入数据
-            unique_title = task.get('expected_survey_title')
-            pipeline_input = self._prepare_pipeline_input(
-                input_data, unique_title, task_id
-            )
+            # 验证输入数据
+            if not input_data or not input_data.get('papers'):
+                error_msg = "输入数据为空或不包含论文"
+                logger.error(f"[任务 {task_id}] {error_msg}")
+                self.task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
+                return
             
             # 更新状态：处理中
             self.task_manager.update_task_status(task_id, TaskStatus.PROCESSING)
+            logger.info(f"[任务 {task_id}] 开始Pipeline处理")
             
             # 启动监控
             self._start_monitoring(task_id)
             
-            # 提交到pipeline
-            self.global_pipeline.put(pipeline_input)
-            logger.info(f"[任务 {task_id}] 已提交到pipeline")
+            # 直接提交task_id到pipeline，让EncodePipeline从数据库读取数据
+            self.global_pipeline.put(task_id)
+            logger.info(f"[任务 {task_id}] 已提交到Pipeline")
             
         except Exception as e:
-            logger.error(f"[任务 {task_id}] 执行失败: {str(e)}")
-            self.task_manager.update_task_status(task_id, TaskStatus.FAILED, str(e))
-    
-    def _prepare_pipeline_input(self, input_data: Dict[str, Any], unique_title: str, 
-                               task_id: str) -> str:
-        """
-        准备 pipeline 输入数据，创建临时文件供 pipeline 处理
-        
-        Args:
-            input_data: 输入数据（从 MongoDB 或文件读取）
-            unique_title: 唯一标题
-            task_id: 任务ID
-            
-        Returns:
-            临时文件路径
-        """
-        temp_file = f"pipeline_input_{task_id}.tmp"
-        
-        # 准备输出数据
-        output_data = {
-            'title': unique_title,
-            'task_id': task_id,
-            'papers': input_data.get('papers', [])
-        }
-        
-        # 写入临时文件
-        with open(temp_file, 'w', encoding='utf-8') as f_out:
-            json.dump(output_data, f_out, ensure_ascii=False)
-            f_out.write('\n')
-        
-        logger.info(f"[任务 {task_id}] 创建 pipeline 输入文件: {temp_file}")
-        return temp_file
+            error_msg = f"任务执行异常: {str(e)}"
+            logger.error(f"[任务 {task_id}] {error_msg}")
+            self.task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
     
     def _start_monitoring(self, task_id: str):
         """启动任务监控"""
@@ -305,25 +329,30 @@ class PipelineTaskManager:
     
     def _monitor_task(self, task_id: str):
         """监控任务完成状态"""
-        logger.info(f"[任务 {task_id}] 开始监控")
+        logger.info(f"[任务 {task_id}] 开始监控Pipeline处理状态")
         
         start_time = time.time()
         
         while time.time() - start_time < self.timeout:
-            # 检查数据库
+            # 检查数据库中的完成状态
             if self._check_completion_in_database(task_id):
-                logger.info(f"[任务 {task_id}] 检测到任务已完成")
+                logger.info(f"[任务 {task_id}] 检测到Pipeline处理已完成")
                 self.task_manager.update_task_status(task_id, TaskStatus.COMPLETED)
+                break
+            
+            # 检查任务是否已经失败
+            task = self.task_manager.get_task(task_id)
+            if task and task.get('status') == TaskStatus.FAILED.value:
+                logger.info(f"[任务 {task_id}] 检测到任务已标记为失败，停止监控")
                 break
             
             time.sleep(self.check_interval)
         else:
-            # 超时
-            logger.warning(f"[任务 {task_id}] 任务超时")
-            self.task_manager.update_task_status(task_id, TaskStatus.TIMEOUT)
+            # 超时处理
+            logger.warning(f"[任务 {task_id}] Pipeline处理超时")
+            self.task_manager.update_task_status(task_id, TaskStatus.TIMEOUT, "Pipeline处理超时")
         
-        # 清理临时文件
-        self._cleanup_temp_files(task_id)
+        logger.info(f"[任务 {task_id}] 监控结束")
     
     def _check_completion_in_database(self, task_id: str) -> bool:
         """检查任务是否在数据库中完成"""
@@ -332,25 +361,13 @@ class PipelineTaskManager:
                 return False
             
             survey = mongo_manager.get_survey(task_id)
-            return survey and survey.get('status') == 'completed'
+            is_completed = survey and survey.get('status') == 'completed'
+            
+            if is_completed:
+                logger.debug(f"[任务 {task_id}] 在数据库中找到完成的Survey")
+            
+            return is_completed
             
         except Exception as e:
             logger.error(f"[任务 {task_id}] 数据库查询失败: {str(e)}")
-            return False
-    
-    def _cleanup_temp_files(self, task_id: str):
-        """清理临时文件"""
-        import glob
-        
-        try:
-            # 清理旧格式的临时文件
-            temp_files = glob.glob(f"*.{task_id}.tmp")
-            # 清理新格式的临时文件
-            temp_files.extend(glob.glob(f"pipeline_input_{task_id}.tmp"))
-            
-            for temp_file in temp_files:
-                if os.path.exists(temp_file):
-                    os.remove(temp_file)
-                    logger.info(f"[任务 {task_id}] 清理临时文件: {temp_file}")
-        except Exception as e:
-            logger.warning(f"[任务 {task_id}] 清理临时文件失败: {str(e)}") 
+            return False 
