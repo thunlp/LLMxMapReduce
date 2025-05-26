@@ -15,6 +15,7 @@ from abc import ABC, abstractmethod
 
 from src.task_manager import TaskStatus, get_task_manager
 from src.database import mongo_manager
+from src.path_validator import get_path_validator
 
 logger = logging.getLogger(__name__)
 
@@ -87,14 +88,21 @@ class TopicSearchProcessor(TaskProcessor):
             
             # 准备输出路径
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            output_path = f"output/{topic}_{timestamp}_crawl_result.jsonl"
-            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+            path_validator = get_path_validator()
+            output_path = path_validator.validate_output_path(
+                topic=topic,
+                timestamp=timestamp,
+                suffix='crawl_result',
+                extension='jsonl',
+                base_dir='output'
+            )
             
             # 更新状态：爬取内容
             task_manager.update_task_status(task_id, TaskStatus.CRAWLING)
             logger.info(f"[任务 {task_id}] 开始爬取网页内容")
             
             # 执行爬取
+            # 这里写入文件是为了保存中间产物，方便后续的llm pipeline的重启
             crawler = AsyncCrawler(model=self.search_model, infer_type="OpenAI")
             await crawler.run(
                 topic=topic,
@@ -161,9 +169,16 @@ class PipelineTaskManager:
         unique_survey_title = f"{original_topic}_{task_id}_{timestamp}"
         
         # 准备输出文件路径
+        # todo 这里不应该还有output_file这种参数了，因为数据全都是存在数据库中的
         if 'output_file' not in params or not params['output_file']:
-            params['output_file'] = f"output/{original_topic}_{timestamp}_result.jsonl"
-            os.makedirs('output', exist_ok=True)
+            path_validator = get_path_validator()
+            params['output_file'] = path_validator.validate_output_path(
+                topic=original_topic,
+                timestamp=timestamp,
+                suffix='result',
+                extension='jsonl',
+                base_dir='output'
+            )
         
         # 扩展参数
         extended_params = params.copy()
@@ -219,8 +234,9 @@ class PipelineTaskManager:
                     
             elif params.get('input_file'):
                 input_file_path = params['input_file']
-                if not os.path.exists(input_file_path):
-                    raise ValueError(f"输入文件不存在: {input_file_path}")
+                path_validator = get_path_validator()
+                if not path_validator.validate_input_path(input_file_path):
+                    raise ValueError(f"输入文件路径不安全或不存在: {input_file_path}")
             else:
                 raise ValueError("必须指定topic或input_file参数")
             

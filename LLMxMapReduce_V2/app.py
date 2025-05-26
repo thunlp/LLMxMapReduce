@@ -165,6 +165,7 @@ class Application:
         self.global_pipeline = None
         self.pipeline_monitor = None
         self.pipeline_task_manager = None
+        self.task_manager = None
         
         # 初始化服务
         self._init_services()
@@ -173,7 +174,7 @@ class Application:
         """初始化各项服务"""
         # 初始化Redis任务管理器
         try:
-            task_manager = get_task_manager({
+            self.task_manager = get_task_manager({
                 'host': self.config.redis.host,
                 'port': self.config.redis.port,
                 'db': self.config.redis.db,
@@ -233,6 +234,31 @@ class Application:
         
         self.logger.info("全局Pipeline已启动")
     
+    def get_system_status(self):
+        """获取系统状态信息"""
+        status = {
+            'pipeline_running': False,
+            'task_manager_connected': False,
+            'active_tasks': 0,
+            'total_tasks': 0
+        }
+        
+        # Pipeline状态
+        if self.global_pipeline:
+            status['pipeline_running'] = self.global_pipeline.is_start
+        
+        # 任务管理器状态
+        if self.task_manager:
+            try:
+                status['task_manager_connected'] = self.task_manager.health_check()
+                status['active_tasks'] = self.task_manager.get_active_task_count()
+                all_tasks = self.task_manager.list_tasks(limit=1000)
+                status['total_tasks'] = len(all_tasks)
+            except Exception as e:
+                self.logger.error(f"获取任务管理器状态失败: {str(e)}")
+        
+        return status
+    
     def run(self):
         """运行应用程序"""
         self.logger.info(f"Web服务器启动在 {self.config.api.host}:{self.config.api.port}")
@@ -257,6 +283,24 @@ class Application:
                 self.logger.info("全局Pipeline已关闭")
             except Exception as e:
                 self.logger.error(f"关闭Pipeline时出错: {str(e)}")
+        
+        # 清理任务管理器
+        if self.task_manager:
+            self.logger.info("正在清理任务管理器...")
+            try:
+                # 清理过期任务
+                expired_count = self.task_manager.cleanup_expired_tasks()
+                if expired_count > 0:
+                    self.logger.info(f"清理了 {expired_count} 个过期任务")
+                
+                # 获取活跃任务数量
+                active_count = self.task_manager.get_active_task_count()
+                if active_count > 0:
+                    self.logger.warning(f"仍有 {active_count} 个活跃任务未完成")
+                
+                self.logger.info("任务管理器清理完成")
+            except Exception as e:
+                self.logger.error(f"清理任务管理器时出错: {str(e)}")
         
         self.logger.info("应用程序已关闭")
 

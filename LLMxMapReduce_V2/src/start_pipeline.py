@@ -13,6 +13,7 @@ from src.encode.encode_pipeline import EncodePipeline
 from src.hidden.hidden_pipeline import HiddenPipeline
 from src.LLM_search import LLM_search
 from src.async_crawl import AsyncCrawler
+from src.path_validator import get_path_validator
 
 logger = logging.getLogger(__name__)
 
@@ -88,9 +89,14 @@ def main():
         url_list = retriever.batch_web_search(queries=queries, topic=args.topic, top_n=int(args.top_n * 1.2))
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         # get references
-        crawl_output_path = f"output/{args.topic}_{timestamp}_crawl_result.jsonl"
-        if not os.path.exists(os.path.dirname(crawl_output_path)):
-            os.mkdir(os.path.dirname(crawl_output_path))
+        path_validator = get_path_validator()
+        crawl_output_path = path_validator.validate_output_path(
+            topic=args.topic,
+            timestamp=timestamp,
+            suffix='crawl_result',
+            extension='jsonl',
+            base_dir='output'
+        )
 
         crawler = AsyncCrawler(model="gemini-2.0-flash-thinking-exp-01-21", infer_type="OpenAI")
         asyncio.run(

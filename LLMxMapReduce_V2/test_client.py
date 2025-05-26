@@ -32,6 +32,7 @@ import os
 import logging
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
+from src.path_validator import get_path_validator
 
 def setup_logging():
     # 创建日志目录
@@ -115,7 +116,14 @@ def start_pipeline(args):
         # 生成默认输出文件路径
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         topic = args.topic or 'output'
-        payload['output_file'] = f"output/{topic}_{timestamp}_result.jsonl"
+        path_validator = get_path_validator()
+        payload['output_file'] = path_validator.validate_output_path(
+            topic=topic,
+            timestamp=timestamp,
+            suffix='result',
+            extension='jsonl',
+            base_dir='output'
+        )
     
     # 如果提供了input_file则使用它代替topic
     if args.input_file:

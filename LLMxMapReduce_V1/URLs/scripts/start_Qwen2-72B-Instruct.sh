@@ -1,1 +1,0 @@
-bash URLs/start_gunicorn.sh --hf-model-name your/model/path --per-proc-gpus 2 --quantization None --cuda-visible-devices 0,1,2,3,4,5,6,7

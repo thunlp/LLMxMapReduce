@@ -49,7 +49,7 @@ class PipelineConfig:
     self_refine_count: int = 3
     self_refine_best_of: int = 3
     check_interval: int = 60  # 任务检查间隔
-    timeout: int = 10800  # 任务超时时间, 3个小时
+    timeout: int = 86400  # 任务超时时间, 3个小时
 
 
 @dataclass
