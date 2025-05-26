@@ -11,6 +11,7 @@ from request import RequestWrapper
 from typing import List
 from prompts import PAGE_REFINE_PROMPT, SIMILARITY_PROMPT
 import logging
+from src.database import mongo_manager
 
 logger = logging.getLogger(__name__)
 # Enable nested event loops (suitable for Jupyter or IPython environments)
@@ -41,7 +42,8 @@ class AsyncCrawler:
         self,
         topic: str,
         url_list: List[str],
-        crawl_output_file_path: str,
+        task_id: str,
+        crawl_output_file_path: str = None,
         top_n: int = 80,
     ):
         """
@@ -55,12 +57,13 @@ class AsyncCrawler:
         Args:
             topic (str): The topic or theme associated with the URLs
             url_list (List[str]): A list of URLs to crawl
-            crawl_output_file_path (str): The file path where the final processed results will be saved
+            task_id (str): The task ID for tracking
+            crawl_output_file_path (str, optional): The file path where the final processed results will be saved (deprecated)
             top_n (int, optional): Maximum number of top results to save. Defaults to 80
         """
         process_start_time = time.time()
         stage_time = process_start_time
-        logger.info(f"Starting crawling process for {len(url_list)} URLs")
+        logger.info(f"Starting crawling process for {len(url_list)} URLs, task_id={task_id}")
 
         # Stage 1: Concurrent URL crawling
         results = await self._crawl_urls(topic, url_list)
@@ -84,7 +87,7 @@ class AsyncCrawler:
         stage_time = time.time()
 
         # Stage 4: Result processing and saving
-        self._process_results(results, crawl_output_file_path, top_n=top_n)
+        self._process_results(results, task_id, topic, crawl_output_file_path, top_n=top_n)
         logger.info(
             f"Stage 4 - Results processing completed in {time.time() - stage_time:.2f} seconds, with {len(results)} results"
         )
@@ -333,23 +336,26 @@ class AsyncCrawler:
     def _process_results(
         self,
         results,
-        output_path,
+        task_id: str,
+        topic: str,
+        output_path: str = None,
         top_n=5,
         similarity_threshold=DEFAULT_SIMILARITY_THRESHOLD,
         min_length=DEFAULT_MIN_LENGTH,
         max_length=DEFAULT_MAX_LENGTH,
     ):
         """
-        Process crawling results and save to file.
+        Process crawling results and save to MongoDB.
 
         Args:
             results: Raw crawling results
-            output_path: Output file path
+            task_id: Task ID for tracking
+            topic: The topic of the crawl
+            output_path: Output file path (optional, for backward compatibility)
             top_n: Maximum number of documents to keep for each topic
             similarity_threshold: Similarity threshold
             min_length: Minimum document length
             max_length: Maximum document length
-            minimal_length: Allowed minimum document length
         """
         # Step 1: Process each paper data serially
         processed_data = []
@@ -369,25 +375,47 @@ class AsyncCrawler:
 
         # Step 2: Organize data by topic
         topics = {}
-        for topic, paper_data in processed_data:
-            topics.setdefault(topic, []).append(paper_data)
+        for topic_name, paper_data in processed_data:
+            topics.setdefault(topic_name, []).append(paper_data)
 
-        # Step 3: Write to file
-        with open(output_path, "w", encoding="utf-8") as outfile:
-            for topic, papers in topics.items():
-                filtered_papers = self._filter_papers(
-                    papers,
-                    similarity_threshold,
-                    min_length,
-                    max_length,
-                    top_n,
-                )
+        # Step 3: Save to MongoDB
+        all_papers = []
+        for topic_name, papers in topics.items():
+            filtered_papers = self._filter_papers(
+                papers,
+                similarity_threshold,
+                min_length,
+                max_length,
+                top_n,
+            )
+            all_papers.extend(filtered_papers)
 
-                output_data = {"title": topic, "papers": filtered_papers}
-                json.dump(output_data, outfile, ensure_ascii=False)
-                outfile.write("\n")
+        # 保存到 MongoDB
+        if mongo_manager and mongo_manager.save_crawl_results(task_id, topic, all_papers):
+            logger.info(f"Crawl results saved to MongoDB for task_id={task_id}, papers_count={len(all_papers)}")
+        else:
+            logger.error(f"Failed to save crawl results to MongoDB for task_id={task_id}")
 
-        logger.info(f"Processed data has been saved to {output_path}")
+        # Step 4: (可选) 如果提供了输出路径，同时保存到文件
+        if output_path:
+            try:
+                with open(output_path, "w", encoding="utf-8") as outfile:
+                    for topic_name, papers in topics.items():
+                        filtered_papers = self._filter_papers(
+                            papers,
+                            similarity_threshold,
+                            min_length,
+                            max_length,
+                            top_n,
+                        )
+
+                        output_data = {"title": topic_name, "papers": filtered_papers}
+                        json.dump(output_data, outfile, ensure_ascii=False)
+                        outfile.write("\n")
+
+                logger.info(f"Processed data has also been saved to file: {output_path}")
+            except Exception as e:
+                logger.warning(f"Failed to save to file {output_path}: {e}, but data is saved in MongoDB")
 
     def _filter_papers(
         self,

@@ -40,7 +40,8 @@ class MongoManager:
     def __init__(self, 
                  connection_string: str = None,
                  database_name: str = "llm_mapreduce",
-                 collection_name: str = "surveys"):
+                 collection_name: str = "surveys",
+                 crawl_results_collection: str = "crawl_results"):
         
         # 使用锁保护初始化过程
         with self._instance_lock:
@@ -53,6 +54,7 @@ class MongoManager:
             )
             self.database_name = database_name
             self.collection_name = collection_name
+            self.crawl_results_collection = crawl_results_collection
             self.max_retries = 3
             self.retry_delay = 1
             
@@ -94,6 +96,7 @@ class MongoManager:
     def _create_indexes(self):
         """创建必要的索引"""
         try:
+            # Survey集合索引
             collection = self._db[self.collection_name]
             
             # 为task_id创建唯一索引
@@ -107,6 +110,21 @@ class MongoManager:
             
             # 为status创建索引
             collection.create_index("status")
+            
+            # 爬虫结果集合索引
+            crawl_collection = self._db[self.crawl_results_collection]
+            
+            # 为task_id创建索引（爬虫结果可能有多个记录对应同一个task_id）
+            crawl_collection.create_index("task_id")
+            
+            # 为topic创建索引
+            crawl_collection.create_index("topic")
+            
+            # 为created_at创建索引
+            crawl_collection.create_index([("created_at", ASCENDING)])
+            
+            # 复合索引：task_id + created_at，用于快速查询最新的爬虫结果
+            crawl_collection.create_index([("task_id", ASCENDING), ("created_at", -1)])
             
             logger.info("MongoDB索引创建完成")
             
@@ -338,6 +356,136 @@ class MongoManager:
             
         except Exception as e:
             logger.error(f"健康检查失败: {str(e)}")
+            return False
+    
+    def save_crawl_results(self, task_id: str, topic: str, papers: List[Dict[str, Any]]) -> bool:
+        """保存爬虫结果到MongoDB
+        
+        Args:
+            task_id: 任务ID
+            topic: 主题
+            papers: 论文列表
+            
+        Returns:
+            bool: 是否保存成功
+        """
+        def _save_operation():
+            collection = self._db[self.crawl_results_collection]
+            
+            document = {
+                "task_id": task_id,
+                "topic": topic,
+                "papers": papers,
+                "created_at": datetime.now(),
+                "metadata": {
+                    "papers_count": len(papers),
+                    "avg_similarity": sum(p.get("similarity", 0) for p in papers) / len(papers) if papers else 0
+                }
+            }
+            
+            # 使用upsert模式
+            result = collection.replace_one(
+                {"task_id": task_id, "topic": topic},
+                document,
+                upsert=True
+            )
+            
+            if result.upserted_id or result.modified_count > 0:
+                logger.info(f"爬虫结果保存成功: task_id={task_id}, topic={topic}, papers_count={len(papers)}")
+                return True
+            else:
+                logger.warning(f"爬虫结果保存未发生变化: task_id={task_id}, topic={topic}")
+                return False
+        
+        try:
+            return self._retry_operation(_save_operation)
+        except Exception as e:
+            logger.error(f"保存爬虫结果失败: task_id={task_id}, topic={topic}, error={str(e)}")
+            return False
+    
+    def get_crawl_results(self, task_id: str) -> Optional[Dict[str, Any]]:
+        """根据task_id获取最新的爬虫结果
+        
+        Args:
+            task_id: 任务ID
+            
+        Returns:
+            爬虫结果文档或None
+        """
+        
+        def _get_operation():
+            collection = self._db[self.crawl_results_collection]
+            # 获取最新的爬虫结果
+            result = collection.find_one(
+                {"task_id": task_id},
+                sort=[("created_at", -1)]
+            )
+            
+            if result:
+                logger.debug(f"找到爬虫结果: task_id={task_id}")
+                return result
+            else:
+                logger.debug(f"未找到爬虫结果: task_id={task_id}")
+                return None
+        
+        try:
+            return self._retry_operation(_get_operation)
+        except Exception as e:
+            logger.error(f"获取爬虫结果失败: task_id={task_id}, error={str(e)}")
+            return None
+    
+    def get_crawl_results_by_topic(self, topic: str, limit: int = 10) -> List[Dict[str, Any]]:
+        """根据主题获取爬虫结果
+        
+        Args:
+            topic: 主题
+            limit: 返回结果数量限制
+            
+        Returns:
+            爬虫结果列表
+        """
+        
+        def _get_operation():
+            collection = self._db[self.crawl_results_collection]
+            cursor = collection.find(
+                {"topic": topic}
+            ).sort("created_at", -1).limit(limit)
+            
+            results = list(cursor)
+            logger.debug(f"根据主题找到{len(results)}个爬虫结果: topic={topic}")
+            return results
+        
+        try:
+            return self._retry_operation(_get_operation)
+        except Exception as e:
+            logger.error(f"根据主题获取爬虫结果失败: topic={topic}, error={str(e)}")
+            return []
+    
+    def delete_crawl_results(self, task_id: str) -> bool:
+        """删除指定任务的所有爬虫结果
+        
+        Args:
+            task_id: 任务ID
+            
+        Returns:
+            是否删除成功
+        """
+        
+        def _delete_operation():
+            collection = self._db[self.crawl_results_collection]
+            result = collection.delete_many({"task_id": task_id})
+            
+            if result.deleted_count > 0:
+                logger.info(f"爬虫结果删除成功: task_id={task_id}, count={result.deleted_count}")
+                return True
+            else:
+                logger.warning(f"爬虫结果删除失败，记录不存在: task_id={task_id}")
+                return False
+        
+        try:
+            return self._retry_operation(_delete_operation)
+        except Exception as e:
+            logger.error(f"删除爬虫结果失败: task_id={task_id}, error={str(e)}")
             return False
 
 

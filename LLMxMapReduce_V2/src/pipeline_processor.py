@@ -86,33 +86,22 @@ class TopicSearchProcessor(TaskProcessor):
                 top_n=int(top_n * 1.2)
             )
             
-            # 准备输出路径
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            path_validator = get_path_validator()
-            output_path = path_validator.validate_output_path(
-                topic=topic,
-                timestamp=timestamp,
-                suffix='crawl_result',
-                extension='jsonl',
-                base_dir='output'
-            )
-            
             # 更新状态：爬取内容
             task_manager.update_task_status(task_id, TaskStatus.CRAWLING)
             logger.info(f"[任务 {task_id}] 开始爬取网页内容")
             
             # 执行爬取
-            # 这里写入文件是为了保存中间产物，方便后续的llm pipeline的重启
+            # 现在将爬虫结果保存到 MongoDB 中，而不是本地文件
             crawler = AsyncCrawler(model=self.search_model, infer_type="OpenAI")
             await crawler.run(
                 topic=topic,
                 url_list=url_list,
-                crawl_output_file_path=output_path,
+                task_id=task_id,  # 传递 task_id
                 top_n=top_n
             )
             
-            logger.info(f"[任务 {task_id}] 爬取完成: {output_path}")
-            return output_path
+            logger.info(f"[任务 {task_id}] 爬取完成，结果已保存到 MongoDB")
+            return task_id  # 返回 task_id 而不是文件路径
             
         except Exception as e:
             logger.error(f"[任务 {task_id}] 处理失败: {str(e)}")
@@ -168,17 +157,7 @@ class PipelineTaskManager:
         original_topic = params.get('topic', 'unnamed_survey')
         unique_survey_title = f"{original_topic}_{task_id}_{timestamp}"
         
-        # 准备输出文件路径
-        # todo 这里不应该还有output_file这种参数了，因为数据全都是存在数据库中的
-        if 'output_file' not in params or not params['output_file']:
-            path_validator = get_path_validator()
-            params['output_file'] = path_validator.validate_output_path(
-                topic=original_topic,
-                timestamp=timestamp,
-                suffix='result',
-                extension='jsonl',
-                base_dir='output'
-            )
+        # 不再需要准备输出文件路径，因为数据现在存储在 MongoDB 中
         
         # 扩展参数
         extended_params = params.copy()
@@ -220,30 +199,55 @@ class PipelineTaskManager:
             # 更新状态
             self.task_manager.update_task_status(task_id, TaskStatus.PREPARING)
             
-            # 处理输入文件
-            input_file_path = None
+            # 处理输入数据
+            input_data = None
             
             if params.get('topic'):
                 # 异步处理主题搜索
-                input_file_path = asyncio.run(
+                result_task_id = asyncio.run(
                     self.topic_processor.process(task_id, params)
                 )
                 
-                if not input_file_path:
+                if not result_task_id:
                     raise ValueError("主题处理失败")
+                
+                # 从 MongoDB 获取爬虫结果
+                crawl_results = mongo_manager.get_crawl_results(task_id)
+                if not crawl_results:
+                    raise ValueError(f"未找到爬虫结果: task_id={task_id}")
+                
+                input_data = crawl_results
                     
             elif params.get('input_file'):
+                # 从文件读取数据（向后兼容）
                 input_file_path = params['input_file']
                 path_validator = get_path_validator()
                 if not path_validator.validate_input_path(input_file_path):
                     raise ValueError(f"输入文件路径不安全或不存在: {input_file_path}")
+                
+                # 读取文件内容
+                with open(input_file_path, 'r', encoding='utf-8') as f:
+                    papers = []
+                    for line in f:
+                        try:
+                            data = json.loads(line.strip())
+                            if 'papers' in data:
+                                papers.extend(data['papers'])
+                        except json.JSONDecodeError:
+                            continue
+                    
+                    input_data = {
+                        'task_id': task_id,
+                        'topic': params.get('topic', 'unknown'),
+                        'papers': papers
+                    }
             else:
                 raise ValueError("必须指定topic或input_file参数")
             
-            # 修改输入文件
+            # 准备 pipeline 输入数据
             unique_title = task.get('expected_survey_title')
-            modified_input = self._modify_input_file(
-                input_file_path, unique_title, task_id
+            pipeline_input = self._prepare_pipeline_input(
+                input_data, unique_title, task_id
             )
             
             # 更新状态：处理中
@@ -253,41 +257,41 @@ class PipelineTaskManager:
             self._start_monitoring(task_id)
             
             # 提交到pipeline
-            self.global_pipeline.put(modified_input)
+            self.global_pipeline.put(pipeline_input)
             logger.info(f"[任务 {task_id}] 已提交到pipeline")
             
         except Exception as e:
             logger.error(f"[任务 {task_id}] 执行失败: {str(e)}")
             self.task_manager.update_task_status(task_id, TaskStatus.FAILED, str(e))
     
-    def _modify_input_file(self, input_file: str, unique_title: str, 
-                          task_id: str) -> str:
+    def _prepare_pipeline_input(self, input_data: Dict[str, Any], unique_title: str, 
+                               task_id: str) -> str:
         """
-        修改输入文件，添加唯一标题和task_id
+        准备 pipeline 输入数据，创建临时文件供 pipeline 处理
         
         Args:
-            input_file: 原始输入文件路径
+            input_data: 输入数据（从 MongoDB 或文件读取）
             unique_title: 唯一标题
             task_id: 任务ID
             
         Returns:
-            修改后的文件路径
+            临时文件路径
         """
-        temp_file = f"{input_file}.{task_id}.tmp"
+        temp_file = f"pipeline_input_{task_id}.tmp"
         
-        with open(input_file, 'r', encoding='utf-8') as f_in:
-            with open(temp_file, 'w', encoding='utf-8') as f_out:
-                for line in f_in:
-                    try:
-                        data = json.loads(line.strip())
-                        if 'title' in data:
-                            data['title'] = unique_title
-                            data['task_id'] = task_id
-                        f_out.write(json.dumps(data, ensure_ascii=False) + '\n')
-                    except json.JSONDecodeError:
-                        f_out.write(line)
+        # 准备输出数据
+        output_data = {
+            'title': unique_title,
+            'task_id': task_id,
+            'papers': input_data.get('papers', [])
+        }
         
-        logger.info(f"[任务 {task_id}] 创建修改后的输入文件: {temp_file}")
+        # 写入临时文件
+        with open(temp_file, 'w', encoding='utf-8') as f_out:
+            json.dump(output_data, f_out, ensure_ascii=False)
+            f_out.write('\n')
+        
+        logger.info(f"[任务 {task_id}] 创建 pipeline 输入文件: {temp_file}")
         return temp_file
     
     def _start_monitoring(self, task_id: str):
@@ -339,7 +343,11 @@ class PipelineTaskManager:
         import glob
         
         try:
+            # 清理旧格式的临时文件
             temp_files = glob.glob(f"*.{task_id}.tmp")
+            # 清理新格式的临时文件
+            temp_files.extend(glob.glob(f"pipeline_input_{task_id}.tmp"))
+            
             for temp_file in temp_files:
                 if os.path.exists(temp_file):
                     os.remove(temp_file)
