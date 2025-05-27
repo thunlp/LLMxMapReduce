@@ -11,7 +11,7 @@ from request import RequestWrapper
 from typing import List
 from prompts import PAGE_REFINE_PROMPT, SIMILARITY_PROMPT
 import logging
-from src.database import mongo_manager
+from src.database import get_mongo_manager
 
 logger = logging.getLogger(__name__)
 # Enable nested event loops (suitable for Jupyter or IPython environments)

@@ -19,7 +19,8 @@ def test_database_connection():
     print("🔍 测试数据库连接...")
     
     try:
-        from src.database import mongo_manager
+        from src.database import get_mongo_manager
+        mongo_manager = get_mongo_manager()
         
         if mongo_manager.connect():
             print("✅ 数据库连接成功")
@@ -134,7 +135,8 @@ def test_database_operations():
     print("\n💾 测试数据库操作...")
     
     try:
-        from src.database import mongo_manager
+        from src.database import get_mongo_manager
+        mongo_manager = get_mongo_manager()
         
         # 测试保存数据
         test_task_id = f"test_{int(time.time())}"

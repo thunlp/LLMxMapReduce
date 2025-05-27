@@ -11,7 +11,7 @@ from flask import Blueprint, request, jsonify
 
 from src.task_manager import TaskStatus, get_task_manager
 from src.pipeline_processor import PipelineTaskManager
-from src.database import mongo_manager
+from src.database import get_mongo_manager
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +21,8 @@ api_bp = Blueprint('api', __name__, url_prefix='/api')
 # 全局变量
 pipeline_task_manager: Optional[PipelineTaskManager] = None
 
+# 全局mongo_manager
+mongo_manager = get_mongo_manager()
 
 def set_pipeline_manager(manager: PipelineTaskManager):
     """设置Pipeline任务管理器"""

@@ -491,24 +491,24 @@ class MongoManager:
 
 
 # 全局实例
-mongo_manager = None
+_mongo_manager = None
 
-def init_mongo_manager(config: Optional[Dict[str, Any]] = None):
+def get_mongo_manager(config: Optional[Dict[str, Any]] = None) -> MongoManager:
     """
     初始化MongoDB管理器，支持传入配置参数
     
     Args:
         config: MongoDB配置对象，包含uri, database, collection等属性
     """
-    global mongo_manager
+    global _mongo_manager
 
-    if mongo_manager is None:
+    if _mongo_manager is None:
         if config is None:
             raise ValueError("初始化阶段MongoDB配置字典不能为空")
-        mongo_manager = MongoManager(
+        _mongo_manager = MongoManager(
             connection_string=config.uri,
             database_name=config.database,
             collection_name=config.collection
         )
     
-    return mongo_manager 
+    return _mongo_manager 
