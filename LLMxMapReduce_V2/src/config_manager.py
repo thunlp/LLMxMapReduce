@@ -66,6 +66,20 @@ class APIConfig:
 
 
 @dataclass
+class DatabaseConfig:
+    """关系数据库配置"""
+    uri: str = 'sqlite:///app.db' # todo maybe change to mysql or postgres (in the future)
+    track_modifications: bool = False
+
+
+@dataclass
+class JWTConfig:
+    """JWT配置"""
+    secret_key: str = 'dev-jwt-secret'
+    access_token_expires: int = 86400 * 7  # 7天
+
+
+@dataclass
 class LoggingConfig:
     """日志配置"""
     level: str = 'INFO'
@@ -84,6 +98,8 @@ class AppConfig:
     pipeline: PipelineConfig = field(default_factory=PipelineConfig)
     api: APIConfig = field(default_factory=APIConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
+    database: DatabaseConfig = field(default_factory=DatabaseConfig)
+    jwt: JWTConfig = field(default_factory=JWTConfig)
     
     # 环境变量
     openai_api_key: Optional[str] = None
@@ -176,6 +192,14 @@ class AppConfig:
         self.logging.file_enabled = get_required_env('LOG_FILE_ENABLED', bool)
         self.logging.max_bytes = get_required_env('LOG_MAX_BYTES', int)
         self.logging.backup_count = get_required_env('LOG_BACKUP_COUNT', int)
+        
+        # 数据库配置 - 可选
+        self.database.uri = get_optional_env('DATABASE_URI', 'sqlite:///app.db')
+        self.database.track_modifications = get_optional_env('DATABASE_TRACK_MODIFICATIONS', False, bool)
+        
+        # JWT配置 - 可选
+        self.jwt.secret_key = get_optional_env('JWT_SECRET_KEY', 'dev-jwt-secret')
+        self.jwt.access_token_expires = get_optional_env('JWT_ACCESS_TOKEN_EXPIRES', 86400 * 7, int)
         
         # API密钥 - 必需
         self.openai_api_key = get_required_env('OPENAI_API_KEY')

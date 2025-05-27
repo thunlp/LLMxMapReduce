@@ -14,5 +14,8 @@ google-genai
 pymongo>=4.0.0
 flask
 flask-cors
+flask-sqlalchemy
+flask-jwt-extended
 redis
 python-dotenv
+tencentcloud-sdk-python

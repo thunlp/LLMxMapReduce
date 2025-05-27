@@ -12,6 +12,8 @@ import argparse
 from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import JWTManager
 from dotenv import load_dotenv
 
 # 加载.env文件
@@ -146,11 +148,39 @@ class Application:
         
         # 初始化Flask应用
         self.app = Flask(__name__)
+        
+        # 配置Flask应用
+        self.app.config['SECRET_KEY'] = self.config.jwt.secret_key
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = self.config.database.uri
+        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = self.config.database.track_modifications
+        self.app.config['JWT_SECRET_KEY'] = self.config.jwt.secret_key
+        self.app.config['JWT_ACCESS_TOKEN_EXPIRES'] = self.config.jwt.access_token_expires
+        
+        # 初始化扩展
         if self.config.api.cors_enabled:
             CORS(self.app)
         
+        # 初始化数据库和JWT
+        from src.backend_api.models import db
+        db.init_app(self.app)
+        
+        # 初始化JWT
+        jwt = JWTManager(self.app)
+        
         # 注册API蓝图
         self.app.register_blueprint(api_bp)
+
+        # 业务API蓝图
+        from src.backend_api.auth import auth_bp
+        from src.backend_api.redemption import redemption_bp
+        
+        self.app.register_blueprint(auth_bp)
+        self.app.register_blueprint(redemption_bp)
+        
+        # 创建数据库表
+        with self.app.app_context():
+            db.create_all()
+            self.logger.info("数据库表已创建")
         
         # 初始化组件
         self.global_pipeline = None
