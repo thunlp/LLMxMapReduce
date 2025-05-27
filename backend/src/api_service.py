@@ -16,7 +16,7 @@ from src.database.mongo_manager import get_mongo_manager
 logger = logging.getLogger(__name__)
 
 # 创建蓝图
-api_bp = Blueprint('api', __name__, url_prefix='/api/pipeline')
+api_bp = Blueprint('task', __name__)
 
 # 全局变量
 pipeline_task_manager: Optional[PipelineTaskManager] = None

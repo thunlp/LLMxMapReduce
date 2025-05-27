@@ -32,6 +32,7 @@ from src.encode.encode_pipeline import EncodePipeline
 from src.hidden.hidden_pipeline import HiddenPipeline
 from async_d import Monitor, PipelineAnalyser, Pipeline
 from src.database.mongo_manager import get_mongo_manager
+from src.common_service.auth.tencent_sms import get_sms_client
 
 
 def setup_logging(config):
@@ -166,16 +167,19 @@ class Application:
         
         # 初始化JWT
         jwt = JWTManager(self.app)
+
+        # 初始化短信
+        sms_client = get_sms_client(self.config.sms)
         
         # 注册API蓝图
-        self.app.register_blueprint(api_bp)
+        self.app.register_blueprint(api_bp, url_prefix='/api')
 
         # 业务API蓝图
         from src.common_service.auth import auth_bp
         from src.common_service.redemption import redemption_bp
         
-        self.app.register_blueprint(auth_bp)
-        self.app.register_blueprint(redemption_bp)
+        self.app.register_blueprint(auth_bp, url_prefix='/auth')
+        self.app.register_blueprint(redemption_bp, url_prefix='/redemption')
         
         # 创建数据库表
         with self.app.app_context():
@@ -195,14 +199,7 @@ class Application:
         """初始化必要的组件"""
         # 初始化Redis任务管理器
         try:
-            self.task_manager = get_task_manager({
-                'host': self.config.redis.host,
-                'port': self.config.redis.port,
-                'db': self.config.redis.db,
-                'password': self.config.redis.password,
-                'key_prefix': self.config.redis.key_prefix,
-                'expire_time': self.config.redis.expire_time
-            })
+            self.task_manager = get_task_manager(self.config.redis)
             self.logger.info("Redis任务管理器初始化成功")
         except Exception as e:
             self.logger.error(f"Redis初始化失败: {str(e)}")
