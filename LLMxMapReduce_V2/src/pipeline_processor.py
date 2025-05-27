@@ -15,9 +15,12 @@ from abc import ABC, abstractmethod
 
 from src.task_manager import TaskStatus, get_task_manager
 from src.path_validator import get_path_validator
+from src.database import get_mongo_manager
+
 
 logger = logging.getLogger(__name__)
 
+mongo_manager = get_mongo_manager()
 
 class TaskProcessor(ABC):
     """任务处理器抽象基类"""
@@ -81,36 +84,37 @@ class TopicSearchProcessor(TaskProcessor):
             )
             
             # 生成查询 - 添加详细的错误处理
-            try:
-                queries = retriever.get_queries(topic=topic, description=description)
-                if not queries:
-                    raise ValueError("生成的查询列表为空")
-                logger.info(f"[任务 {task_id}] 查询生成成功，共生成 {len(queries)} 个查询")
-            except Exception as e:
-                error_msg = f"查询生成失败: {str(e)}"
-                logger.error(f"[任务 {task_id}] {error_msg}")
-                task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
-                return None
+            # todo debug for now, not get queries
+            # try:
+            #     queries = retriever.get_queries(topic=topic, description=description)
+            #     if not queries:
+            #         raise ValueError("生成的查询列表为空")
+            #     logger.info(f"[任务 {task_id}] 查询生成成功，共生成 {len(queries)} 个查询")
+            # except Exception as e:
+            #     error_msg = f"查询生成失败: {str(e)}"
+            #     logger.error(f"[任务 {task_id}] {error_msg}")
+            #     task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
+            #     return None
             
             # 更新状态：搜索网页
             task_manager.update_task_status(task_id, TaskStatus.SEARCHING_WEB)
             logger.info(f"[任务 {task_id}] 开始搜索网页")
             
             # 搜索网页 - 添加详细的错误处理
-            try:
-                url_list = retriever.batch_web_search(
-                    queries=queries,
-                    topic=topic,
-                    top_n=int(top_n * 1.2)
-                )
-                if not url_list:
-                    raise ValueError("搜索到的URL列表为空")
-                logger.info(f"[任务 {task_id}] 网页搜索成功，共找到 {len(url_list)} 个URL")
-            except Exception as e:
-                error_msg = f"网页搜索失败: {str(e)}"
-                logger.error(f"[任务 {task_id}] {error_msg}")
-                task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
-                return None
+            # try:
+            #     url_list = retriever.batch_web_search(
+            #         queries=queries,
+            #         topic=topic,
+            #         top_n=int(top_n * 1.2)
+            #     )
+            #     if not url_list:
+            #         raise ValueError("搜索到的URL列表为空")
+            #     logger.info(f"[任务 {task_id}] 网页搜索成功，共找到 {len(url_list)} 个URL")
+            # except Exception as e:
+            #     error_msg = f"网页搜索失败: {str(e)}"
+            #     logger.error(f"[任务 {task_id}] {error_msg}")
+            #     task_manager.update_task_status(task_id, TaskStatus.FAILED, error_msg)
+            #     return None
             
             # 更新状态：爬取内容
             task_manager.update_task_status(task_id, TaskStatus.CRAWLING)
@@ -121,7 +125,7 @@ class TopicSearchProcessor(TaskProcessor):
                 crawler = AsyncCrawler(model=self.search_model, infer_type="OpenAI")
                 await crawler.run(
                     topic=topic,
-                    url_list=url_list,
+                    url_list=[], # todo debug for now, not get url_list
                     task_id=task_id,
                     top_n=top_n
                 )

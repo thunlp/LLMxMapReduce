@@ -1,0 +1,50 @@
+# Query: from src.database import get_mongo_manager
+# ContextLines: 1
+
+10 results - 6 files
+
+LLMxMapReduce_V2/src/api_service.py:
+  13  from src.pipeline_processor import PipelineTaskManager
+  14: from src.database.mongo_manager import get_mongo_manager
+  15  
+
+LLMxMapReduce_V2/src/async_crawl.py:
+  13  import logging
+  14: from src.database import get_mongo_manager
+  15  
+
+LLMxMapReduce_V2/src/pipeline_processor.py:
+   17  from src.path_validator import get_path_validator
+   18: from src.database import get_mongo_manager
+   19  
+
+  133                  # 从 MongoDB 获取爬虫结果
+  134:                 from src.database import get_mongo_manager
+  135                  mongo_manager = get_mongo_manager()
+
+  288                  # 从 MongoDB 获取爬虫结果
+  289:                 from src.database import get_mongo_manager
+  290                  mongo_manager = get_mongo_manager()
+
+LLMxMapReduce_V2/src/decode/decode_pipeline.py:
+   47                  # 在运行时导入，确保获取到正确配置的mongo_manager
+   48:                 from src.database import get_mongo_manager
+   49                  mongo_manager = get_mongo_manager()
+
+  195                  # 在运行时导入，确保获取到正确配置的mongo_manager
+  196:                 from src.database import get_mongo_manager
+  197                  mongo_manager = get_mongo_manager()
+
+LLMxMapReduce_V2/src/encode/encode_pipeline.py:
+  62              # 在运行时导入，确保获取到正确配置的mongo_manager
+  63:             from src.database import get_mongo_manager
+  64              mongo_manager = get_mongo_manager()
+
+LLMxMapReduce_V2/tests/test_mongodb_connnect.py:
+   21      try:
+   22:         from src.database import get_mongo_manager
+   23          mongo_manager = get_mongo_manager()
+
+  137      try:
+  138:         from src.database import get_mongo_manager
+  139          mongo_manager = get_mongo_manager()
