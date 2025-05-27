@@ -305,9 +305,7 @@ class Application:
 def main():
     """主函数"""
     app = Application()
-    from src.database.mongo_manager import _mongo_manager
-    print(_mongo_manager is None)
-    # app.run()
+    app.run()
 
 
 if __name__ == '__main__':

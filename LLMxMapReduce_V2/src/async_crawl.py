@@ -66,6 +66,7 @@ class AsyncCrawler:
         stage_time = process_start_time
         logger.info(f"Starting crawling process for {len(url_list)} URLs, task_id={task_id}")
 
+        results = [] # todo debug for now, not get results
         # Stage 1: Concurrent URL crawling
         # results = await self._crawl_urls(topic, url_list)
         logger.info(
@@ -87,7 +88,7 @@ class AsyncCrawler:
         )
         stage_time = time.time()
 
-        results = [] # todo debug for now, not get results
+        
 
         # Stage 4: Result processing and saving
         self._process_results(results, task_id, topic, crawl_output_file_path, top_n=top_n)
@@ -394,7 +395,7 @@ class AsyncCrawler:
         #     all_papers.extend(filtered_papers)
         
         all_papers = []
-        hack_file_path = '/home/ubuntu/projects/dev/LLMxMapReduce/LLMxMapReduce_V2/output/mini_dataset.jsonl'
+        hack_file_path = '/home/ubuntu/projects/dev/LLMxMapReduce/LLMxMapReduce_V2/output/mini_dataset.json'
         with open(hack_file_path, 'r', encoding='utf-8') as file:
             all_papers = json.load(file)['papers']
 
