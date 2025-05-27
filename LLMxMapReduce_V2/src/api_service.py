@@ -11,7 +11,7 @@ from flask import Blueprint, request, jsonify
 
 from src.task_manager import TaskStatus, get_task_manager
 from src.pipeline_processor import PipelineTaskManager
-from src.database import get_mongo_manager
+from src.database.mongo_manager import get_mongo_manager
 
 logger = logging.getLogger(__name__)
 

@@ -15,7 +15,7 @@ from abc import ABC, abstractmethod
 
 from src.task_manager import TaskStatus, get_task_manager
 from src.path_validator import get_path_validator
-from src.database import get_mongo_manager
+from src.database.mongo_manager import get_mongo_manager
 
 
 logger = logging.getLogger(__name__)
@@ -131,7 +131,7 @@ class TopicSearchProcessor(TaskProcessor):
                 )
                 
                 # 从 MongoDB 获取爬虫结果
-                from src.database import get_mongo_manager
+                from src.database.mongo_manager import get_mongo_manager
                 mongo_manager = get_mongo_manager()
                 crawl_results = mongo_manager.get_crawl_results(task_id)
                 if not crawl_results or not crawl_results.get('papers'):
@@ -286,7 +286,7 @@ class PipelineTaskManager:
                     return
                 
                 # 从 MongoDB 获取爬虫结果
-                from src.database import get_mongo_manager
+                from src.database.mongo_manager import get_mongo_manager
                 mongo_manager = get_mongo_manager()
                 crawl_results = mongo_manager.get_crawl_results(task_id)
                 if not crawl_results:

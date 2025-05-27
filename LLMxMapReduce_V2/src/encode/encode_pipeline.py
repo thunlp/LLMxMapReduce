@@ -60,7 +60,7 @@ class EncodePipeline(Sequential):
             logger.info(f"[EncodePipeline] 开始从数据库加载数据: task_id={task_id}")
             
             # 在运行时导入，确保获取到正确配置的mongo_manager
-            from src.database import get_mongo_manager
+            from src.database.mongo_manager import get_mongo_manager
             mongo_manager = get_mongo_manager()
             
             # 获取任务信息

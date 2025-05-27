@@ -45,7 +45,7 @@ class DecodePipeline(Sequential):
         if self.use_database:
             try:
                 # 在运行时导入，确保获取到正确配置的mongo_manager
-                from src.database import get_mongo_manager
+                from src.database.mongo_manager import get_mongo_manager
                 mongo_manager = get_mongo_manager()
                 if mongo_manager.connect():
                     logger.info("DecodePipeline: 数据库连接成功，将使用数据库存储")
@@ -193,7 +193,7 @@ class DecodePipeline(Sequential):
         if self.use_database and survey.task_id:
             try:
                 # 在运行时导入，确保获取到正确配置的mongo_manager
-                from src.database import get_mongo_manager
+                from src.database.mongo_manager import get_mongo_manager
                 mongo_manager = get_mongo_manager()
                 if mongo_manager.save_survey(survey.task_id, survey_data):
                     logger.info(f"Survey保存到数据库成功: task_id={survey.task_id}, title={survey.title}")

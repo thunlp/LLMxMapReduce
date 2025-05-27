@@ -19,7 +19,7 @@ def test_database_connection():
     print("🔍 测试数据库连接...")
     
     try:
-        from src.database import get_mongo_manager
+        from src.database.mongo_manager import get_mongo_manager
         mongo_manager = get_mongo_manager()
         
         if mongo_manager.connect():
@@ -135,7 +135,7 @@ def test_database_operations():
     print("\n💾 测试数据库操作...")
     
     try:
-        from src.database import get_mongo_manager
+        from src.database.mongo_manager import get_mongo_manager
         mongo_manager = get_mongo_manager()
         
         # 测试保存数据
