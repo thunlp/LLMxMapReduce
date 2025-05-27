@@ -4,7 +4,6 @@
 集中管理应用程序的所有配置，支持环境变量和配置文件
 """
 import os
-import json
 import logging
 from typing import Dict, Any, Optional
 from dataclasses import dataclass, field
@@ -26,35 +25,35 @@ class RedisConfig:
 @dataclass
 class MongoConfig:
     """MongoDB配置"""
-    database: str
-    collection: str
+    database: str = ''
+    collection: str = ''
     uri: str = 'mongodb://localhost:27017/'
 
 
 @dataclass
 class PipelineConfig:
     """Pipeline配置"""
-    config_file: str
-    top_n: int
-    data_num: int
-    parallel_num: int
-    output_each_block: bool
-    digest_group_mode: str
-    skeleton_group_size: int
-    block_count: int
-    conv_layer: int
-    conv_kernel_width: int
-    conv_result_num: int
-    top_k: int
-    self_refine_count: int
-    self_refine_best_of: int
-    check_interval: int
-    timeout: int
-    use_search: bool
-    search_model: str
-    search_model_infer_type: str
-    search_engine: str
-    search_each_query_result: int
+    config_file: str = ''
+    top_n: int = 0
+    data_num: int = 0
+    parallel_num: int = 1
+    output_each_block: bool = False
+    digest_group_mode: str = ''
+    skeleton_group_size: int = 0
+    block_count: int = 0
+    conv_layer: int = 0
+    conv_kernel_width: int = 0
+    conv_result_num: int = 0
+    top_k: int = 0
+    self_refine_count: int = 0
+    self_refine_best_of: int = 0
+    check_interval: int = 0
+    timeout: int = 0
+    use_search: bool = False
+    search_model: str = ''
+    search_model_infer_type: str = ''
+    search_engine: str = ''
+    search_each_query_result: int = 0
 
 
 @dataclass
@@ -136,8 +135,6 @@ class AppConfig:
         self.redis.expire_time = get_optional_env('REDIS_EXPIRE_TIME', value_type=int)
         
         # MongoDB配置 - 必需
-        print(os.getenv("MONGO_DATABASE"))
-        print(os.getenv("MONGO_COLLECTION"))
         self.mongo.uri = get_optional_env('MONGO_URI', 'mongodb://localhost:27017/')
         self.mongo.database = get_required_env('MONGO_DATABASE')
         self.mongo.collection = get_required_env('MONGO_COLLECTION')
@@ -148,7 +145,7 @@ class AppConfig:
         self.pipeline.top_n = get_required_env('PIPELINE_TOP_N', int)
         self.pipeline.data_num = get_required_env('PIPELINE_DATA_NUM', int)
         self.pipeline.output_each_block = get_required_env('PIPELINE_OUTPUT_EACH_BLOCK', bool)
-        self.pipeline.digest_group_mode = get_required_env('PIPELINE_DIEGST_GROUP_MODE')
+        self.pipeline.digest_group_mode = get_required_env('PIPELINE_DIGEST_GROUP_MODE')
         self.pipeline.skeleton_group_size = get_required_env('PIPELINE_SKELETON_GROUP_SIZE', int)
         self.pipeline.block_count = get_required_env('PIPELINE_BLOCK_COUNT', int)
         self.pipeline.conv_layer = get_required_env('PIPELINE_CONV_LAYER', int)

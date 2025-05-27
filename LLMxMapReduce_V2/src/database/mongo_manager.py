@@ -493,7 +493,7 @@ class MongoManager:
 # 全局实例
 mongo_manager = None
 
-def init_mongo_manager(config: Dict[str, Any]):
+def init_mongo_manager(config: Optional[Dict[str, Any]] = None):
     """
     初始化MongoDB管理器，支持传入配置参数
     
@@ -503,6 +503,8 @@ def init_mongo_manager(config: Dict[str, Any]):
     global mongo_manager
 
     if mongo_manager is None:
+        if config is None:
+            raise ValueError("初始化阶段MongoDB配置字典不能为空")
         mongo_manager = MongoManager(
             connection_string=config.uri,
             database_name=config.database,
