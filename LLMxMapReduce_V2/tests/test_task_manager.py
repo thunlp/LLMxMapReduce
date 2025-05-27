@@ -1,6 +1,11 @@
 import unittest
 import time
 from datetime import datetime, timedelta
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from src.task_manager import RedisTaskManager, TaskStatus
 import json
 
