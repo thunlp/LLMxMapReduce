@@ -205,7 +205,6 @@ def main():
             print(f"   curl http://localhost:5000/api/task/{task_id}")
     
     print("\n🎉 测试完成!")
-    print("\n📚 更多信息请查看: DATABASE_OPTIMIZATION_README.md")
 
 
 if __name__ == "__main__":

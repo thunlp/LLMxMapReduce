@@ -62,13 +62,11 @@ class RedisTaskManager:
                 db=db,
                 password=password,
                 decode_responses=True,
-                connection_pool_kwargs={
-                    'max_connections': 50,
-                    'socket_keepalive': True,
-                    'socket_keepalive_options': {}
-                }
+                max_connections=50,
+                socket_keepalive=True,
+                socket_keepalive_options={}
             )
-            # 测试连接
+            # 测试redis连接
             self.redis_client.ping()
             logger.info(f"Redis连接成功: {host}:{port}")
         except RedisError as e:

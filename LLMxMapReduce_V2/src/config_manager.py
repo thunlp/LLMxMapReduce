@@ -8,6 +8,10 @@ import json
 import logging
 from typing import Dict, Any, Optional
 from dataclasses import dataclass, field
+from dotenv import load_dotenv
+
+# 加载.env文件
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
