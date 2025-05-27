@@ -66,29 +66,26 @@ class AsyncCrawler:
         stage_time = process_start_time
         logger.info(f"Starting crawling process for {len(url_list)} URLs, task_id={task_id}")
 
-        results = [] # todo debug for now, not get results
         # Stage 1: Concurrent URL crawling
-        # results = await self._crawl_urls(topic, url_list)
+        results = await self._crawl_urls(topic, url_list)
         logger.info(
             f"Stage 1 - Crawling completed in {time.time() - stage_time:.2f} seconds, with {len(results)} results"
         )
         stage_time = time.time()
 
         # Stage 2: Concurrent content filtering and title generation
-        # results = await self._process_filter_and_titles(results)
+        results = await self._process_filter_and_titles(results)
         logger.info(
             f"Stage 2 - Content filtering and title generation completed in {time.time() - stage_time:.2f} seconds, with {len(results)} results"
         )
         stage_time = time.time()
 
         # Stage 3: Concurrent similarity scoring
-        # results = await self._process_similarity_scores(results)
+        results = await self._process_similarity_scores(results)
         logger.info(
             f"Stage 3 - Similarity scoring completed in {time.time() - stage_time:.2f} seconds, with {len(results)} results"
         )
         stage_time = time.time()
-
-        
 
         # Stage 4: Result processing and saving
         self._process_results(results, task_id, topic, crawl_output_file_path, top_n=top_n)
@@ -361,44 +358,39 @@ class AsyncCrawler:
             min_length: Minimum document length
             max_length: Maximum document length
         """
-        # # Step 1: Process each paper data serially
-        # processed_data = []
-        # for data in results:
-        #     try:
-        #         # Build paper data
-        #         paper_data = {
-        #             "title": data["title"],
-        #             "url": data["url"],
-        #             "txt": data["filtered"],
-        #             "similarity": data.get("similarity", 0),
-        #         }
-        #         processed_data.append((data["topic"], paper_data))
-        #     except Exception as e:
-        #         logger.error(f"Failed to process paper data: {e}")
-        #         continue
+        # Step 1: Process each paper data serially
+        processed_data = []
+        for data in results:
+            try:
+                # Build paper data
+                paper_data = {
+                    "title": data["title"],
+                    "url": data["url"],
+                    "txt": data["filtered"],
+                    "similarity": data.get("similarity", 0),
+                }
+                processed_data.append((data["topic"], paper_data))
+            except Exception as e:
+                logger.error(f"Failed to process paper data: {e}")
+                continue
 
-        # # Step 2: Organize data by topic
-        # topics = {}
-        # for topic_name, paper_data in processed_data:
-        #     topics.setdefault(topic_name, []).append(paper_data)
+        # Step 2: Organize data by topic
+        topics = {}
+        for topic_name, paper_data in processed_data:
+            topics.setdefault(topic_name, []).append(paper_data)
 
-        # # Step 3: Save to MongoDB
-        # all_papers = []
-        # for topic_name, papers in topics.items():
-        #     filtered_papers = self._filter_papers(
-        #         papers,
-        #         similarity_threshold,
-        #         min_length,
-        #         max_length,
-        #         top_n,
-        #     )
-        #     all_papers.extend(filtered_papers)
-        
+        # Step 3: Save to MongoDB
         all_papers = []
-        hack_file_path = '/home/ubuntu/projects/dev/LLMxMapReduce/LLMxMapReduce_V2/output/mini_dataset.json'
-        with open(hack_file_path, 'r', encoding='utf-8') as file:
-            all_papers = json.load(file)['papers']
-
+        for topic_name, papers in topics.items():
+            filtered_papers = self._filter_papers(
+                papers,
+                similarity_threshold,
+                min_length,
+                max_length,
+                top_n,
+            )
+            all_papers.extend(filtered_papers)
+        
         # 保存到 MongoDB
         if mongo_manager and mongo_manager.save_crawl_results(task_id, topic, all_papers):
             logger.info(f"Crawl results saved to MongoDB for task_id={task_id}, papers_count={len(all_papers)}")
