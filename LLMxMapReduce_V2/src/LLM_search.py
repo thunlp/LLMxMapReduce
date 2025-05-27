@@ -79,11 +79,17 @@ class LLM_search:
         self.serpapi_key = os.getenv("SERP_API_KEY")
         self.serper_api_key = os.getenv("SERPER_API_KEY")
         
-        if self.serpapi_key is not None:
+        if self.serpapi_key:
+            if not isinstance(self.serpapi_key, str):
+                raise ValueError("SERP_API_KEY 必须是一个字符串")
             logger.info("Using SERPAPI for web search.")
-        elif self.bing_subscription_key is not None:
+        elif self.bing_subscription_key:
+            if not isinstance(self.bing_subscription_key, str):
+                raise ValueError("BING_SEARCH_V7_SUBSCRIPTION_KEY 必须是一个字符串")
             logger.info("Using Bing Search API for web search.")
-        elif self.serper_api_key is not None:
+        elif self.serper_api_key:
+            if not isinstance(self.serper_api_key, str):
+                raise ValueError("SERPER_API_KEY 必须是一个字符串")
             logger.info("Using Serper.dev API for web search.")
         else:
             raise ValueError("No valid search engine key provided, please check your environment variables, SERP_API_KEY, BING_SEARCH_V7_SUBSCRIPTION_KEY, or SERPER_API_KEY.")
