@@ -1,9 +1,0 @@
-{
-  "baseUrl": "http://localhost:5001",
-  "authToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTc0NzkwMjMwNCwianRpIjoiZjhhYzYyYmYtZWY2Yi00NWE4LWE5MjItYTU2NjUxZjU5NjRjIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNzQ3OTAyMzA0LCJleHAiOjE3NDc5ODg3MDR9.4Yvi9FYTYhW8lGB0hUj7kcbP99JEBuNaaXAl05_M0TI",
-  "testUser": {
-    "id": 1,
-    "phone": "13829816170"
-  },
-  "testRedemptionCode": "TEST1234567890"
-}
