@@ -167,11 +167,11 @@ class LLM_search:
         self,
         query: str,
     ):
-        if self.serpapi_key is not None:
+        if self.serpapi_key:
             return self._serpapi_web_search(query)
-        elif self.bing_subscription_key is not None and self.engine == "bing":
+        elif self.bing_subscription_key and self.engine == "bing":
             return self._bing_web_search(query)
-        elif self.serper_api_key is not None and self.engine == "google":
+        elif self.serper_api_key and self.engine == "google":
             return self._serper_web_search(query)
         else:
             raise ValueError("No valid search engine key provided, please check your environment variables, SERP_API_KEY, BING_SEARCH_V7_SUBSCRIPTION_KEY, or SERPER_API_KEY.")

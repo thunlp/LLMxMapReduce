@@ -309,6 +309,4 @@ def main():
 
 
 if __name__ == '__main__':
-    print(os.getenv("SERPER_API_KEY") is None)
-    print(os.getenv("SERP_API_KEY") is None)
-    # main() 
+    main() 
