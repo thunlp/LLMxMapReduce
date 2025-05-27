@@ -12,6 +12,10 @@ import argparse
 from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_cors import CORS
+from dotenv import load_dotenv
+
+# 加载.env文件
+load_dotenv()
 
 # 设置Python路径
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -28,11 +32,11 @@ from async_d import Monitor, PipelineAnalyser, Pipeline
 
 # 设置环境变量（开发环境默认值）
 if not os.getenv('OPENAI_API_KEY'):
-    os.environ['OPENAI_API_KEY'] = "7891b3e1-51cf-4979-9eae-ecdf4e411d5e"
+    raise ValueError("OPENAI_API_KEY 未设置")
 if not os.getenv('OPENAI_API_BASE'):
-    os.environ['OPENAI_API_BASE'] = "https://ark.cn-beijing.volces.com/api/v3"
+    raise ValueError("OPENAI_API_BASE 未设置")
 if not os.getenv('SERPER_API_KEY'):
-    os.environ['SERPER_API_KEY'] = "769aed5f5ca7b1ad747d71b57224eb53135d0069"
+    raise ValueError("SERPER_API_KEY 未设置")
 
 
 def setup_logging(config):
@@ -99,7 +103,7 @@ class EntirePipeline(Pipeline):
         self.config = config
         
         # 初始化各个阶段
-        # ! 三个管道的默认并发为1，不知道提高并发系统有没有风险
+        # ^ 三个管道的默认并发为1，不知道提高并发系统有没有风险
         self.encode_pipeline = EncodePipeline(
             self.model_config["encode"],
             data_num=1  # 全局pipeline模式，每次处理一个任务
