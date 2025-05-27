@@ -8,52 +8,53 @@ import json
 import logging
 from typing import Dict, Any, Optional
 from dataclasses import dataclass, field
-from dotenv import load_dotenv
-
-# 加载.env文件
-load_dotenv()
 
 logger = logging.getLogger(__name__)
-
 
 @dataclass
 class RedisConfig:
     """Redis配置"""
+    # host, port, db 拥有默认值的原因在于这里实在是太常见了！
     host: str = 'localhost'
     port: int = 6379
     db: int = 0
     password: Optional[str] = None
-    key_prefix: str = 'llm_task:'
-    expire_time: int = 86400  # 24小时
+    key_prefix: Optional[str] = None
+    expire_time: Optional[int] = None
 
 
 @dataclass
 class MongoConfig:
     """MongoDB配置"""
     uri: str = 'mongodb://localhost:27017/'
-    database: str = 'llm_survey'
-    collection: str = 'surveys'
+    database: str
+    collection: str
 
 
 @dataclass
 class PipelineConfig:
     """Pipeline配置"""
-    config_file: str = 'config/model_config_ds.json'  # 默认使用deepseek模型
-    top_n: int = 50
-    data_num: int = 1
-    parallel_num: int = 1
-    output_each_block: bool = False
-    digest_group_mode: str = 'llm'
-    skeleton_group_size: int = 3
-    block_count: int = 1
-    conv_layer: int = 6
-    conv_kernel_width: int = 3
-    conv_result_num: int = 10
-    top_k: int = 6
-    self_refine_count: int = 3
-    self_refine_best_of: int = 3
-    check_interval: int = 60  # 任务检查间隔
-    timeout: int = 86400  # 任务超时时间, 3个小时
+    config_file: str
+    top_n: int
+    data_num: int
+    parallel_num: int
+    output_each_block: bool
+    digest_group_mode: str
+    skeleton_group_size: int
+    block_count: int
+    conv_layer: int
+    conv_kernel_width: int
+    conv_result_num: int
+    top_k: int
+    self_refine_count: int
+    self_refine_best_of: int
+    check_interval: int
+    timeout: int
+    use_search: bool
+    search_model: str
+    search_model_infer_type: str
+    search_engine: str
+    search_each_query_result: int
 
 
 @dataclass
@@ -91,92 +92,100 @@ class AppConfig:
     serper_api_key: Optional[str] = None
     prompt_language: Optional[str] = None
     
-    # 搜索模型配置
-    search_model: str = 'gemini-2.0-flash-thinking-exp-01-21'
-    
     def load_from_env(self):
         """从环境变量加载配置"""
-        # Redis配置
-        self.redis.host = os.getenv('REDIS_HOST', self.redis.host)
-        self.redis.port = int(os.getenv('REDIS_PORT', str(self.redis.port)))
-        self.redis.db = int(os.getenv('REDIS_DB', str(self.redis.db)))
-        self.redis.password = os.getenv('REDIS_PASSWORD', self.redis.password)
-        self.redis.key_prefix = os.getenv('REDIS_KEY_PREFIX', self.redis.key_prefix)
-        self.redis.expire_time = int(os.getenv('REDIS_EXPIRE_TIME', str(self.redis.expire_time)))
-        
-        # MongoDB配置
-        self.mongo.uri = os.getenv('MONGO_URI', self.mongo.uri)
-        self.mongo.database = os.getenv('MONGO_DATABASE', self.mongo.database)
-        self.mongo.collection = os.getenv('MONGO_COLLECTION', self.mongo.collection)
-        
-        # Pipeline配置
-        self.pipeline.config_file = os.getenv('PIPELINE_CONFIG_FILE', self.pipeline.config_file)
-        self.pipeline.parallel_num = int(os.getenv('PIPELINE_PARALLEL_NUM', str(self.pipeline.parallel_num)))
-        self.pipeline.top_n = int(os.getenv('PIPELINE_TOP_N', str(self.pipeline.top_n)))
-        self.pipeline.data_num = int(os.getenv('PIPELINE_DATA_NUM', str(self.pipeline.data_num)))
-        self.pipeline.output_each_block = os.getenv('PIPELINE_OUTPUT_EACH_BLOCK', 'false').lower() == 'true'
-        self.pipeline.digest_group_mode = os.getenv('PIPELINE_DIGEST_GROUP_MODE', self.pipeline.digest_group_mode)
-        self.pipeline.skeleton_group_size = int(os.getenv('PIPELINE_SKELETON_GROUP_SIZE', str(self.pipeline.skeleton_group_size)))
-        self.pipeline.block_count = int(os.getenv('PIPELINE_BLOCK_COUNT', str(self.pipeline.block_count)))
-        self.pipeline.conv_layer = int(os.getenv('PIPELINE_CONV_LAYER', str(self.pipeline.conv_layer)))
-        self.pipeline.conv_kernel_width = int(os.getenv('PIPELINE_CONV_KERNEL_WIDTH', str(self.pipeline.conv_kernel_width)))
-        self.pipeline.conv_result_num = int(os.getenv('PIPELINE_CONV_RESULT_NUM', str(self.pipeline.conv_result_num)))
-        self.pipeline.top_k = int(os.getenv('PIPELINE_TOP_K', str(self.pipeline.top_k)))
-        self.pipeline.self_refine_count = int(os.getenv('PIPELINE_SELF_REFINE_COUNT', str(self.pipeline.self_refine_count)))
-        self.pipeline.self_refine_best_of = int(os.getenv('PIPELINE_SELF_REFINE_BEST_OF', str(self.pipeline.self_refine_best_of)))
-        self.pipeline.check_interval = int(os.getenv('PIPELINE_CHECK_INTERVAL', str(self.pipeline.check_interval)))
-        self.pipeline.timeout = int(os.getenv('PIPELINE_TIMEOUT', str(self.pipeline.timeout)))
-        
-        # API配置
-        self.api.host = os.getenv('API_HOST', self.api.host)
-        self.api.port = int(os.getenv('API_PORT', str(self.api.port)))
-        self.api.debug = os.getenv('API_DEBUG', 'false').lower() == 'true'
-        self.api.cors_enabled = os.getenv('API_CORS_ENABLED', 'true').lower() == 'true'
-        
-        # 日志配置
-        self.logging.level = os.getenv('LOG_LEVEL', self.logging.level)
-        self.logging.file_path = os.getenv('LOG_FILE_PATH', self.logging.file_path)
-        self.logging.file_enabled = os.getenv('LOG_FILE_ENABLED', 'true').lower() == 'true'
-        self.logging.max_bytes = int(os.getenv('LOG_MAX_BYTES', str(self.logging.max_bytes)))
-        self.logging.backup_count = int(os.getenv('LOG_BACKUP_COUNT', str(self.logging.backup_count)))
-        
-        # API密钥
-        self.openai_api_key = os.getenv('OPENAI_API_KEY')
-        self.openai_api_base = os.getenv('OPENAI_API_BASE')
-        self.serper_api_key = os.getenv('SERPER_API_KEY')
-        self.prompt_language = os.getenv('PROMPT_LANGUAGE')
-        
-        # 搜索模型
-        self.search_model = os.getenv('SEARCH_MODEL', self.search_model)
-    
-    def load_from_file(self, config_file: str):
-        """从配置文件(json)加载配置"""
-        try:
-            with open(config_file, 'r', encoding='utf-8') as f:
-                config_data = json.load(f)
+        def get_required_env(key: str, value_type=str):
+            """获取必需的环境变量，如果不存在则抛出异常"""
+            value = os.getenv(key)
+            if value is None:
+                raise ValueError(f"必需的环境变量 {key} 未设置")
             
-            # 更新配置
-            if 'redis' in config_data:
-                self.redis = RedisConfig(**config_data['redis'])
-            if 'mongo' in config_data:
-                self.mongo = MongoConfig(**config_data['mongo'])
-            if 'pipeline' in config_data:
-                self.pipeline = PipelineConfig(**config_data['pipeline'])
-            if 'api' in config_data:
-                self.api = APIConfig(**config_data['api'])
-            if 'logging' in config_data:
-                self.logging = LoggingConfig(**config_data['logging'])
+            if value_type == int:
+                try:
+                    return int(value)
+                except ValueError:
+                    raise ValueError(f"环境变量 {key} 的值 '{value}' 不是有效的整数")
+            elif value_type == bool:
+                return value.lower() in ('true', '1', 'yes', 'on')
+            return value
+        
+        def get_optional_env(key: str, default_value=None, value_type=str):
+            """获取可选的环境变量"""
+            value = os.getenv(key)
+            if value is None:
+                return default_value
             
-            # 其他配置
-            for key in ['openai_api_key', 'openai_api_base', 'serper_api_key', 
-                       'prompt_language', 'search_model']:
-                if key in config_data:
-                    setattr(self, key, config_data[key])
-            
-            logger.info(f"从配置文件加载配置: {config_file}")
-            
-        except Exception as e:
-            logger.warning(f"加载配置文件失败: {config_file}, error: {str(e)}")
+            if value_type == int:
+                try:
+                    return int(value)
+                except ValueError:
+                    logger.warning(f"环境变量 {key} 的值 '{value}' 不是有效的整数，使用默认值 {default_value}")
+                    return default_value
+            elif value_type == bool:
+                return value.lower() in ('true', '1', 'yes', 'on')
+            return value
+        
+        # Redis配置 - 必需，但是有默认值（业界常用）
+        self.redis.host = get_optional_env('REDIS_HOST', 'localhost')
+        self.redis.port = get_optional_env('REDIS_PORT', 6379, int)
+        self.redis.db = get_optional_env('REDIS_DB', 0, int)
+
+        # Redis密码和前缀可选
+        self.redis.password = get_optional_env('REDIS_PASSWORD')
+        self.redis.key_prefix = get_optional_env('REDIS_KEY_PREFIX')
+        self.redis.expire_time = get_optional_env('REDIS_EXPIRE_TIME', value_type=int)
+        
+        # MongoDB配置 - 必需
+        self.mongo.uri = get_optional_env('MONGO_URI', 'mongodb://localhost:27017/')
+        self.mongo.database = get_required_env('MONGO_DATABASE')
+        self.mongo.collection = get_required_env('MONGO_COLLECTION')
+        
+        # Pipeline配置 - 必需
+        self.pipeline.config_file = get_required_env('PIPELINE_CONFIG_FILE')
+        self.pipeline.parallel_num = get_required_env('PIPELINE_PARALLEL_NUM', int)
+        self.pipeline.top_n = get_required_env('PIPELINE_TOP_N', int)
+        self.pipeline.data_num = get_required_env('PIPELINE_DATA_NUM', int)
+        self.pipeline.output_each_block = get_required_env('PIPELINE_OUTPUT_EACH_BLOCK', bool)
+        self.pipeline.digest_group_mode = get_required_env('PIPELINE_DIEGST_GROUP_MODE')
+        self.pipeline.skeleton_group_size = get_required_env('PIPELINE_SKELETON_GROUP_SIZE', int)
+        self.pipeline.block_count = get_required_env('PIPELINE_BLOCK_COUNT', int)
+        self.pipeline.conv_layer = get_required_env('PIPELINE_CONV_LAYER', int)
+        self.pipeline.conv_kernel_width = get_required_env('PIPELINE_CONV_KERNEL_WIDTH', int)
+        self.pipeline.conv_result_num = get_required_env('PIPELINE_CONV_RESULT_NUM', int)
+        self.pipeline.top_k = get_required_env('PIPELINE_TOP_K', int)
+        self.pipeline.self_refine_count = get_required_env('PIPELINE_SELF_REFINE_COUNT', int)
+        self.pipeline.self_refine_best_of = get_required_env('PIPELINE_SELF_REFINE_BEST_OF', int)
+        self.pipeline.check_interval = get_required_env('PIPELINE_CHECK_INTERVAL', int)
+        self.pipeline.timeout = get_required_env('PIPELINE_TIMEOUT', int)
+        self.pipeline.use_search = get_required_env('PIPELINE_USE_SEARCH', bool)
+        
+        # 搜索的功能处理模块，唯一在use_search为True时才需要用到
+        self.pipeline.search_model = get_optional_env('PIPELINE_SEARCH_MODEL')
+        self.pipeline.search_model_infer_type = get_optional_env('PIPELINE_SEARCH_MODEL_INFER_TYPE')
+        self.pipeline.search_engine = get_optional_env('PIPELINE_SEARCH_ENGINE')
+        self.pipeline.search_each_query_result = get_optional_env('PIPELINE_SEARCH_EACH_QUERY_RESULT', int)
+        
+        # API配置 - 必需
+        self.api.host = get_optional_env('API_HOST', '0.0.0.0')
+        self.api.port = get_optional_env('API_PORT', 5000, int)
+        self.api.debug = get_optional_env('API_DEBUG', False, bool)
+        self.api.cors_enabled = get_optional_env('API_CORS_ENABLED', True, bool)
+        
+        # 日志配置 - 必需
+        self.logging.level = get_required_env('LOG_LEVEL')
+        self.logging.file_path = get_required_env('LOG_FILE_PATH')
+        self.logging.file_enabled = get_required_env('LOG_FILE_ENABLED', bool)
+        self.logging.max_bytes = get_required_env('LOG_MAX_BYTES', int)
+        self.logging.backup_count = get_required_env('LOG_BACKUP_COUNT', int)
+        
+        # API密钥 - 必需
+        self.openai_api_key = get_required_env('OPENAI_API_KEY')
+        # OpenAI API Base 可选
+        self.openai_api_base = get_required_env('OPENAI_API_BASE')
+        # Serper API Key 可选（如果不使用搜索功能）
+        self.serper_api_key = get_optional_env('SERPER_API_KEY')
+        # 提示词的语言可选
+        self.prompt_language = get_optional_env('PROMPT_LANGUAGE')
     
     def validate(self) -> bool:
         """验证配置的有效性"""
@@ -238,7 +247,12 @@ class AppConfig:
                 'self_refine_count': self.pipeline.self_refine_count,
                 'self_refine_best_of': self.pipeline.self_refine_best_of,
                 'check_interval': self.pipeline.check_interval,
-                'timeout': self.pipeline.timeout
+                'timeout': self.pipeline.timeout,
+                'use_search': self.pipeline.use_search,
+                'search_model': self.pipeline.search_model,
+                'search_model_infer_type': self.pipeline.search_model_infer_type,
+                'search_engine': self.pipeline.search_engine,
+                'search_each_query_result': self.pipeline.search_each_query_result
             },
             'api': {
                 'host': self.api.host,
@@ -253,8 +267,7 @@ class AppConfig:
                 'file_path': self.logging.file_path,
                 'max_bytes': self.logging.max_bytes,
                 'backup_count': self.logging.backup_count
-            },
-            'search_model': self.search_model
+            }
         }
 
 
