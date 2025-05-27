@@ -315,7 +315,7 @@ class RedisTaskManager:
 _task_manager_instance = None
 
 
-def get_task_manager(redis_config: Optional[Dict[str, Any]] = None) -> RedisTaskManager:
+def get_task_manager(redis_config: Dict[str, Any]) -> RedisTaskManager:
     """
     获取任务管理器实例（单例模式）
     
@@ -328,7 +328,6 @@ def get_task_manager(redis_config: Optional[Dict[str, Any]] = None) -> RedisTask
     global _task_manager_instance
     
     if _task_manager_instance is None:
-        config = redis_config or {}
-        _task_manager_instance = RedisTaskManager(**config)
+        _task_manager_instance = RedisTaskManager(**redis_config)
     
     return _task_manager_instance 

@@ -43,8 +43,17 @@ class TopicSearchProcessor(TaskProcessor):
     负责处理主题搜索和网页爬取任务
     """
     
-    def __init__(self, search_model: str = 'gemini-2.0-flash-thinking-exp-01-21'):
+    def __init__(self, 
+                 top_n,
+                 infer_type,
+                 engine,
+                 each_query_result,
+                 search_model):
         self.search_model = search_model
+        self.top_n = top_n
+        self.infer_type = infer_type
+        self.engine = engine
+        self.each_query_result = each_query_result
     
     async def process(self, task_id: str, params: Dict[str, Any]) -> Optional[str]:
         """执行主题搜索和爬取"""
@@ -66,9 +75,9 @@ class TopicSearchProcessor(TaskProcessor):
             # 初始化检索器
             retriever = LLM_search(
                 model=self.search_model,
-                infer_type="OpenAI",
-                engine='google',
-                each_query_result=10
+                infer_type=self.infer_type,
+                engine=self.engine,
+                each_query_result=self.each_query_result
             )
             
             # 生成查询 - 添加详细的错误处理
@@ -92,7 +101,7 @@ class TopicSearchProcessor(TaskProcessor):
                 url_list = retriever.batch_web_search(
                     queries=queries,
                     topic=topic,
-                    top_n=int(top_n * 1.2)
+                    top_n=int(self.top_n * 1.2)
                 )
                 if not url_list:
                     raise ValueError("搜索到的URL列表为空")
@@ -114,7 +123,7 @@ class TopicSearchProcessor(TaskProcessor):
                     topic=topic,
                     url_list=url_list,
                     task_id=task_id,
-                    top_n=top_n
+                    top_n=self.top_n
                 )
                 
                 # 从 MongoDB 获取爬虫结果
@@ -170,12 +179,32 @@ class PipelineTaskManager:
         self.timeout = timeout
         self.task_manager = get_task_manager()
 
-        if 'search_model' in kwargs:
-            self.search_model = kwargs['search_model']
-        else:
-            self.search_model = 'gemini-2.0-flash-thinking-exp-01-21'
+        if 'use_search' in kwargs and kwargs['use_search']:
+            if 'search_model' not in kwargs:
+                raise ValueError("请提供search_model参数")
+            if 'top_n' not in kwargs:
+                raise ValueError("请提供top_n参数")
+            if 'infer_type' not in kwargs:
+                raise ValueError("请提供infer_type参数")
+            if 'engine' not in kwargs:
+                raise ValueError("请提供engine参数")
+            if 'each_query_result' not in kwargs:
+                raise ValueError("请提供each_query_result参数")
+            
+            # 打印日志配置信息
+            logger.info(f"使用搜索引擎: {kwargs['use_search']}")
+            logger.info(f"搜索模型: {kwargs['search_model']}")
+            logger.info(f"每个查询结果数量: {kwargs['each_query_result']}")
+            logger.info(f"推理类型: {kwargs['infer_type']}")
+            logger.info(f"搜索引擎: {kwargs['engine']}")
 
-        self.topic_processor = TopicSearchProcessor(search_model=self.search_model)
+            self.topic_processor = TopicSearchProcessor(
+                search_model=kwargs['search_model'],
+                top_n=kwargs['top_n'],
+                infer_type=kwargs['infer_type'],
+                engine=kwargs['engine'],
+                each_query_result=kwargs['each_query_result']
+            )
     
     def submit_task(self, params: Dict[str, Any]) -> str:
         """

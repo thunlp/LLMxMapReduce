@@ -275,26 +275,15 @@ class AppConfig:
 _config_instance: Optional[AppConfig] = None
 
 
-def get_config(config_file: Optional[str] = None) -> AppConfig:
+def get_config() -> AppConfig:
     """
     获取配置实例（单例模式）
-    
-    Args:
-        config_file: 配置文件路径（可选）
-    
-    Returns:
-        AppConfig实例
     """
     global _config_instance
     
     if _config_instance is None:
         _config_instance = AppConfig()
         
-        # 先从文件加载
-        if config_file and os.path.exists(config_file):
-            _config_instance.load_from_file(config_file)
-        
-        # 再从环境变量加载（覆盖文件配置）
         _config_instance.load_from_env()
         
         # 验证配置

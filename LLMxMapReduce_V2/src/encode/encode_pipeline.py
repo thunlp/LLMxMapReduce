@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 class EncodePipeline(Sequential):
-    def __init__(self, configs, data_num, worker_num=1):
+    def __init__(self, configs, data_num=0, worker_num=1):
         self.configs = configs
         self.worker_num = worker_num
         self.data_num = data_num  # 实际上这个属性并没有什么用，就是用来校验输入文件的数量的而已

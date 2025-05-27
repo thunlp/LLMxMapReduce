@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 # 加载.env文件
 load_dotenv()
 
-# 设置Python路径
+# 设置Python路径，防止包的导入问题
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src'))
 
@@ -30,14 +30,6 @@ from src.encode.encode_pipeline import EncodePipeline
 from src.hidden.hidden_pipeline import HiddenPipeline
 from async_d import Monitor, PipelineAnalyser, Pipeline
 from src.database import init_mongo_manager
-
-# 设置环境变量（开发环境默认值）
-if not os.getenv('OPENAI_API_KEY'):
-    raise ValueError("OPENAI_API_KEY 未设置")
-if not os.getenv('OPENAI_API_BASE'):
-    raise ValueError("OPENAI_API_BASE 未设置")
-if not os.getenv('SERPER_API_KEY'):
-    raise ValueError("SERPER_API_KEY 未设置")
 
 
 def setup_logging(config):
@@ -104,11 +96,8 @@ class EntirePipeline(Pipeline):
         self.config = config
         
         # 初始化各个阶段
-        # ^ 三个管道的默认并发为1，不知道提高并发系统有没有风险
-        self.encode_pipeline = EncodePipeline(
-            self.model_config["encode"],
-            data_num=1  # 全局pipeline模式，每次处理一个任务
-        )
+        # ! 三个pipeline的默认并发都是默认为1，不知道提高并发系统有没有风险
+        self.encode_pipeline = EncodePipeline(self.model_config["encode"])
         
         self.hidden_pipeline = HiddenPipeline(
             self.model_config["hidden"],
@@ -127,9 +116,9 @@ class EntirePipeline(Pipeline):
         
         self.decode_pipeline = DecodePipeline(
             self.model_config["decode"],
-            output_file=None,  # 全局pipeline模式，不使用固定输出文件
+            output_file=None,
             worker_num=config.parallel_num,
-            use_database=True  # 优先使用数据库存储，这里默认选择mongodb
+            use_database=True  # 使用数据库
         )
         
         # 构建pipeline
@@ -144,15 +133,12 @@ class EntirePipeline(Pipeline):
 class Application:
     """主应用程序类"""
     
-    def __init__(self, config_file=None):
+    def __init__(self):
         """
         初始化应用程序
-        
-        Args:
-            config_file: 配置文件路径（可选）
         """
         # 加载配置
-        self.config = get_config(config_file)
+        self.config = get_config()
         
         # 设置日志
         self.logger = setup_logging(self.config.logging)
@@ -176,7 +162,7 @@ class Application:
         self._init_services()
     
     def _init_services(self):
-        """初始化各项服务"""
+        """初始化必要的组件"""
         # 初始化Redis任务管理器
         try:
             self.task_manager = get_task_manager({
@@ -192,7 +178,7 @@ class Application:
             self.logger.error(f"Redis初始化失败: {str(e)}")
             raise
         
-        # 初始化MongoDB（可选）
+        # 初始化MongoDB
         try:
             mongo_manager = init_mongo_manager(self.config.mongo)
             if mongo_manager.connect():
@@ -212,7 +198,12 @@ class Application:
             global_pipeline=self.global_pipeline,
             check_interval=self.config.pipeline.check_interval,
             timeout=self.config.pipeline.timeout,
-            search_model=self.config.search_model
+            use_search=self.config.pipeline.use_search,
+            search_model=self.config.pipeline.search_model,
+            top_n=self.config.pipeline.top_n,
+            infer_type=self.config.pipeline.search_model_infer_type,
+            engine=self.config.pipeline.search_engine,
+            each_query_result=self.config.pipeline.search_each_query_result
         )
         
         # 设置API服务的Pipeline管理器

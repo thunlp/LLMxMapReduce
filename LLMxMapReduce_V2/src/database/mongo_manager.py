@@ -17,6 +17,7 @@ from typing import Optional, Dict, List, Any
 from pymongo import MongoClient, ASCENDING
 from pymongo.errors import ConnectionFailure
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -492,8 +493,7 @@ class MongoManager:
 # 全局实例
 mongo_manager = None
 
-
-def init_mongo_manager(config=None):
+def init_mongo_manager(config: Dict[str, Any]):
     """
     初始化MongoDB管理器，支持传入配置参数
     
@@ -501,18 +501,8 @@ def init_mongo_manager(config=None):
         config: MongoDB配置对象，包含uri, database, collection等属性
     """
     global mongo_manager
-    
-    if config:
-        # 重新创建实例以应用新配置
-        # 先清理现有实例
-        if hasattr(MongoManager, '_instance') and MongoManager._instance:
-            if hasattr(MongoManager._instance, 'disconnect'):
-                MongoManager._instance.disconnect()
-        
-        # 重置单例
-        MongoManager._instance = None
-        
-        # 创建新实例
+
+    if mongo_manager is None:
         mongo_manager = MongoManager(
             connection_string=config.uri,
             database_name=config.database,
