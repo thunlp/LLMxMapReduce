@@ -94,8 +94,8 @@ class TestAPIService(unittest.TestCase):
             self.task_manager.delete_task(self.test_task_id)
     
     @patch('src.api_service.get_task_manager')
-    def test_01_start_pipeline_success(self, mock_get_task_manager):
-        """测试成功启动Pipeline任务"""
+    def test_01_submit_task_success(self, mock_get_task_manager):
+        """测试成功提交任务"""
         # 模拟任务管理器
         mock_task_manager = Mock()
         mock_get_task_manager.return_value = mock_task_manager
@@ -114,7 +114,7 @@ class TestAPIService(unittest.TestCase):
         self.mock_pipeline_manager.submit_task.return_value = self.test_task_id
         
         # 发送请求
-        response = self.client.post('/api/start_pipeline', 
+        response = self.client.post('/api/task/submit', 
                                   json=self.test_params,
                                   content_type='application/json')
         
@@ -130,13 +130,13 @@ class TestAPIService(unittest.TestCase):
         self.mock_pipeline_manager.submit_task.assert_called_once_with(self.test_params)
         mock_task_manager.get_task.assert_called_once_with(self.test_task_id)
     
-    def test_02_start_pipeline_no_manager(self):
+    def test_02_submit_task_no_manager(self):
         """测试Pipeline管理器未初始化的情况"""
         # 清除Pipeline管理器
         set_pipeline_manager(None)
         
         # 发送请求
-        response = self.client.post('/api/start_pipeline', 
+        response = self.client.post('/api/task/submit', 
                                   json=self.test_params,
                                   content_type='application/json')
         
@@ -563,7 +563,7 @@ class TestAPIService(unittest.TestCase):
     def test_17_invalid_json_request(self):
         """测试无效JSON请求"""
         # 发送无效JSON
-        response = self.client.post('/api/start_pipeline',
+        response = self.client.post('/api/task/submit',
                                   data='invalid json',
                                   content_type='application/json')
         
@@ -576,7 +576,7 @@ class TestAPIService(unittest.TestCase):
     def test_18_missing_required_fields(self):
         """测试缺少必需字段的请求"""
         # 发送空参数
-        response = self.client.post('/api/start_pipeline',
+        response = self.client.post('/api/task/submit',
                                   json={},
                                   content_type='application/json')
         

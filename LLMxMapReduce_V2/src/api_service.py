@@ -28,9 +28,9 @@ def set_pipeline_manager(manager: PipelineTaskManager):
     pipeline_task_manager = manager
 
 
-@api_bp.route('/start_pipeline', methods=['POST'])
-def start_pipeline():
-    """启动新的Pipeline任务
+@api_bp.route('/task/submit', methods=['POST'])
+def submit_task():
+    """提交新的任务
     
     请求体参数:
         topic: 研究主题

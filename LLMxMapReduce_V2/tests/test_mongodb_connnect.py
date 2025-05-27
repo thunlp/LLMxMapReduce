@@ -12,8 +12,7 @@ import time
 import requests
 from datetime import datetime
 
-# 添加项目路径
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 def test_database_connection():
     """测试数据库连接"""
@@ -89,7 +88,7 @@ def test_complete_workflow():
         # 启动任务
         print("📝 提交测试任务...")
         response = requests.post(
-            f"{base_url}/api/start_pipeline",
+            f"{base_url}/api/task/submit",
             json=test_data,
             timeout=10
         )
