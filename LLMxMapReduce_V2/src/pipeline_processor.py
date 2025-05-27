@@ -66,7 +66,7 @@ class TopicSearchProcessor(TaskProcessor):
             # 提取参数
             topic = params.get('topic')
             description = params.get('description', '')
-            top_n = int(params.get('top_n', 50))
+            top_n = int(params.get('top_n', self.top_n))
             
             # 更新状态：生成查询
             task_manager.update_task_status(task_id, TaskStatus.SEARCHING)
@@ -101,7 +101,7 @@ class TopicSearchProcessor(TaskProcessor):
                 url_list = retriever.batch_web_search(
                     queries=queries,
                     topic=topic,
-                    top_n=int(self.top_n * 1.2)
+                    top_n=int(top_n * 1.2)
                 )
                 if not url_list:
                     raise ValueError("搜索到的URL列表为空")
@@ -123,7 +123,7 @@ class TopicSearchProcessor(TaskProcessor):
                     topic=topic,
                     url_list=url_list,
                     task_id=task_id,
-                    top_n=self.top_n
+                    top_n=top_n
                 )
                 
                 # 从 MongoDB 获取爬虫结果
