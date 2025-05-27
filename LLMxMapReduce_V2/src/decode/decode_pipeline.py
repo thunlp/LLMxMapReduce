@@ -17,10 +17,11 @@ from src.utils.process_str import str2list, remove_illegal_bibkeys
 # 首先定义logger
 logger = logging.getLogger(__name__)
 
-# 导入数据库管理器
+# 检查数据库模块是否可用
 try:
-    from src.database import mongo_manager
+    import src.database
     DATABASE_AVAILABLE = True
+    logger.info("数据库模块可用")
 except ImportError as e:
     logger.warning(f"数据库模块不可用，将仅使用文件存储: {str(e)}")
     DATABASE_AVAILABLE = False
@@ -43,6 +44,8 @@ class DecodePipeline(Sequential):
         # 如果启用数据库，尝试连接
         if self.use_database:
             try:
+                # 在运行时导入，确保获取到正确配置的mongo_manager
+                from src.database import mongo_manager
                 if mongo_manager.connect():
                     logger.info("DecodePipeline: 数据库连接成功，将使用数据库存储")
                 else:
@@ -188,6 +191,8 @@ class DecodePipeline(Sequential):
         # 尝试保存到数据库
         if self.use_database and survey.task_id:
             try:
+                # 在运行时导入，确保获取到正确配置的mongo_manager
+                from src.database import mongo_manager
                 if mongo_manager.save_survey(survey.task_id, survey_data):
                     logger.info(f"Survey保存到数据库成功: task_id={survey.task_id}, title={survey.title}")
                     saved_to_database = True

@@ -29,6 +29,7 @@ from src.decode.decode_pipeline import DecodePipeline
 from src.encode.encode_pipeline import EncodePipeline
 from src.hidden.hidden_pipeline import HiddenPipeline
 from async_d import Monitor, PipelineAnalyser, Pipeline
+from src.database import init_mongo_manager
 
 # 设置环境变量（开发环境默认值）
 if not os.getenv('OPENAI_API_KEY'):
@@ -193,7 +194,7 @@ class Application:
         
         # 初始化MongoDB（可选）
         try:
-            from src.database import mongo_manager
+            mongo_manager = init_mongo_manager(self.config.mongo)
             if mongo_manager.connect():
                 self.logger.info("MongoDB连接成功")
                 stats = mongo_manager.get_stats()

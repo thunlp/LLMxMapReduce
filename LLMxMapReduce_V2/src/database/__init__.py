@@ -4,6 +4,6 @@
 提供MongoDB连接和操作功能
 """
 
-from .mongo_manager import MongoManager, mongo_manager
+from .mongo_manager import MongoManager, mongo_manager, init_mongo_manager
 
-__all__ = ['MongoManager', 'mongo_manager'] 
+__all__ = ['MongoManager', 'mongo_manager', 'init_mongo_manager'] 

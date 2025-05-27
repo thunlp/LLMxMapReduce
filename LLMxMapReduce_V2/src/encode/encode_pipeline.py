@@ -7,7 +7,6 @@ from gevent.fileobject import FileObject
 from threading import Lock
 
 from src.data_structure.survey import Survey
-from src.database import mongo_manager
 from src.task_manager import get_task_manager
 import logging
 logger = logging.getLogger(__name__)
@@ -59,6 +58,9 @@ class EncodePipeline(Sequential):
         """从数据库读取爬虫结果并构建Survey"""
         try:
             logger.info(f"[EncodePipeline] 开始从数据库加载数据: task_id={task_id}")
+            
+            # 在运行时导入，确保获取到正确配置的mongo_manager
+            from src.database import mongo_manager
             
             # 获取任务信息
             task_manager = get_task_manager()

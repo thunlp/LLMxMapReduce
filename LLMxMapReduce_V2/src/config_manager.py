@@ -101,6 +101,8 @@ class AppConfig:
         self.redis.port = int(os.getenv('REDIS_PORT', str(self.redis.port)))
         self.redis.db = int(os.getenv('REDIS_DB', str(self.redis.db)))
         self.redis.password = os.getenv('REDIS_PASSWORD', self.redis.password)
+        self.redis.key_prefix = os.getenv('REDIS_KEY_PREFIX', self.redis.key_prefix)
+        self.redis.expire_time = int(os.getenv('REDIS_EXPIRE_TIME', str(self.redis.expire_time)))
         
         # MongoDB配置
         self.mongo.uri = os.getenv('MONGO_URI', self.mongo.uri)
@@ -110,15 +112,33 @@ class AppConfig:
         # Pipeline配置
         self.pipeline.config_file = os.getenv('PIPELINE_CONFIG_FILE', self.pipeline.config_file)
         self.pipeline.parallel_num = int(os.getenv('PIPELINE_PARALLEL_NUM', str(self.pipeline.parallel_num)))
+        self.pipeline.top_n = int(os.getenv('PIPELINE_TOP_N', str(self.pipeline.top_n)))
+        self.pipeline.data_num = int(os.getenv('PIPELINE_DATA_NUM', str(self.pipeline.data_num)))
+        self.pipeline.output_each_block = os.getenv('PIPELINE_OUTPUT_EACH_BLOCK', 'false').lower() == 'true'
+        self.pipeline.digest_group_mode = os.getenv('PIPELINE_DIGEST_GROUP_MODE', self.pipeline.digest_group_mode)
+        self.pipeline.skeleton_group_size = int(os.getenv('PIPELINE_SKELETON_GROUP_SIZE', str(self.pipeline.skeleton_group_size)))
+        self.pipeline.block_count = int(os.getenv('PIPELINE_BLOCK_COUNT', str(self.pipeline.block_count)))
+        self.pipeline.conv_layer = int(os.getenv('PIPELINE_CONV_LAYER', str(self.pipeline.conv_layer)))
+        self.pipeline.conv_kernel_width = int(os.getenv('PIPELINE_CONV_KERNEL_WIDTH', str(self.pipeline.conv_kernel_width)))
+        self.pipeline.conv_result_num = int(os.getenv('PIPELINE_CONV_RESULT_NUM', str(self.pipeline.conv_result_num)))
+        self.pipeline.top_k = int(os.getenv('PIPELINE_TOP_K', str(self.pipeline.top_k)))
+        self.pipeline.self_refine_count = int(os.getenv('PIPELINE_SELF_REFINE_COUNT', str(self.pipeline.self_refine_count)))
+        self.pipeline.self_refine_best_of = int(os.getenv('PIPELINE_SELF_REFINE_BEST_OF', str(self.pipeline.self_refine_best_of)))
+        self.pipeline.check_interval = int(os.getenv('PIPELINE_CHECK_INTERVAL', str(self.pipeline.check_interval)))
+        self.pipeline.timeout = int(os.getenv('PIPELINE_TIMEOUT', str(self.pipeline.timeout)))
         
         # API配置
         self.api.host = os.getenv('API_HOST', self.api.host)
         self.api.port = int(os.getenv('API_PORT', str(self.api.port)))
         self.api.debug = os.getenv('API_DEBUG', 'false').lower() == 'true'
+        self.api.cors_enabled = os.getenv('API_CORS_ENABLED', 'true').lower() == 'true'
         
         # 日志配置
         self.logging.level = os.getenv('LOG_LEVEL', self.logging.level)
         self.logging.file_path = os.getenv('LOG_FILE_PATH', self.logging.file_path)
+        self.logging.file_enabled = os.getenv('LOG_FILE_ENABLED', 'true').lower() == 'true'
+        self.logging.max_bytes = int(os.getenv('LOG_MAX_BYTES', str(self.logging.max_bytes)))
+        self.logging.backup_count = int(os.getenv('LOG_BACKUP_COUNT', str(self.logging.backup_count)))
         
         # API密钥
         self.openai_api_key = os.getenv('OPENAI_API_KEY')

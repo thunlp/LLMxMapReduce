@@ -14,7 +14,6 @@ from datetime import datetime
 from abc import ABC, abstractmethod
 
 from src.task_manager import TaskStatus, get_task_manager
-from src.database import mongo_manager
 from src.path_validator import get_path_validator
 
 logger = logging.getLogger(__name__)
@@ -118,7 +117,8 @@ class TopicSearchProcessor(TaskProcessor):
                     top_n=top_n
                 )
                 
-                # 验证爬取结果是否保存成功
+                # 从 MongoDB 获取爬虫结果
+                from src.database import mongo_manager
                 crawl_results = mongo_manager.get_crawl_results(task_id)
                 if not crawl_results or not crawl_results.get('papers'):
                     raise ValueError("爬取结果为空或保存失败")
@@ -252,6 +252,7 @@ class PipelineTaskManager:
                     return
                 
                 # 从 MongoDB 获取爬虫结果
+                from src.database import mongo_manager
                 crawl_results = mongo_manager.get_crawl_results(task_id)
                 if not crawl_results:
                     error_msg = f"未找到爬虫结果: task_id={task_id}"
@@ -364,6 +365,9 @@ class PipelineTaskManager:
     def _check_completion_in_database(self, task_id: str) -> bool:
         """检查任务是否在数据库中完成"""
         try:
+            # 在运行时导入，确保获取到正确配置的mongo_manager
+            from src.database import mongo_manager
+            
             if not mongo_manager:
                 return False
             

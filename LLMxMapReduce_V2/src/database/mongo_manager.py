@@ -39,7 +39,7 @@ class MongoManager:
     
     def __init__(self, 
                  connection_string: str = None,
-                 database_name: str = "llm_mapreduce",
+                 database_name: str = "llm_survey",
                  collection_name: str = "surveys",
                  crawl_results_collection: str = "crawl_results"):
         
@@ -49,7 +49,7 @@ class MongoManager:
                 return
             
             self.connection_string = connection_string or os.environ.get(
-                'MONGODB_CONNECTION_STRING', 
+                'MONGO_URI', 
                 'mongodb://localhost:27017/'
             )
             self.database_name = database_name
@@ -490,4 +490,33 @@ class MongoManager:
 
 
 # 全局实例
-mongo_manager = MongoManager() 
+mongo_manager = None
+
+
+def init_mongo_manager(config=None):
+    """
+    初始化MongoDB管理器，支持传入配置参数
+    
+    Args:
+        config: MongoDB配置对象，包含uri, database, collection等属性
+    """
+    global mongo_manager
+    
+    if config:
+        # 重新创建实例以应用新配置
+        # 先清理现有实例
+        if hasattr(MongoManager, '_instance') and MongoManager._instance:
+            if hasattr(MongoManager._instance, 'disconnect'):
+                MongoManager._instance.disconnect()
+        
+        # 重置单例
+        MongoManager._instance = None
+        
+        # 创建新实例
+        mongo_manager = MongoManager(
+            connection_string=config.uri,
+            database_name=config.database,
+            collection_name=config.collection
+        )
+    
+    return mongo_manager 
