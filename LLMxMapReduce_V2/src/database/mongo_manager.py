@@ -16,6 +16,7 @@ from datetime import datetime
 from typing import Optional, Dict, List, Any
 from pymongo import MongoClient, ASCENDING
 from pymongo.errors import ConnectionFailure
+from src.config_manager import MongoConfig
 
 
 logger = logging.getLogger(__name__)
@@ -493,7 +494,7 @@ class MongoManager:
 # 全局实例
 _mongo_manager = None
 
-def get_mongo_manager(config: Optional[Dict[str, Any]] = None) -> MongoManager:
+def get_mongo_manager(config: Optional[MongoConfig] = None) -> MongoManager:
     """
     初始化MongoDB管理器，支持传入配置参数
     

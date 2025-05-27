@@ -3,12 +3,21 @@ from tencentcloud.common.exception.tencent_cloud_sdk_exception import TencentClo
 from tencentcloud.sms.v20210111 import sms_client, models
 from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
-
+from src.config_manager import SMSConfig
+from typing import Optional
 
 class TencentSMS:
     """腾讯云短信发送工具类"""
 
-    def __init__(self, secret_id, secret_key, sdk_app_id, sign_name, region="ap-guangzhou"):
+    def __init__(
+            self, 
+            secret_id, 
+            secret_key, 
+            sdk_app_id, 
+            sign_name, 
+            template_id,
+            region
+        ):
         """
         初始化腾讯云短信发送工具
 
@@ -24,8 +33,9 @@ class TencentSMS:
         self.sdk_app_id = sdk_app_id
         self.sign_name = sign_name
         self.region = region
+        self.template_id = template_id
 
-    def send_verification_code(self, phone_number, code, template_id, minutes=10):
+    def send_verification_code(self, phone_number, code, minutes=10):
         """
         发送验证码短信
 
@@ -78,7 +88,7 @@ class TencentSMS:
             req.SignName = self.sign_name
 
             # 设置模板ID
-            req.TemplateId = template_id
+            req.TemplateId = self.template_id
 
             # 模板参数: 验证码和有效期（分钟）
             req.TemplateParamSet = [str(code), str(minutes)]
@@ -111,3 +121,20 @@ class TencentSMS:
                 "message": f"短信发送失败: {err}",
                 "error": str(err)
             }
+
+_sms_client = None
+
+def get_sms_client(config: Optional[SMSConfig] = None) -> TencentSMS:
+    global _sms_client
+    if _sms_client is None:
+        if config is None:
+            raise ValueError("SMS配置为空")
+        _sms_client = TencentSMS(
+            secret_id=config.secret_id, 
+            secret_key=config.secret_key, 
+            sdk_app_id=config.sdk_app_id, 
+            sign_name=config.sign_name,
+            template_id=config.template_id,
+            region=config.region
+        )
+    return _sms_client

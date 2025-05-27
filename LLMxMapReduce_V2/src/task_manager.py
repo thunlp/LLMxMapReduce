@@ -10,6 +10,8 @@ from datetime import datetime
 from typing import Dict, Optional, List, Any
 import redis
 from redis.exceptions import RedisError
+from src.config_manager import RedisConfig
+
 
 logger = logging.getLogger(__name__)
 
@@ -315,7 +317,7 @@ class RedisTaskManager:
 _task_manager_instance = None
 
 
-def get_task_manager(redis_config: Optional[Dict[str, Any]] = None) -> RedisTaskManager:
+def get_task_manager(redis_config: Optional[RedisConfig] = None) -> RedisTaskManager:
     """
     获取任务管理器实例（单例模式）
     
@@ -330,6 +332,13 @@ def get_task_manager(redis_config: Optional[Dict[str, Any]] = None) -> RedisTask
     if _task_manager_instance is None:
         if redis_config is None:
             raise ValueError("初始化阶段Redis配置字典不能为空")
-        _task_manager_instance = RedisTaskManager(**redis_config)
+        _task_manager_instance = RedisTaskManager(
+            host=redis_config.host,
+            port=redis_config.port,
+            db=redis_config.db,
+            password=redis_config.password,
+            key_prefix=redis_config.key_prefix,
+            expire_time=redis_config.expire_time
+        )
     
     return _task_manager_instance 

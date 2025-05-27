@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token, get_jwt_identity
 from src.backend_api.models import db, User, VerificationCode
 from src.backend_api.helpers import generate_verification_code, api_response, jwt_required_custom
-from src.backend_api.auth.tencent_sms import TencentSMS
+from src.backend_api.auth.tencent_sms import get_sms_client
 import os
 import logging
 
@@ -11,23 +11,8 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# 腾讯云短信配置
-SMS_SECRET_ID = os.environ.get("TENCENT_SECRET_ID", "您的SecretId")
-SMS_SECRET_KEY = os.environ.get("TENCENT_SECRET_KEY", "您的SecretKey")
-SMS_SDK_APP_ID = os.environ.get("TENCENT_SMS_SDK_APP_ID", "1400078787")  # ID
-SMS_SIGN_NAME = os.environ.get("TENCENT_SMS_SIGN_NAME", "腾讯云")  # 签名
-SMS_TEMPLATE_ID = os.environ.get("TENCENT_SMS_TEMPLATE_ID", "2433692")  # 短信模板ID
-
-# 初始化短信发送工具
-sms_client = TencentSMS(
-    secret_id=SMS_SECRET_ID,
-    secret_key=SMS_SECRET_KEY,
-    sdk_app_id=SMS_SDK_APP_ID,
-    sign_name=SMS_SIGN_NAME
-)
 
 auth_bp = Blueprint('auth', __name__)
-
 
 @auth_bp.route('/send_code', methods=['POST'])
 def send_verification_code():
@@ -71,10 +56,10 @@ def send_verification_code():
     # 调用腾讯云短信服务发送验证码
     try:
         # 发送短信验证码，有效期10分钟
+        sms_client = get_sms_client()
         result = sms_client.send_verification_code(
             phone_number=phone,
             code=code,
-            template_id=SMS_TEMPLATE_ID,
             minutes=10
         )
 

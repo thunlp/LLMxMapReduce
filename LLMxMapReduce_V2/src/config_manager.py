@@ -76,7 +76,18 @@ class DatabaseConfig:
 class JWTConfig:
     """JWT配置"""
     secret_key: str = 'dev-jwt-secret'
-    access_token_expires: int = 86400 * 7  # 7天
+    access_token_expires: int = 604800  # 7天
+
+
+@dataclass
+class SMSConfig:
+    """SMS配置"""
+    secret_id: str = ''
+    secret_key: str = ''
+    sdk_app_id: str = ''
+    sign_name: str = ''
+    template_id: str = ''
+    region: str = 'ap-guangzhou'
 
 
 @dataclass
@@ -100,7 +111,8 @@ class AppConfig:
     logging: LoggingConfig = field(default_factory=LoggingConfig)
     database: DatabaseConfig = field(default_factory=DatabaseConfig)
     jwt: JWTConfig = field(default_factory=JWTConfig)
-    
+    sms: SMSConfig = field(default_factory=SMSConfig)
+
     # 环境变量
     openai_api_key: Optional[str] = None
     openai_api_base: Optional[str] = None
@@ -200,6 +212,14 @@ class AppConfig:
         # JWT配置 - 可选
         self.jwt.secret_key = get_optional_env('JWT_SECRET_KEY', 'dev-jwt-secret')
         self.jwt.access_token_expires = get_optional_env('JWT_ACCESS_TOKEN_EXPIRES', 86400 * 7, int)
+
+        # SMS配置 - 必需
+        self.sms.secret_id = get_required_env('TENCENT_SECRET_ID')
+        self.sms.secret_key = get_required_env('TENCENT_SECRET_KEY')
+        self.sms.sdk_app_id = get_required_env('TENCENT_SMS_SDK_APP_ID')
+        self.sms.sign_name = get_required_env('TENCENT_SMS_SIGN_NAME')
+        self.sms.template_id = get_required_env('TENCENT_SMS_TEMPLATE_ID')
+        self.sms.region = get_optional_env('TENCENT_SMS_REGION', 'ap-guangzhou')
         
         # API密钥 - 必需
         self.openai_api_key = get_required_env('OPENAI_API_KEY')
