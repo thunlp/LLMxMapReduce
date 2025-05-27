@@ -21,9 +21,6 @@ api_bp = Blueprint('api', __name__, url_prefix='/api')
 # 全局变量
 pipeline_task_manager: Optional[PipelineTaskManager] = None
 
-# 全局mongo_manager
-mongo_manager = get_mongo_manager()
-
 def set_pipeline_manager(manager: PipelineTaskManager):
     """设置Pipeline任务管理器"""
     global pipeline_task_manager
@@ -266,8 +263,10 @@ def get_task_output(task_id: str):
         }), 400
     
     # 优先从数据库获取
-    if mongo_manager:
-        try:
+    try:
+        from src.database.mongo_manager import get_mongo_manager
+        mongo_manager = get_mongo_manager()
+        if mongo_manager:
             survey = mongo_manager.get_survey(task_id)
             if survey and survey.get('survey_data'):
                 logger.info(f"从数据库获取任务结果: {task_id}")
@@ -281,8 +280,8 @@ def get_task_output(task_id: str):
                         'status': survey.get('status')
                     }
                 })
-        except Exception as e:
-            logger.warning(f"从数据库获取任务结果失败: {task_id}, error: {str(e)}")
+    except Exception as e:
+        logger.warning(f"从数据库获取任务结果失败: {task_id}, error: {str(e)}")
     
     # 备选：从文件获取
     output_file = task['params'].get('output_file')
@@ -313,13 +312,15 @@ def get_task_output(task_id: str):
 @api_bp.route('/database/stats', methods=['GET'])
 def get_database_stats():
     """获取数据库统计信息"""
-    if not mongo_manager:
-        return jsonify({
-            'success': False,
-            'error': '数据库不可用'
-        }), 503
-    
     try:
+        from src.database.mongo_manager import get_mongo_manager
+        mongo_manager = get_mongo_manager()
+        if not mongo_manager:
+            return jsonify({
+                'success': False,
+                'error': '数据库不可用'
+            }), 503
+        
         stats = mongo_manager.get_stats()
         return jsonify({
             'success': True,
@@ -336,14 +337,16 @@ def get_database_stats():
 @api_bp.route('/database/health', methods=['GET'])
 def database_health_check():
     """数据库健康检查"""
-    if not mongo_manager:
-        return jsonify({
-            'success': False,
-            'status': 'unavailable',
-            'message': '数据库模块未加载'
-        }), 503
-    
     try:
+        from src.database.mongo_manager import get_mongo_manager
+        mongo_manager = get_mongo_manager()
+        if not mongo_manager:
+            return jsonify({
+                'success': False,
+                'status': 'unavailable',
+                'message': '数据库模块未加载'
+            }), 503
+        
         is_healthy = mongo_manager.health_check()
         if is_healthy:
             return jsonify({
@@ -397,11 +400,13 @@ def health_check():
     redis_healthy = task_manager.health_check()
     
     mongo_healthy = False
-    if mongo_manager:
-        try:
+    try:
+        from src.database.mongo_manager import get_mongo_manager
+        mongo_manager = get_mongo_manager()
+        if mongo_manager:
             mongo_healthy = mongo_manager.health_check()
-        except:
-            pass
+    except:
+        pass
     
     all_healthy = redis_healthy
     

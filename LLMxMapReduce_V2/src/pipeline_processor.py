@@ -20,8 +20,6 @@ from src.database.mongo_manager import get_mongo_manager
 
 logger = logging.getLogger(__name__)
 
-mongo_manager = get_mongo_manager()
-
 class TaskProcessor(ABC):
     """任务处理器抽象基类"""
     
@@ -400,8 +398,9 @@ class PipelineTaskManager:
     def _check_completion_in_database(self, task_id: str) -> bool:
         """检查任务是否在数据库中完成"""
         try:
-            # 在运行时导入，确保获取到正确配置的mongo_manager
-            
+            # 在运行时获取mongo_manager，确保获取到正确配置的实例
+            from src.database.mongo_manager import get_mongo_manager
+            mongo_manager = get_mongo_manager()
             
             if not mongo_manager:
                 return False

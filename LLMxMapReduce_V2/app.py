@@ -29,7 +29,7 @@ from src.decode.decode_pipeline import DecodePipeline
 from src.encode.encode_pipeline import EncodePipeline
 from src.hidden.hidden_pipeline import HiddenPipeline
 from async_d import Monitor, PipelineAnalyser, Pipeline
-from src.database import init_mongo_manager
+from src.database.mongo_manager import get_mongo_manager
 
 
 def setup_logging(config):
@@ -180,7 +180,7 @@ class Application:
         
         # 初始化MongoDB
         try:
-            mongo_manager = init_mongo_manager(self.config.mongo)
+            mongo_manager = get_mongo_manager(self.config.mongo)
             if mongo_manager.connect():
                 self.logger.info("MongoDB连接成功")
                 stats = mongo_manager.get_stats()
