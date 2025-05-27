@@ -61,7 +61,7 @@ class LLM_search:
         self,
         model: str = "gemini-2.0-flash-thinking-exp-01-21",
         infer_type: str = "OpenAI",
-        engine: Literal["google", "baidu", "bing", "serper"] = "google",
+        engine: Literal["google", "baidu", "bing"] = "google",
         each_query_result: int = 10,
         filter_date: Optional[str] = None,
         max_workers: int = 10,
@@ -163,9 +163,9 @@ class LLM_search:
     ):
         if self.serpapi_key is not None:
             return self._serpapi_web_search(query)
-        elif self.bing_subscription_key is not None:
+        elif self.bing_subscription_key is not None and self.engine == "bing":
             return self._bing_web_search(query)
-        elif self.serper_api_key is not None:
+        elif self.serper_api_key is not None and self.engine == "google":
             return self._serper_web_search(query)
         else:
             raise ValueError("No valid search engine key provided, please check your environment variables, SERP_API_KEY, BING_SEARCH_V7_SUBSCRIPTION_KEY, or SERPER_API_KEY.")
