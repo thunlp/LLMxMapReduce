@@ -16,7 +16,7 @@ class EncodePipeline(Sequential):
     def __init__(self, configs, data_num, worker_num=1):
         self.configs = configs
         self.worker_num = worker_num
-        self.data_num = data_num
+        self.data_num = data_num  # 实际上这个属性并没有什么用，就是用来校验输入文件的数量的而已
         self.processed_count = 0
         self._count_lock = Lock()
 
@@ -95,12 +95,6 @@ class EncodePipeline(Sequential):
                 return
             
             logger.info(f"[EncodePipeline] Survey从数据库加载成功: task_id={task_id}, title={survey.title}, papers_count={len(survey.papers)}")
-            
-            with self._count_lock:
-                if self.data_num is not None:
-                    if self.processed_count >= self.data_num:
-                        return
-                    self.processed_count += 1
             
             yield survey
             
