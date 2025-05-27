@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta, timezone
 from flask_jwt_extended import create_access_token, get_jwt_identity
-from src.backend_api.models import db, User, VerificationCode
-from src.backend_api.helpers import generate_verification_code, api_response, jwt_required_custom
-from src.backend_api.auth.tencent_sms import get_sms_client
+from src.common_service.models import db, User, VerificationCode
+from src.common_service.helpers import generate_verification_code, api_response, jwt_required_custom
+from src.common_service.auth.tencent_sms import get_sms_client
 import os
 import logging
 

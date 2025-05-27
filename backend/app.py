@@ -161,7 +161,7 @@ class Application:
             CORS(self.app)
         
         # 初始化数据库和JWT
-        from src.backend_api.models import db
+        from src.common_service.models import db
         db.init_app(self.app)
         
         # 初始化JWT
@@ -171,8 +171,8 @@ class Application:
         self.app.register_blueprint(api_bp)
 
         # 业务API蓝图
-        from src.backend_api.auth import auth_bp
-        from src.backend_api.redemption import redemption_bp
+        from src.common_service.auth import auth_bp
+        from src.common_service.redemption import redemption_bp
         
         self.app.register_blueprint(auth_bp)
         self.app.register_blueprint(redemption_bp)

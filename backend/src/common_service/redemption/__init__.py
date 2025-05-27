@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity
-from src.backend_api.models import db, User, RedemptionCode, RedemptionRecord
-from src.backend_api.helpers import generate_redemption_code, api_response, jwt_required_custom
+from src.common_service.models import db, User, RedemptionCode, RedemptionRecord
+from src.common_service.helpers import generate_redemption_code, api_response, jwt_required_custom
 
 redemption_bp = Blueprint('redemption', __name__)
 
