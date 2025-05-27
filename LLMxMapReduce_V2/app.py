@@ -210,7 +210,8 @@ class Application:
         self.pipeline_task_manager = PipelineTaskManager(
             global_pipeline=self.global_pipeline,
             check_interval=self.config.pipeline.check_interval,
-            timeout=self.config.pipeline.timeout
+            timeout=self.config.pipeline.timeout,
+            search_model=self.config.search_model
         )
         
         # 设置API服务的Pipeline管理器

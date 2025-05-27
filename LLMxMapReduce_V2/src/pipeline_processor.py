@@ -155,7 +155,8 @@ class PipelineTaskManager:
     def __init__(self, 
                  global_pipeline,
                  check_interval: int = 60,
-                 timeout: int = 86400):
+                 timeout: int = 86400,
+                 **kwargs):
         """
         初始化任务管理器
         
@@ -168,7 +169,13 @@ class PipelineTaskManager:
         self.check_interval = check_interval
         self.timeout = timeout
         self.task_manager = get_task_manager()
-        self.topic_processor = TopicSearchProcessor()
+
+        if 'search_model' in kwargs:
+            self.search_model = kwargs['search_model']
+        else:
+            self.search_model = 'gemini-2.0-flash-thinking-exp-01-21'
+
+        self.topic_processor = TopicSearchProcessor(search_model=self.search_model)
     
     def submit_task(self, params: Dict[str, Any]) -> str:
         """
