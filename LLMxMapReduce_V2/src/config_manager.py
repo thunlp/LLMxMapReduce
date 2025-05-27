@@ -26,9 +26,9 @@ class RedisConfig:
 @dataclass
 class MongoConfig:
     """MongoDB配置"""
-    uri: str = 'mongodb://localhost:27017/'
     database: str
     collection: str
+    uri: str = 'mongodb://localhost:27017/'
 
 
 @dataclass
@@ -136,6 +136,8 @@ class AppConfig:
         self.redis.expire_time = get_optional_env('REDIS_EXPIRE_TIME', value_type=int)
         
         # MongoDB配置 - 必需
+        print(os.getenv("MONGO_DATABASE"))
+        print(os.getenv("MONGO_COLLECTION"))
         self.mongo.uri = get_optional_env('MONGO_URI', 'mongodb://localhost:27017/')
         self.mongo.database = get_required_env('MONGO_DATABASE')
         self.mongo.collection = get_required_env('MONGO_COLLECTION')

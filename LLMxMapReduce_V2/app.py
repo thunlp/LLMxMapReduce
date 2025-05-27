@@ -304,30 +304,7 @@ class Application:
 
 def main():
     """主函数"""
-    parser = argparse.ArgumentParser(description='启动LLMxMapReduce Web服务')
-    parser.add_argument('--config', type=str, help='配置文件路径')
-    parser.add_argument('--language', type=str, help='提示语言 (zh/en)')
-    parser.add_argument('--host', type=str, help='服务器主机地址')
-    parser.add_argument('--port', type=int, help='服务器端口')
-    parser.add_argument('--redis-host', type=str, help='Redis主机地址')
-    parser.add_argument('--redis-port', type=int, help='Redis端口')
-    
-    args = parser.parse_args()
-    
-    # 设置环境变量
-    if args.language:
-        os.environ['PROMPT_LANGUAGE'] = args.language
-    if args.host:
-        os.environ['API_HOST'] = args.host
-    if args.port:
-        os.environ['API_PORT'] = str(args.port)
-    if args.redis_host:
-        os.environ['REDIS_HOST'] = args.redis_host
-    if args.redis_port:
-        os.environ['REDIS_PORT'] = str(args.redis_port)
-    
-    # 创建并运行应用
-    app = Application(config_file=args.config)
+    app = Application()
     app.run()
 
 
