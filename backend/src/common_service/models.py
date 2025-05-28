@@ -181,7 +181,16 @@ class Task(db.Model):
     
     def is_expired(self):
         """检查任务是否过期"""
-        return datetime.now(timezone.utc) > self.expire_at
+        current_time = datetime.now(timezone.utc)
+        
+        # 确保expire_at有时区信息
+        if self.expire_at.tzinfo is None:
+            # 如果expire_at没有时区信息，假设它是UTC时间
+            expire_at_utc = self.expire_at.replace(tzinfo=timezone.utc)
+        else:
+            expire_at_utc = self.expire_at
+        
+        return current_time > expire_at_utc
     
     def can_retry(self):
         """检查是否可以重试"""

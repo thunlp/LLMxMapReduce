@@ -86,7 +86,7 @@ class AsyncCrawler:
             f"Stage 3 - Similarity scoring completed in {time.time() - stage_time:.2f} seconds, with {len(results)} results"
         )
         stage_time = time.time()
-
+       
         # Stage 4: Result processing and saving
         self._process_results(results, task_id, topic, crawl_output_file_path, top_n=top_n)
         logger.info(
