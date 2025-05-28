@@ -56,13 +56,16 @@ def send_verification_code():
     # 调用腾讯云短信服务发送验证码
     try:
         # 发送短信验证码，有效期10分钟
-        sms_client = get_sms_client()
-        result = sms_client.send_verification_code(
-            phone_number=phone,
-            code=code,
-            minutes=10
-        )
-
+        if not os.environ.get("FLASK_ENV") == "dev":
+            sms_client = get_sms_client()
+            result = sms_client.send_verification_code(
+                phone_number=phone,
+                code=code,
+                minutes=10
+            )
+        else:
+            result = {"success": True} # 开发环境不发送短信
+        
         logger.info(f"短信发送结果: {result}")
 
         if result.get("success"):
@@ -73,7 +76,7 @@ def send_verification_code():
             logger.error(f"短信发送失败: {result.get('message')}")
 
             # 判断是否为开发环境
-            if os.environ.get("FLASK_ENV") == "development":
+            if os.environ.get("FLASK_ENV") == "dev":
                 return api_response(
                     data={"code": code},  # 仅在开发环境返回验证码
                     message="验证码发送失败，但已生成用于测试"
@@ -85,7 +88,7 @@ def send_verification_code():
         logger.exception("发送短信时发生异常")
 
         # 判断是否为开发环境
-        if os.environ.get("FLASK_ENV") == "development":
+        if os.environ.get("FLASK_ENV") == "dev":
             return api_response(
                 data={"code": code},  # 仅在开发环境返回验证码
                 message=f"验证码发送异常，但已生成用于测试: {str(e)}"
