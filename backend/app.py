@@ -199,7 +199,8 @@ class Application:
         """初始化必要的组件"""
         # 初始化Redis任务管理器
         try:
-            self.task_manager = get_task_manager(self.config.redis)
+            # 使用SQLAlchemy作为任务管理器
+            self.task_manager = get_task_manager(manager_type="sqlalchemy", default_expire_hours=24)
             self.logger.info("Redis任务管理器初始化成功")
         except Exception as e:
             self.logger.error(f"Redis初始化失败: {str(e)}")

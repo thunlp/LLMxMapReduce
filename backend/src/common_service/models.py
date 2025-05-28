@@ -68,7 +68,7 @@ class RedemptionRecord(db.Model):
     
 
 class Task(db.Model):
-    """任务表 - 增强版本，支持完整的任务管理功能"""
+    """任务表"""
     __tablename__ = 'tasks'
     
     # 数据库主键
