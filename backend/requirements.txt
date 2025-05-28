@@ -19,3 +19,4 @@ flask-jwt-extended
 redis
 python-dotenv
 tencentcloud-sdk-python
+psycopg2-binary

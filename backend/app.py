@@ -8,7 +8,6 @@ import os
 import sys
 import json
 import logging
-import argparse
 from logging.handlers import RotatingFileHandler
 from flask import Flask
 from flask_cors import CORS
@@ -152,8 +151,12 @@ class Application:
         
         # 配置Flask应用
         self.app.config['SECRET_KEY'] = self.config.jwt.secret_key
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = self.config.database.uri
-        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = self.config.database.track_modifications
+        
+        # 构建PostgreSQL数据库连接字符串
+        postgres_uri = f"postgresql://{self.config.postgres.user}:{self.config.postgres.password}@{self.config.postgres.host}:{self.config.postgres.port}/{self.config.postgres.dbname}"
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = postgres_uri
+        self.app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+        
         self.app.config['JWT_SECRET_KEY'] = self.config.jwt.secret_key
         self.app.config['JWT_ACCESS_TOKEN_EXPIRES'] = self.config.jwt.access_token_expires
         
@@ -198,12 +201,23 @@ class Application:
     def _init_services(self):
         """初始化必要的组件"""
         try:
-            # 初始化Redis任务管理器
-            self.task_manager = get_task_manager(manager_type="redis", redis_config=self.config.redis)
-            self.logger.info("Redis任务管理器初始化成功")
+            # 初始化PostgreSQL任务管理器（替代Redis）
+            self.task_manager = get_task_manager(
+                manager_type="postgresql", 
+                flask_app=self.app,
+                expire_time=86400,  # 24小时过期
+                user_id=1  # 默认用户ID
+            )
+            self.logger.info("PostgreSQL任务管理器初始化成功")
         except Exception as e:
-            self.logger.error(f"Redis初始化失败: {str(e)}")
-            raise
+            self.logger.error(f"PostgreSQL任务管理器初始化失败: {str(e)}")
+            # 如果PostgreSQL失败，回退到Redis
+            try:
+                self.task_manager = get_task_manager(manager_type="redis", redis_config=self.config.redis)
+                self.logger.warning("已回退到Redis任务管理器")
+            except Exception as redis_error:
+                self.logger.error(f"Redis初始化也失败: {str(redis_error)}")
+                raise
         
         # 初始化MongoDB
         try:
@@ -216,6 +230,7 @@ class Application:
                 self.logger.warning("MongoDB连接失败，将仅使用文件存储")
         except Exception as e:
             self.logger.warning(f"MongoDB初始化失败: {str(e)}")
+            raise
         
         # 初始化全局Pipeline
         self._init_global_pipeline()

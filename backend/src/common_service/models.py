@@ -1,14 +1,13 @@
-from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, ForeignKey, Float, Text
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker, scoped_session
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey, Float, Text
+from sqlalchemy.orm import relationship
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
 import json
 
+# 创建Flask-SQLAlchemy实例
+db = SQLAlchemy()
 
-Base = declarative_base()
-
-
-class User(Base):
+class User(db.Model):
     """用户表"""
     __tablename__ = 'users'
     
@@ -32,7 +31,7 @@ class User(Base):
         return f'<User {self.phone}>'
 
 
-class VerificationCode(Base):
+class VerificationCode(db.Model):
     """验证码表"""
     __tablename__ = 'verification_codes'
     
@@ -47,7 +46,7 @@ class VerificationCode(Base):
         return f'<VerificationCode {self.phone}:{self.code}>'
 
 
-class RedemptionCode(Base):
+class RedemptionCode(db.Model):
     """兑换码表"""
     __tablename__ = 'redemption_codes'
     
@@ -61,7 +60,7 @@ class RedemptionCode(Base):
         return f'<RedemptionCode {self.code}>'
 
 
-class RedemptionRecord(Base):
+class RedemptionRecord(db.Model):
     """兑换记录表"""
     __tablename__ = 'redemption_records'
     
@@ -78,7 +77,7 @@ class RedemptionRecord(Base):
         return f'<RedemptionRecord {self.user_id}:{self.code}>'
     
 
-class Task(Base):
+class Task(db.Model):
     """任务表"""
     __tablename__ = 'tasks'
     
@@ -119,9 +118,6 @@ class Task(Base):
     # 任务结果数据（JSON格式存储）
     result_data = Column(Text)
     
-    # 任务优先级
-    priority = Column(Integer, default=0)
-    
     # 重试次数
     retry_count = Column(Integer, default=0)
     max_retries = Column(Integer, default=3)
@@ -144,7 +140,6 @@ class Task(Base):
             'execution_seconds': self.execution_seconds,
             'error': self.error,
             'expire_at': self.expire_at.isoformat() if self.expire_at else None,
-            'priority': self.priority,
             'retry_count': self.retry_count,
             'max_retries': self.max_retries
         }
@@ -213,29 +208,3 @@ class Task(Base):
     def can_retry(self):
         """检查是否可以重试"""
         return self.retry_count < self.max_retries
-
-
-# 数据库连接和会话管理
-def setup_database(connection_string, pool_size=5, max_overflow=10):
-    """配置数据库连接和会话工厂"""
-    engine = create_engine(
-        connection_string,
-        pool_size=pool_size,
-        max_overflow=max_overflow,
-        pool_pre_ping=True
-    )
-    
-    # 创建会话工厂
-    Session = scoped_session(sessionmaker(
-        bind=engine,
-        autocommit=False,
-        autoflush=False,
-        expire_on_commit=False
-    ))
-    
-    return engine, Session
-
-
-def create_tables(engine):
-    """创建数据库表"""
-    Base.metadata.create_all(bind=engine)

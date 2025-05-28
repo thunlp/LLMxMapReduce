@@ -66,10 +66,13 @@ class APIConfig:
 
 
 @dataclass
-class DatabaseConfig:
+class PostgresConfig:
     """关系数据库配置"""
-    uri: str = 'sqlite:///app.db' # todo maybe change to mysql or postgres (in the future)
-    track_modifications: bool = False
+    host: str = 'localhost'
+    port: int = 5432
+    user: str = 'huanyu'
+    password: str = '123456'
+    dbname: str = 'llm_survey'
 
 
 @dataclass
@@ -109,7 +112,7 @@ class AppConfig:
     pipeline: PipelineConfig = field(default_factory=PipelineConfig)
     api: APIConfig = field(default_factory=APIConfig)
     logging: LoggingConfig = field(default_factory=LoggingConfig)
-    database: DatabaseConfig = field(default_factory=DatabaseConfig)
+    postgres: PostgresConfig = field(default_factory=PostgresConfig)
     jwt: JWTConfig = field(default_factory=JWTConfig)
     sms: SMSConfig = field(default_factory=SMSConfig)
 
@@ -152,22 +155,22 @@ class AppConfig:
                 return value.lower() in ('true', '1', 'yes', 'on')
             return value
         
-        # Redis配置 - 必需，但是有默认值（业界常用）
+        # Redis配置
         self.redis.host = get_optional_env('REDIS_HOST', 'localhost')
         self.redis.port = get_optional_env('REDIS_PORT', 6379, int)
         self.redis.db = get_optional_env('REDIS_DB', 0, int)
 
-        # Redis密码和前缀可选
+        # Redis密码和前缀
         self.redis.password = get_optional_env('REDIS_PASSWORD')
         self.redis.key_prefix = get_optional_env('REDIS_KEY_PREFIX')
         self.redis.expire_time = get_optional_env('REDIS_EXPIRE_TIME', value_type=int)
         
-        # MongoDB配置 - 必需
+        # MongoDB配置
         self.mongo.uri = get_optional_env('MONGO_URI', 'mongodb://localhost:27017/')
         self.mongo.database = get_required_env('MONGO_DATABASE')
         self.mongo.collection = get_required_env('MONGO_COLLECTION')
         
-        # Pipeline配置 - 必需
+        # Pipeline配置
         self.pipeline.config_file = get_required_env('PIPELINE_CONFIG_FILE')
         self.pipeline.parallel_num = get_required_env('PIPELINE_PARALLEL_NUM', int)
         self.pipeline.top_n = get_required_env('PIPELINE_TOP_N', int)
@@ -192,28 +195,31 @@ class AppConfig:
         self.pipeline.search_engine = get_optional_env('PIPELINE_SEARCH_ENGINE')
         self.pipeline.search_each_query_result = get_optional_env('PIPELINE_SEARCH_EACH_QUERY_RESULT', int)
         
-        # API配置 - 必需
+        # API配置
         self.api.host = get_optional_env('API_HOST', '0.0.0.0')
         self.api.port = get_optional_env('API_PORT', 5000, int)
         self.api.debug = get_optional_env('API_DEBUG', False, bool)
         self.api.cors_enabled = get_optional_env('API_CORS_ENABLED', True, bool)
         
-        # 日志配置 - 必需
+        # 日志配置
         self.logging.level = get_required_env('LOG_LEVEL')
         self.logging.file_path = get_required_env('LOG_FILE_PATH')
         self.logging.file_enabled = get_required_env('LOG_FILE_ENABLED', bool)
         self.logging.max_bytes = get_required_env('LOG_MAX_BYTES', int)
         self.logging.backup_count = get_required_env('LOG_BACKUP_COUNT', int)
         
-        # 数据库配置 - 可选
-        self.database.uri = get_optional_env('DATABASE_URI', 'sqlite:///app.db')
-        self.database.track_modifications = get_optional_env('DATABASE_TRACK_MODIFICATIONS', False, bool)
+        # 数据库配置
+        self.postgres.host = get_optional_env('POSTGRES_HOST', 'localhost')
+        self.postgres.port = get_optional_env('POSTGRES_PORT', 5432, int)
+        self.postgres.user = get_required_env('POSTGRES_USER')
+        self.postgres.password = get_required_env('POSTGRES_PASSWORD')
+        self.postgres.dbname = get_required_env('POSTGRES_DB')
         
-        # JWT配置 - 可选
+        # JWT配置
         self.jwt.secret_key = get_optional_env('JWT_SECRET_KEY', 'dev-jwt-secret')
         self.jwt.access_token_expires = get_optional_env('JWT_ACCESS_TOKEN_EXPIRES', 86400 * 7, int)
 
-        # SMS配置 - 必需
+        # SMS配置
         self.sms.secret_id = get_required_env('TENCENT_SECRET_ID')
         self.sms.secret_key = get_required_env('TENCENT_SECRET_KEY')
         self.sms.sdk_app_id = get_required_env('TENCENT_SMS_SDK_APP_ID')
@@ -221,13 +227,13 @@ class AppConfig:
         self.sms.template_id = get_required_env('TENCENT_SMS_TEMPLATE_ID')
         self.sms.region = get_optional_env('TENCENT_SMS_REGION', 'ap-guangzhou')
         
-        # API密钥 - 必需
+        # API密钥
         self.openai_api_key = get_required_env('OPENAI_API_KEY')
-        # OpenAI API Base 可选
+        # OpenAI API Base
         self.openai_api_base = get_required_env('OPENAI_API_BASE')
-        # Serper API Key 可选（如果不使用搜索功能）
+        # Serper API Key（如果不使用搜索功能）
         self.serper_api_key = get_optional_env('SERPER_API_KEY')
-        # 提示词的语言可选
+        # 提示词的语言
         self.prompt_language = get_optional_env('PROMPT_LANGUAGE')
     
     def validate(self) -> bool:

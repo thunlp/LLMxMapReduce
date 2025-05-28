@@ -2,6 +2,11 @@
 Pipeline处理器模块
 
 负责Pipeline任务的处理、监控和生命周期管理
+
+使用说明：
+1. 使用统一的TaskManager接口进行任务状态管理
+2. TaskManager会自动处理Flask应用上下文问题
+3. 支持Redis和PostgreSQL两种存储后端
 """
 import os
 import json
@@ -128,7 +133,6 @@ class TopicSearchProcessor(TaskProcessor):
                 )
                 
                 # 从 MongoDB 获取爬虫结果
-                from src.database.mongo_manager import get_mongo_manager
                 mongo_manager = get_mongo_manager()
                 crawl_results = mongo_manager.get_crawl_results(task_id)
                 if not crawl_results or not crawl_results.get('papers'):
