@@ -6,26 +6,14 @@
 """
 import json
 import logging
-import uuid
-import threading
 from abc import ABC, abstractmethod
 from enum import Enum
-from datetime import datetime, timezone, timedelta
-from typing import Dict, Optional, List, Any, Union
+from datetime import datetime
+from typing import Dict, Optional, List, Any
 import redis
 from redis.exceptions import RedisError
 from src.config_manager import RedisConfig
 
-# 尝试导入SQLAlchemy相关模块（可选依赖）
-try:
-    from sqlalchemy.exc import SQLAlchemyError
-    from sqlalchemy import and_, or_
-    from src.common_service.models import db, Task, User
-    SQLALCHEMY_AVAILABLE = True
-except ImportError:
-    SQLALCHEMY_AVAILABLE = False
-    logger = logging.getLogger(__name__)
-    logger.warning("SQLAlchemy模块未找到，SQLAlchemyTaskManager将不可用")
 
 logger = logging.getLogger(__name__)
 
@@ -285,7 +273,7 @@ class RedisTaskManager(BaseTaskManager):
         获取任务列表
         
         Args:
-            status: 筛选状态（可选）
+            status: 状态筛选（可选）
             limit: 返回数量限制
             
         Returns:
@@ -381,331 +369,6 @@ class RedisTaskManager(BaseTaskManager):
             return False
 
 
-class SQLAlchemyTaskManager(BaseTaskManager):
-    """基于SQLAlchemy ORM的任务管理器
-    
-    与现有的数据模型完美集成，支持事务和关系查询
-    """
-    
-    def __init__(self, default_expire_hours: int = 24):
-        """
-        初始化SQLAlchemy任务管理器
-        
-        Args:
-            default_expire_hours: 默认任务过期时间（小时）
-        """
-        if not SQLALCHEMY_AVAILABLE:
-            raise ImportError("SQLAlchemy模块未安装，无法使用SQLAlchemyTaskManager")
-        
-        self.default_expire_hours = default_expire_hours
-        self._lock = threading.Lock()
-        logger.info("SQLAlchemy任务管理器初始化成功")
-    
-    def create_task(self, task_id: str, params: Dict[str, Any], 
-                   user_id: Optional[int] = None, 
-                   expire_hours: Optional[int] = None, 
-                   priority: int = 0) -> bool:
-        """
-        创建新任务
-        
-        Args:
-            task_id: 任务ID
-            params: 任务参数
-            user_id: 用户ID（可选，用于SQLAlchemy版本）
-            expire_hours: 过期时间（小时）
-            priority: 任务优先级
-            
-        Returns:
-            创建是否成功
-        """
-        try:
-            with self._lock:
-                # 计算过期时间
-                if expire_hours is None:
-                    expire_hours = self.default_expire_hours
-                expire_at = datetime.now(timezone.utc) + timedelta(hours=expire_hours)
-                
-                # 创建任务对象
-                task = Task(
-                    task_id=task_id,
-                    user_id=user_id or 1,  # 如果没有提供user_id，使用默认值
-                    status=TaskStatus.PENDING.value,
-                    priority=priority,
-                    expire_at=expire_at
-                )
-                
-                # 设置任务参数
-                task.set_params(params)
-                
-                # 保存到数据库
-                db.session.add(task)
-                db.session.commit()
-                
-                logger.info(f"任务创建成功: {task_id}")
-                return True
-                
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            logger.error(f"创建任务失败: {task_id}, error: {str(e)}")
-            return False
-    
-    def update_task_status(self, task_id: str, status: TaskStatus, 
-                          error: Optional[str] = None) -> bool:
-        """
-        更新任务状态
-        
-        Args:
-            task_id: 任务ID
-            status: 新状态
-            error: 错误信息（可选）
-            
-        Returns:
-            更新是否成功
-        """
-        try:
-            with self._lock:
-                task = Task.query.filter_by(task_id=task_id).first()
-                if not task:
-                    logger.warning(f"任务不存在: {task_id}")
-                    return False
-                
-                # 检查任务是否过期
-                if task.is_expired():
-                    logger.warning(f"任务已过期: {task_id}")
-                    return False
-                
-                # 更新状态
-                task.status = status.value
-                task.updated_at = datetime.now(timezone.utc)
-                
-                if error:
-                    task.error = error
-                
-                # 特殊状态处理
-                if status == TaskStatus.PREPARING and not task.start_time:
-                    task.start_time = datetime.now(timezone.utc)
-                elif status == TaskStatus.COMPLETED:
-                    task.end_time = datetime.now(timezone.utc)
-                    # 计算执行时间
-                    if task.start_time:
-                        execution_time = task.end_time - task.start_time
-                        task.execution_seconds = execution_time.total_seconds()
-                elif status == TaskStatus.FAILED:
-                    task.end_time = datetime.now(timezone.utc)
-                    if task.start_time:
-                        execution_time = task.end_time - task.start_time
-                        task.execution_seconds = execution_time.total_seconds()
-                
-                db.session.commit()
-                logger.info(f"任务状态更新: {task_id} -> {status.value}")
-                return True
-                
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            logger.error(f"更新任务状态失败: {task_id}, error: {str(e)}")
-            return False
-    
-    def get_task(self, task_id: str) -> Optional[Dict[str, Any]]:
-        """
-        获取任务信息
-        
-        Args:
-            task_id: 任务ID
-            
-        Returns:
-            任务信息字典，不存在则返回None
-        """
-        try:
-            task = Task.query.filter_by(task_id=task_id).first()
-            if not task:
-                return None
-            
-            # 检查是否过期
-            if task.is_expired():
-                logger.info(f"任务已过期: {task_id}")
-                return None
-            
-            task_dict = task.to_dict()
-            # 保持与Redis版本的兼容性，使用'id'字段
-            task_dict['id'] = task_dict.get('id', task_id)
-            return task_dict
-            
-        except SQLAlchemyError as e:
-            logger.error(f"获取任务失败: {task_id}, error: {str(e)}")
-            return None
-    
-    def update_task_field(self, task_id: str, field: str, value: Any) -> bool:
-        """
-        更新任务的单个字段
-        
-        Args:
-            task_id: 任务ID
-            field: 字段名
-            value: 字段值
-            
-        Returns:
-            更新是否成功
-        """
-        try:
-            with self._lock:
-                task = Task.query.filter_by(task_id=task_id).first()
-                if not task:
-                    logger.warning(f"任务不存在: {task_id}")
-                    return False
-                
-                if task.is_expired():
-                    logger.warning(f"任务已过期: {task_id}")
-                    return False
-                
-                # 安全的字段更新
-                allowed_fields = {
-                    'status', 'error', 'priority', 'retry_count', 
-                    'max_retries', 'result_data'
-                }
-                
-                if field not in allowed_fields:
-                    logger.error(f"不允许更新字段: {field}")
-                    return False
-                
-                # 特殊字段处理
-                if field == 'result_data' and isinstance(value, dict):
-                    task.set_result_data(value)
-                else:
-                    setattr(task, field, value)
-                
-                task.updated_at = datetime.now(timezone.utc)
-                db.session.commit()
-                
-                logger.info(f"任务字段更新成功: {task_id}.{field}")
-                return True
-                
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            logger.error(f"更新任务字段失败: {task_id}.{field}, error: {str(e)}")
-            return False
-    
-    def list_tasks(self, status: Optional[TaskStatus] = None, 
-                   limit: int = 100) -> List[Dict[str, Any]]:
-        """
-        获取任务列表
-        
-        Args:
-            status: 状态筛选（可选）
-            limit: 返回数量限制
-            
-        Returns:
-            任务列表
-        """
-        try:
-            query = Task.query.filter(
-                Task.expire_at > datetime.now(timezone.utc)
-            )
-            
-            # 状态筛选
-            if status:
-                query = query.filter(Task.status == status.value)
-            
-            # 排序和限制
-            tasks = query.order_by(Task.created_at.desc()).limit(limit).all()
-            
-            result = []
-            for task in tasks:
-                task_dict = task.to_dict()
-                # 保持与Redis版本的兼容性
-                task_dict['id'] = task_dict.get('id', task.task_id)
-                result.append(task_dict)
-            
-            return result
-            
-        except SQLAlchemyError as e:
-            logger.error(f"获取任务列表失败: {str(e)}")
-            return []
-    
-    def delete_task(self, task_id: str) -> bool:
-        """
-        删除任务
-        
-        Args:
-            task_id: 任务ID
-            
-        Returns:
-            删除是否成功
-        """
-        try:
-            with self._lock:
-                task = Task.query.filter_by(task_id=task_id).first()
-                if not task:
-                    logger.warning(f"任务不存在: {task_id}")
-                    return False
-                
-                db.session.delete(task)
-                db.session.commit()
-                
-                logger.info(f"任务已删除: {task_id}")
-                return True
-                
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            logger.error(f"删除任务失败: {task_id}, error: {str(e)}")
-            return False
-    
-    def get_active_task_count(self) -> int:
-        """获取活跃任务数量"""
-        try:
-            active_statuses = [
-                TaskStatus.PENDING.value, TaskStatus.PREPARING.value,
-                TaskStatus.SEARCHING.value, TaskStatus.SEARCHING_WEB.value,
-                TaskStatus.CRAWLING.value, TaskStatus.PROCESSING.value
-            ]
-            
-            count = Task.query.filter(
-                and_(
-                    Task.status.in_(active_statuses),
-                    Task.expire_at > datetime.now(timezone.utc)
-                )
-            ).count()
-            
-            return count
-            
-        except SQLAlchemyError as e:
-            logger.error(f"获取活跃任务数量失败: {str(e)}")
-            return 0
-    
-    def cleanup_expired_tasks(self) -> int:
-        """清理过期任务"""
-        try:
-            with self._lock:
-                expired_tasks = Task.query.filter(
-                    Task.expire_at <= datetime.now(timezone.utc)
-                ).all()
-                
-                expired_count = len(expired_tasks)
-                
-                for task in expired_tasks:
-                    db.session.delete(task)
-                
-                db.session.commit()
-                
-                if expired_count > 0:
-                    logger.info(f"清理了 {expired_count} 个过期任务")
-                
-                return expired_count
-                
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            logger.error(f"清理过期任务失败: {str(e)}")
-            return 0
-    
-    def health_check(self) -> bool:
-        """健康检查"""
-        try:
-            # 简单的数据库连接测试
-            db.session.execute('SELECT 1')
-            return True
-        except SQLAlchemyError:
-            return False
-
-
 # 创建全局任务管理器实例（单例模式）
 _task_manager_instance = None
 
@@ -738,12 +401,6 @@ def get_task_manager(manager_type: str = "redis",
                 key_prefix=redis_config.key_prefix,
                 expire_time=redis_config.expire_time
             )
-        elif manager_type == "sqlalchemy":
-            if not SQLALCHEMY_AVAILABLE:
-                raise ImportError("SQLAlchemy模块未安装，无法使用SQLAlchemyTaskManager")
-            _task_manager_instance = SQLAlchemyTaskManager(
-                default_expire_hours=kwargs.get('default_expire_hours', 24)
-            )
         else:
             raise ValueError(f"不支持的TaskManager类型: {manager_type}")
     
@@ -753,18 +410,4 @@ def get_task_manager(manager_type: str = "redis",
 def reset_task_manager():
     """重置任务管理器实例（主要用于测试）"""
     global _task_manager_instance
-    _task_manager_instance = None
-
-
-# 为了保持向后兼容性，保留原有的函数签名
-def get_redis_task_manager(redis_config: RedisConfig) -> RedisTaskManager:
-    """
-    获取Redis任务管理器实例（向后兼容）
-    
-    Args:
-        redis_config: Redis配置
-        
-    Returns:
-        RedisTaskManager实例
-    """
-    return get_task_manager(manager_type="redis", redis_config=redis_config) 
+    _task_manager_instance = None 

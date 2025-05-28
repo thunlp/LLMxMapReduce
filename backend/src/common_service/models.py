@@ -1,115 +1,133 @@
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, DateTime, ForeignKey, Float, Text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 from datetime import datetime, timezone
 import json
 
-db = SQLAlchemy()
 
-class User(db.Model):
+Base = declarative_base()
+
+
+class User(Base):
     """用户表"""
     __tablename__ = 'users'
     
-    id = db.Column(db.Integer, primary_key=True)
-    phone = db.Column(db.String(20), unique=True, nullable=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
+    id = Column(Integer, primary_key=True)
+    phone = Column(String(20), unique=True, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(
+        DateTime, 
+        default=lambda: datetime.now(timezone.utc), 
+        onupdate=lambda: datetime.now(timezone.utc)
+    )
     
     # 用户剩余使用次数
-    remaining_uses = db.Column(db.Integer, default=0)
+    remaining_uses = Column(Integer, default=0)
     
     # 关联
-    tasks = db.relationship('Task', backref='user', lazy=True)
-    redemption_records = db.relationship('RedemptionRecord', backref='user', lazy=True)
+    tasks = relationship("Task", back_populates="user")
+    redemption_records = relationship("RedemptionRecord", back_populates="user")
     
     def __repr__(self):
         return f'<User {self.phone}>'
 
 
-class VerificationCode(db.Model):
+class VerificationCode(Base):
     """验证码表"""
     __tablename__ = 'verification_codes'
     
-    id = db.Column(db.Integer, primary_key=True)
-    phone = db.Column(db.String(20), nullable=False)
-    code = db.Column(db.String(6), nullable=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    expires_at = db.Column(db.DateTime, nullable=False)
-    is_used = db.Column(db.Boolean, default=False)
+    id = Column(Integer, primary_key=True)
+    phone = Column(String(20), nullable=False)
+    code = Column(String(6), nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    expires_at = Column(DateTime, nullable=False)
+    is_used = Column(Boolean, default=False)
     
     def __repr__(self):
         return f'<VerificationCode {self.phone}:{self.code}>'
 
 
-class RedemptionCode(db.Model):
+class RedemptionCode(Base):
     """兑换码表"""
     __tablename__ = 'redemption_codes'
     
-    id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(16), unique=True, nullable=False)
-    uses_granted = db.Column(db.Integer, default=1)  # 兑换后获得的使用次数
-    is_used = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    id = Column(Integer, primary_key=True)
+    code = Column(String(16), unique=True, nullable=False)
+    uses_granted = Column(Integer, default=1)  # 兑换后获得的使用次数
+    is_used = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     
     def __repr__(self):
         return f'<RedemptionCode {self.code}>'
 
 
-class RedemptionRecord(db.Model):
+class RedemptionRecord(Base):
     """兑换记录表"""
     __tablename__ = 'redemption_records'
     
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    code = db.Column(db.String(16), nullable=False)
-    uses_granted = db.Column(db.Integer, nullable=False)
-    redeemed_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    code = Column(String(16), nullable=False)
+    uses_granted = Column(Integer, nullable=False)
+    redeemed_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
+    
+    # 关联
+    user = relationship("User", back_populates="redemption_records")
     
     def __repr__(self):
         return f'<RedemptionRecord {self.user_id}:{self.code}>'
     
 
-class Task(db.Model):
+class Task(Base):
     """任务表"""
     __tablename__ = 'tasks'
     
     # 数据库主键
-    id = db.Column(db.Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
     
     # 业务层面的任务ID（UUID格式，用于外部API）
-    task_id = db.Column(db.String(36), unique=True, nullable=False, index=True)
+    task_id = Column(String(36), unique=True, nullable=False, index=True)
     
     # 关联用户
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     
     # 任务状态
-    status = db.Column(db.String(20), nullable=False, index=True)
+    status = Column(String(20), nullable=False, index=True)
     
     # 任务参数（JSON格式存储）
-    params = db.Column(db.Text)
+    params = Column(Text)
     
     # 时间字段
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), index=True)
-    updated_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
-    start_time = db.Column(db.DateTime)
-    end_time = db.Column(db.DateTime)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), index=True)
+    updated_at = Column(
+        DateTime, 
+        default=lambda: datetime.now(timezone.utc), 
+        onupdate=lambda: datetime.now(timezone.utc)
+    )
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
     
     # 执行时间（秒）
-    execution_seconds = db.Column(db.Float)
+    execution_seconds = Column(Float)
     
     # 错误信息
-    error = db.Column(db.Text)
+    error = Column(Text)
     
     # 过期时间
-    expire_at = db.Column(db.DateTime, nullable=False, index=True)
+    expire_at = Column(DateTime, nullable=False, index=True)
     
     # 任务结果数据（JSON格式存储）
-    result_data = db.Column(db.Text)
+    result_data = Column(Text)
     
     # 任务优先级
-    priority = db.Column(db.Integer, default=0)
+    priority = Column(Integer, default=0)
     
     # 重试次数
-    retry_count = db.Column(db.Integer, default=0)
-    max_retries = db.Column(db.Integer, default=3)
+    retry_count = Column(Integer, default=0)
+    max_retries = Column(Integer, default=3)
+    
+    # 关联
+    user = relationship("User", back_populates="tasks")
     
     def __repr__(self):
         return f'<Task {self.task_id}:{self.status}>'
@@ -195,3 +213,29 @@ class Task(db.Model):
     def can_retry(self):
         """检查是否可以重试"""
         return self.retry_count < self.max_retries
+
+
+# 数据库连接和会话管理
+def setup_database(connection_string, pool_size=5, max_overflow=10):
+    """配置数据库连接和会话工厂"""
+    engine = create_engine(
+        connection_string,
+        pool_size=pool_size,
+        max_overflow=max_overflow,
+        pool_pre_ping=True
+    )
+    
+    # 创建会话工厂
+    Session = scoped_session(sessionmaker(
+        bind=engine,
+        autocommit=False,
+        autoflush=False,
+        expire_on_commit=False
+    ))
+    
+    return engine, Session
+
+
+def create_tables(engine):
+    """创建数据库表"""
+    Base.metadata.create_all(bind=engine)
