@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
 import json
 
-# 创建Flask-SQLAlchemy实例
 db = SQLAlchemy()
 
 class User(db.Model):

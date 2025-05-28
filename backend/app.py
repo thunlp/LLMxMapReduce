@@ -205,8 +205,7 @@ class Application:
             self.task_manager = get_task_manager(
                 manager_type="postgresql", 
                 flask_app=self.app,
-                expire_time=86400,  # 24小时过期
-                user_id=1  # 默认用户ID
+                expire_time=86400
             )
             self.logger.info("PostgreSQL任务管理器初始化成功")
         except Exception as e:

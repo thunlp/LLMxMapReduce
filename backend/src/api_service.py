@@ -8,10 +8,12 @@ import json
 import logging
 from typing import Dict, Any, Optional
 from flask import Blueprint, request, jsonify
+from flask_jwt_extended import get_jwt_identity
 
 from src.task_manager import TaskStatus, get_task_manager
 from src.pipeline_processor import PipelineTaskManager
 from src.database.mongo_manager import get_mongo_manager
+from src.common_service.helpers import jwt_required_custom
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +30,7 @@ def set_pipeline_manager(manager: PipelineTaskManager):
 
 
 @api_bp.route('/task/submit', methods=['POST'])
+@jwt_required_custom
 def submit_task():
     """提交新的任务
     
@@ -53,8 +56,25 @@ def submit_task():
                 'error': 'Pipeline管理器未初始化'
             }), 500
         
+        # 获取当前用户ID
+        current_user_id = get_jwt_identity()
+        if not current_user_id:
+            return jsonify({
+                'success': False,
+                'error': '无法获取用户信息'
+            }), 401
+        
         # 获取请求参数
         params = request.json
+        if not params:
+            return jsonify({
+                'success': False,
+                'error': '请求参数不能为空'
+            }), 400
+        
+        # 添加用户ID到参数中
+        params['user_id'] = current_user_id
+        
         logger.info(f"收到Pipeline请求: {params}")
         
         # 提交任务

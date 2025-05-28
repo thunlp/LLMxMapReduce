@@ -123,26 +123,21 @@ class PostgreSQLTaskManager(BaseTaskManager):
     
     def __init__(self, 
                  flask_app=None,
-                 expire_time: int = 86400,  # 默认24小时过期
-                 user_id: int = 1):  # 默认用户ID，用于创建任务时的关联
+                 expire_time: int = 86400):  # 默认24小时过期
         """
         初始化PostgreSQL任务管理器
         
         Args:
             flask_app: Flask应用实例，用于创建应用上下文
             expire_time: 任务过期时间（秒）
-            user_id: 默认用户ID
         """
         self.flask_app = flask_app
         self.expire_time = expire_time
-        self.default_user_id = user_id
         
-        # 验证Flask应用和数据库连接
         if flask_app:
             try:
                 with flask_app.app_context():
                     from src.common_service.models import db
-                    # 测试数据库连接 - 使用SQLAlchemy 2.0兼容的方式
                     with db.engine.connect() as connection:
                         connection.execute(db.text('SELECT 1'))
                     logger.info("PostgreSQL连接成功")
@@ -159,7 +154,7 @@ class PostgreSQLTaskManager(BaseTaskManager):
         
         Args:
             task_id: 任务ID
-            params: 任务参数
+            params: 任务参数，必须包含 'user_id' 字段
             
         Returns:
             创建是否成功
@@ -167,13 +162,18 @@ class PostgreSQLTaskManager(BaseTaskManager):
         try:
             from src.common_service.models import db, Task
             
+            # 验证必需的user_id参数
+            if 'user_id' not in params:
+                logger.error(f"创建任务失败: {task_id}, 缺少必需的user_id参数")
+                return False
+            
             # 计算过期时间
             expire_at = datetime.now(timezone.utc) + timedelta(seconds=self.expire_time)
             
             # 创建任务实例
             task = Task(
                 task_id=task_id,
-                user_id=params.get('user_id', self.default_user_id),
+                user_id=params['user_id'],
                 status=TaskStatus.PENDING.value,
                 expire_at=expire_at
             )
@@ -775,8 +775,7 @@ def get_task_manager(manager_type: str = "redis",
         elif manager_type == "postgresql":
             _task_manager_instance = PostgreSQLTaskManager(
                 flask_app=flask_app,
-                expire_time=kwargs.get('expire_time', 86400),
-                user_id=kwargs.get('user_id', 1)
+                expire_time=kwargs.get('expire_time', 86400)
             )
         else:
             raise ValueError(f"不支持的TaskManager类型: {manager_type}")
