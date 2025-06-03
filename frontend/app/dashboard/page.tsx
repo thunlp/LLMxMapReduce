@@ -10,20 +10,56 @@ import { Footer } from "@/components/footer"
 import { Search, Send, Upload, Globe, ThumbsUp, MessageSquare, Clock, ChevronDown } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
+import { useAuth } from "@/contexts/auth-context"
+import { submitTask } from "@/lib/api"
+import { toast } from "sonner"
 
 export default function DashboardPage() {
   const [topic, setTopic] = useState("")
   const [keywords, setKeywords] = useState("")
   const [language, setLanguage] = useState("zh")
   const [isGenerating, setIsGenerating] = useState(false)
+  const { token, user } = useAuth()
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
+    if (!token) {
+      toast.error("请先登录", {
+        description: "您需要登录后才能提交任务",
+      })
+      return
+    }
+
+    if (!topic) {
+      toast.error("请输入文章标题", {
+        description: "文章标题不能为空",
+      })
+      return
+    }
+
     setIsGenerating(true)
-    // Simulate API call
-    setTimeout(() => {
+    
+    try {
+      const response = await submitTask(token, topic, keywords || undefined)
+      // 根据后端返回的success字段判断是否成功
+      if (response.success) {
+        toast.success("提交成功", {
+          description: response.message || `任务ID: ${response.data.task_id}\n标题: ${response.data.unique_survey_title}`,
+        })
+      } else {
+        toast.error("提交失败", {
+          description: response.message || "任务提交失败",
+        })
+      }
+      
+      // 这里可以添加刷新历史记录的逻辑
+      
+    } catch (error: any) {
+      toast.error("提交失败", {
+        description: error.message || "网络错误或服务器异常",
+      })
+    } finally {
       setIsGenerating(false)
-      // Here you would handle the response
-    }, 3000)
+    }
   }
 
   // Mock history data

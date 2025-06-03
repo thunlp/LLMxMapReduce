@@ -20,10 +20,7 @@ export function Header({ showUserNav = true }: HeaderProps) {
           ) : (
             <nav className="flex items-center gap-6">
               <Link href="/login" className="text-sm font-medium hover:underline">
-                登录
-              </Link>
-              <Link href="/register" className="text-sm font-medium hover:underline">
-                注册
+                登录 / 注册
               </Link>
             </nav>
           )}
