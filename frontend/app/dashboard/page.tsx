@@ -20,7 +20,7 @@ export default function DashboardPage() {
   const [keywords, setKeywords] = useState("")
   const [language, setLanguage] = useState("zh")
   const [isGenerating, setIsGenerating] = useState(false)
-  const { token, user, isLoading } = useAuth()
+  const { token, user, isLoading, refreshUserInfo } = useAuth()
   const router = useRouter()
 
   // 检查登录状态
@@ -70,6 +70,9 @@ export default function DashboardPage() {
         toast.success("提交成功", {
           description: response.message || `任务ID: ${response.data.task_id}\n标题: ${response.data.unique_survey_title}`,
         })
+        
+        // 刷新用户信息以更新剩余次数
+        await refreshUserInfo()
       } else {
         toast.error("提交失败", {
           description: response.message || "任务提交失败",
@@ -129,7 +132,7 @@ export default function DashboardPage() {
                     <h3 className="text-lg font-medium">文章标题：</h3>
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-muted-foreground">剩余次数：</span>
-                      <Badge variant="outline">12</Badge>
+                      <Badge variant="outline">{user?.remaining_uses || 0}</Badge>
                     </div>
                   </div>
                   <Input

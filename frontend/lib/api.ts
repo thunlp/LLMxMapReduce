@@ -13,6 +13,14 @@ interface LoginResponse {
   };
 }
 
+// 新增：用户信息响应接口
+interface UserInfoResponse {
+  id: number;
+  phone: string;
+  remaining_uses: number;
+  created_at: string;
+}
+
 // 新增：任务提交响应接口
 interface TaskSubmitResponse {
   task_id: string;
@@ -58,7 +66,7 @@ export async function login(phone: string, code: string): Promise<ApiResponse<Lo
 }
 
 // 获取用户信息
-export async function getUserInfo(token: string): Promise<ApiResponse> {
+export async function getUserInfo(token: string): Promise<ApiResponse<UserInfoResponse>> {
   const response = await fetch(`${API_BASE_URL}/auth/user_info`, {
     method: 'GET',
     headers: {
