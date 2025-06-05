@@ -55,46 +55,35 @@ def send_verification_code():
 
     # 调用腾讯云短信服务发送验证码
     try:
-        # 发送短信验证码，有效期10分钟
-        if not os.environ.get("FLASK_ENV") == "dev":
+        # 判断是否为开发环境
+        if os.environ.get("FLASK_ENV") == "dev":
+            # 开发环境下不发送真实短信，直接返回验证码
+            logger.info(f"开发环境模式，生成的验证码: {code}")
+            return api_response(
+                data={"code": code},  # 开发环境返回验证码用于测试
+                message="验证码已生成（开发模式）"
+            )
+        else:
+            # 生产环境发送短信验证码，有效期10分钟
             sms_client = get_sms_client()
             result = sms_client.send_verification_code(
                 phone_number=phone,
                 code=code,
                 minutes=10
             )
-        else:
-            result = {"success": True} # 开发环境不发送短信
-        
-        logger.info(f"短信发送结果: {result}")
+            
+            logger.info(f"短信发送结果: {result}")
 
-        if result.get("success"):
-            return api_response(message="验证码已发送")
-        else:
-            # 短信发送失败，但验证码已存储在数据库中
-            # 在开发环境中，可以返回验证码用于测试
-            logger.error(f"短信发送失败: {result.get('message')}")
-
-            # 判断是否为开发环境
-            if os.environ.get("FLASK_ENV") == "dev":
-                return api_response(
-                    data={"code": code},  # 仅在开发环境返回验证码
-                    message="验证码发送失败，但已生成用于测试"
-                )
+            if result.get("success"):
+                return api_response(message="验证码已发送")
             else:
+                # 短信发送失败
+                logger.error(f"短信发送失败: {result.get('message')}")
                 return api_response(message="验证码发送失败，请稍后重试", status=500)
 
     except Exception as e:
         logger.exception("发送短信时发生异常")
-
-        # 判断是否为开发环境
-        if os.environ.get("FLASK_ENV") == "dev":
-            return api_response(
-                data={"code": code},  # 仅在开发环境返回验证码
-                message=f"验证码发送异常，但已生成用于测试: {str(e)}"
-            )
-        else:
-            return api_response(message="验证码发送失败，请稍后重试", status=500)
+        return api_response(message="验证码发送失败，请稍后重试", status=500)
 
 
 @auth_bp.route('/login', methods=['POST'])

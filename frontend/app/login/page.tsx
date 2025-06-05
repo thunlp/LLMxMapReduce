@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { sendVerificationCode, login } from "@/lib/api"
+import { useAuth } from "@/contexts/auth-context"
 import { toast } from "sonner"
 
 export default function LoginPage() {
@@ -21,6 +22,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isLoginLoading, setIsLoginLoading] = useState(false)
   const router = useRouter()
+  const { login: authLogin } = useAuth()
 
   const handleSendCode = async () => {
     if (!phoneNumber || phoneNumber.length !== 11) {
@@ -78,10 +80,8 @@ export default function LoginPage() {
       
       if (response.success && response.data) {
         toast.success(response.message || "登录成功")
-        
-        // 保存token到localStorage
-        localStorage.setItem('token', response.data.token)
-        localStorage.setItem('user', JSON.stringify(response.data.user))
+        // 使用AuthContext的login方法来保存状态
+        authLogin(response.data.token, response.data.user)
         
         // 跳转到dashboard
         router.push("/dashboard")

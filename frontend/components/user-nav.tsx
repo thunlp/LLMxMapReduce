@@ -12,10 +12,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
 import Link from "next/link"
 
 export function UserNav() {
   const router = useRouter()
+  const { user, logout } = useAuth()
+
+  const handleLogout = () => {
+    logout()
+    router.push("/")
+  }
 
   return (
     <DropdownMenu>
@@ -31,7 +38,9 @@ export function UserNav() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">用户</p>
-            <p className="text-xs leading-none text-muted-foreground">138****1234</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user?.phone ? `${user.phone.slice(0, 3)}****${user.phone.slice(-4)}` : "138****1234"}
+            </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -44,7 +53,7 @@ export function UserNav() {
           </Link>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push("/")}>退出登录</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>退出登录</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )

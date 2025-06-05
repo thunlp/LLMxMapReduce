@@ -17,7 +17,7 @@ def generate_redemption_code(length=16):
 def api_response(data=None, message="", status=200):
     """统一API响应格式"""
     response = {
-        "status": "success" if status < 400 else "error",
+        "success": status < 400,
         "message": message,
     }
     

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -19,7 +20,31 @@ export default function DashboardPage() {
   const [keywords, setKeywords] = useState("")
   const [language, setLanguage] = useState("zh")
   const [isGenerating, setIsGenerating] = useState(false)
-  const { token, user } = useAuth()
+  const { token, user, isLoading } = useAuth()
+  const router = useRouter()
+
+  // 检查登录状态
+  useEffect(() => {
+    if (!isLoading && !token) {
+      toast.error("请先登录")
+      router.push("/login")
+    }
+  }, [token, isLoading, router])
+
+  // 如果正在加载或未登录，显示加载状态
+  if (isLoading || !token) {
+    return (
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-lg">加载中...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    )
+  }
 
   const handleGenerate = async () => {
     if (!token) {
@@ -127,18 +152,20 @@ export default function DashboardPage() {
                   />
                 </div>
 
-                <div className="flex flex-wrap gap-3 mt-4">
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <Upload className="h-4 w-4" />
-                    上传文件
-                  </Button>
+                <div className="flex flex-wrap items-center justify-between gap-3 mt-4">
+                  <div className="flex gap-3">
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <Upload className="h-4 w-4" />
+                      上传文件
+                    </Button>
 
-                  <Button variant="outline" className="flex items-center gap-2">
-                    <Globe className="h-4 w-4" />
-                    Web检索
-                  </Button>
+                    <Button variant="outline" className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      Web检索
+                    </Button>
+                  </div>
 
-                  <div className="ml-auto flex items-center gap-3">
+                  <div className="flex items-center gap-3">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="flex items-center gap-2">
