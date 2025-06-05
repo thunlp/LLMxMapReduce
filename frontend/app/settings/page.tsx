@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -13,33 +14,162 @@ import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
 import { useTheme } from "next-themes"
 import { Badge } from "@/components/ui/badge"
+import { Loader2, Gift, CreditCard, Sparkles } from "lucide-react"
+import { getUserInfo, redeemCode } from "@/lib/api"
+import { useToast } from "@/hooks/use-toast"
 
 export default function SettingsPage() {
-  const [phoneNumber, setPhoneNumber] = useState("138****1234")
+  const searchParams = useSearchParams()
+  const [activeTab, setActiveTab] = useState("profile")
+  const [phoneNumber, setPhoneNumber] = useState("")
   const [email, setEmail] = useState("")
   const [name, setName] = useState("")
-  const [redeemCode, setRedeemCode] = useState("")
+  const [redeemCodeInput, setRedeemCodeInput] = useState("")
+  const [currentCredits, setCurrentCredits] = useState(0)
+  const [isRedeeming, setIsRedeeming] = useState(false)
+  const [isLoadingUserInfo, setIsLoadingUserInfo] = useState(true)
   const [notifications, setNotifications] = useState({
     email: false,
     sms: true,
     browser: true,
   })
   const { theme, setTheme } = useTheme()
+  const { toast } = useToast()
+
+  // 兑换码套餐配置
+  const codePackages = [
+    {
+      id: "basic",
+      name: "基础包",
+      credits: 10,
+      price: 29.9,
+      description: "适合偶尔使用的用户",
+      popular: false,
+    },
+    {
+      id: "standard",
+      name: "标准包",
+      credits: 30,
+      price: 79.9,
+      description: "最受欢迎的选择",
+      popular: true,
+      originalPrice: 89.7,
+    },
+    {
+      id: "premium",
+      name: "高级包",
+      credits: 100,
+      price: 199.9,
+      description: "重度使用用户的最佳选择",
+      popular: false,
+      originalPrice: 299,
+    },
+  ]
+
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab && ['profile', 'appearance', 'notifications', 'subscription'].includes(tab)) {
+      setActiveTab(tab)
+    }
+  }, [searchParams])
+
+  // 获取用户信息
+  useEffect(() => {
+    async function fetchUserInfo() {
+      try {
+        const token = localStorage.getItem('token')
+        if (!token) {
+          return
+        }
+
+        const response = await getUserInfo(token)
+        if (response.success) {
+          setCurrentCredits(response.data.remaining_uses)
+          setPhoneNumber(response.data.phone)
+        }
+      } catch (error) {
+        console.error('获取用户信息失败:', error)
+      } finally {
+        setIsLoadingUserInfo(false)
+      }
+    }
+
+    fetchUserInfo()
+  }, [])
 
   const handleSaveProfile = () => {
     // Here you would implement the profile update logic
-    alert("个人资料已更新")
+    toast({
+      title: "个人资料已更新",
+    })
   }
 
   const handleSaveNotifications = () => {
     // Here you would implement the notification settings update logic
-    alert("通知设置已更新")
+    toast({
+      title: "通知设置已更新",
+    })
   }
 
-  const handleRedeem = () => {
-    // Here you would implement the redemption logic
-    setRedeemCode("")
-    alert("兑换码已使用")
+  const handleRedeemCode = async () => {
+    if (!redeemCodeInput.trim()) {
+      toast({
+        title: "请输入兑换码",
+        variant: "destructive",
+      })
+      return
+    }
+
+    const token = localStorage.getItem('token')
+    if (!token) {
+      toast({
+        title: "请先登录",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setIsRedeeming(true)
+    
+    try {
+      const response = await redeemCode(token, redeemCodeInput.trim())
+      
+      if (response.success) {
+        toast({
+          title: "兑换成功",
+          description: `获得 ${response.data.added_uses} 次使用次数`,
+        })
+        
+        // 更新当前次数
+        setCurrentCredits(response.data.remaining_uses)
+        
+        // 清空输入框
+        setRedeemCodeInput("")
+      } else {
+        toast({
+          title: "兑换失败",
+          description: response.message,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "兑换失败",
+        description: error instanceof Error ? error.message : "请稍后重试",
+        variant: "destructive",
+      })
+    } finally {
+      setIsRedeeming(false)
+    }
+  }
+
+  const handlePurchaseCode = (packageId: string) => {
+    // 这里未来会实现购买兑换码的逻辑
+    const selectedPackage = codePackages.find(pkg => pkg.id === packageId)
+    toast({
+      title: "功能开发中",
+      description: `${selectedPackage?.name} 购买功能即将上线`,
+    })
   }
 
   return (
@@ -53,12 +183,12 @@ export default function SettingsPage() {
               <p className="text-muted-foreground">管理您的账户设置和偏好</p>
             </div>
             <Separator />
-            <Tabs defaultValue="profile" className="space-y-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
               <TabsList>
                 <TabsTrigger value="profile">个人资料</TabsTrigger>
                 <TabsTrigger value="appearance">外观</TabsTrigger>
                 <TabsTrigger value="notifications">通知</TabsTrigger>
-                <TabsTrigger value="subscription">订阅与兑换</TabsTrigger>
+                <TabsTrigger value="subscription">购买与兑换</TabsTrigger>
               </TabsList>
               <TabsContent value="profile" className="space-y-6">
                 <Card>
@@ -173,42 +303,115 @@ export default function SettingsPage() {
                 </Card>
               </TabsContent>
               <TabsContent value="subscription" className="space-y-6">
+                {/* 当前次数显示 */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>订阅信息</CardTitle>
-                    <CardDescription>查看您的订阅状态和剩余使用次数</CardDescription>
+                    <CardTitle>当前账户状态</CardTitle>
+                    <CardDescription>查看您的使用次数余额</CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent>
                     <div className="flex justify-between items-center p-4 border rounded-lg">
                       <div>
-                        <h3 className="font-medium">当前计划</h3>
-                        <p className="text-sm text-muted-foreground">标准版</p>
+                        <h3 className="font-medium">可用次数</h3>
+                        <p className="text-sm text-muted-foreground">当前剩余使用次数</p>
                       </div>
                       <div className="text-right">
-                        <h3 className="font-medium">剩余次数</h3>
-                        <Badge className="ml-2">12</Badge>
+                        {isLoadingUserInfo ? (
+                          <Loader2 className="h-6 w-6 animate-spin" />
+                        ) : (
+                          <Badge variant="secondary" className="text-lg px-3 py-1">
+                            {currentCredits} 次
+                          </Badge>
+                        )}
                       </div>
                     </div>
+                  </CardContent>
+                </Card>
 
-                    <div className="space-y-2 mt-6">
-                      <Label htmlFor="redeem-code">兑换码</Label>
+                {/* 购买兑换码套餐 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <CreditCard className="h-5 w-5" />
+                      购买使用次数
+                    </CardTitle>
+                    <CardDescription>选择适合您的套餐，获得更多使用次数</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4 md:grid-cols-3">
+                      {codePackages.map((pkg) => (
+                        <Card key={pkg.id} className={`relative ${pkg.popular ? 'border-primary shadow-md' : ''}`}>
+                          {pkg.popular && (
+                            <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
+                              <Badge className="bg-primary text-primary-foreground flex items-center gap-1">
+                                <Sparkles className="h-3 w-3" />
+                                推荐
+                              </Badge>
+                            </div>
+                          )}
+                          <CardHeader className="text-center pb-4">
+                            <CardTitle className="text-lg">{pkg.name}</CardTitle>
+                            <div className="space-y-1">
+                              <div className="text-3xl font-bold">¥{pkg.price}</div>
+                              {pkg.originalPrice && (
+                                <div className="text-sm text-muted-foreground line-through">
+                                  原价 ¥{pkg.originalPrice}
+                                </div>
+                              )}
+                            </div>
+                          </CardHeader>
+                          <CardContent className="text-center space-y-2">
+                            <div className="text-2xl font-semibold text-primary">
+                              {pkg.credits} 次
+                            </div>
+                            <p className="text-sm text-muted-foreground">{pkg.description}</p>
+                            <div className="text-xs text-muted-foreground">
+                              平均 ¥{(pkg.price / pkg.credits).toFixed(2)}/次
+                            </div>
+                          </CardContent>
+                          <CardFooter>
+                            <Button 
+                              className="w-full" 
+                              variant={pkg.popular ? "default" : "outline"}
+                              onClick={() => handlePurchaseCode(pkg.id)}
+                            >
+                              立即购买
+                            </Button>
+                          </CardFooter>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 兑换码输入 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Gift className="h-5 w-5" />
+                      兑换码
+                    </CardTitle>
+                    <CardDescription>如果您有兑换码，可以在这里使用</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="redeem-code">输入兑换码</Label>
                       <div className="flex gap-2">
                         <Input
                           id="redeem-code"
                           placeholder="请输入兑换码"
-                          value={redeemCode}
-                          onChange={(e) => setRedeemCode(e.target.value)}
+                          value={redeemCodeInput}
+                          onChange={(e) => setRedeemCodeInput(e.target.value)}
+                          disabled={isRedeeming}
                         />
-                        <Button onClick={handleRedeem} disabled={!redeemCode}>
+                        <Button onClick={handleRedeemCode} disabled={!redeemCodeInput || isRedeeming}>
+                          {isRedeeming && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
                           兑换
                         </Button>
                       </div>
                       <p className="text-sm text-muted-foreground">输入兑换码获取更多使用次数</p>
                     </div>
                   </CardContent>
-                  <CardFooter>
-                    <Button variant="outline">升级到高级版</Button>
-                  </CardFooter>
                 </Card>
               </TabsContent>
             </Tabs>

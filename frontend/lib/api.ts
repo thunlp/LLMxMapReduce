@@ -29,6 +29,22 @@ interface TaskSubmitResponse {
   unique_survey_title: string;
 }
 
+// 新增：兑换码使用响应接口
+interface RedemptionResponse {
+  remaining_uses: number;
+  added_uses: number;
+}
+
+// 新增：兑换历史响应接口
+interface RedemptionHistory {
+  history: Array<{
+    id: number;
+    code: string;
+    uses_granted: number;
+    redeemed_at: string;
+  }>;
+}
+
 const API_BASE_URL = 'http://localhost:8080/api/v1';
 
 // 发送验证码
@@ -99,6 +115,42 @@ export async function submitTask(token: string, topic: string, description?: str
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(errorData.message || '提交任务失败');
+  }
+
+  return response.json();
+}
+
+// 使用兑换码
+export async function redeemCode(token: string, code: string): Promise<ApiResponse<RedemptionResponse>> {
+  const response = await fetch(`${API_BASE_URL}/redemption/redeem`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ code }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || '兑换失败');
+  }
+
+  return response.json();
+}
+
+// 获取兑换历史
+export async function getRedemptionHistory(token: string): Promise<ApiResponse<RedemptionHistory>> {
+  const response = await fetch(`${API_BASE_URL}/redemption/history`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('获取兑换历史失败');
   }
 
   return response.json();
