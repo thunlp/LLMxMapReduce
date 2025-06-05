@@ -324,7 +324,69 @@ GET /tasks?status=completed&limit=20
 
 ---
 
-### 9. 获取任务输出结果
+### 9. 获取用户任务列表
+```http
+GET /user/tasks
+```
+
+获取当前登录用户创建的任务列表，支持状态过滤和数量限制。
+
+**请求头**:
+```
+Authorization: Bearer <token>
+```
+
+**查询参数**:
+- `status`: 状态过滤 (string, 可选)
+- `limit`: 返回数量限制 (integer, 默认100)
+
+**示例请求**:
+```http
+GET /user/tasks?status=completed&limit=10
+```
+
+**响应示例**:
+```json
+{
+  "success": true,
+  "tasks": [
+    {
+      "id": "task_12345",
+      "status": "completed",
+      "created_at": "2025-01-15T10:30:00Z",
+      "updated_at": "2025-01-15T11:00:00Z",
+      "params": {
+        "topic": "AI研究综述",
+        "user_id": 1
+      },
+      "execution_seconds": 120.5,
+      "start_time": "2025-01-15T10:30:30Z",
+      "end_time": "2025-01-15T10:32:30Z"
+    },
+    {
+      "id": "task_67890",
+      "status": "running",
+      "created_at": "2025-01-15T11:00:00Z",
+      "updated_at": "2025-01-15T11:05:00Z",
+      "params": {
+        "topic": "机器学习算法研究",
+        "user_id": 1
+      }
+    }
+  ],
+  "count": 2,
+  "user_id": 1
+}
+```
+
+**错误响应**:
+- `400 Bad Request`: 无效的状态值
+- `401 Unauthorized`: 未提供有效token或无法获取用户信息
+- `500 Internal Server Error`: 服务器内部错误
+
+---
+
+### 10. 获取任务输出结果
 ```http
 GET /output/{task_id}
 ```
@@ -364,7 +426,7 @@ GET /output/{task_id}
 
 ---
 
-### 10. 删除任务
+### 11. 删除任务
 ```http
 DELETE /task/{task_id}
 ```
@@ -389,7 +451,7 @@ DELETE /task/{task_id}
 
 ## 兑换码管理接口 (Redemption Code)
 
-### 11. 生成兑换码
+### 12. 生成兑换码
 ```http
 POST /redemption/generate
 ```
@@ -431,7 +493,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 12. 兑换码使用
+### 13. 兑换码使用
 ```http
 POST /redemption/redeem
 ```
@@ -468,7 +530,7 @@ Authorization: Bearer <token>
 
 ---
 
-### 13. 获取兑换历史
+### 14. 获取兑换历史
 ```http
 GET /redemption/history
 ```
@@ -508,7 +570,7 @@ Authorization: Bearer <token>
 
 ## 系统监控接口 (System Monitoring)
 
-### 14. 数据库统计信息
+### 15. 数据库统计信息
 ```http
 GET /database/stats
 ```
@@ -538,7 +600,7 @@ GET /database/stats
 
 ---
 
-### 15. 数据库健康检查
+### 16. 数据库健康检查
 ```http
 GET /database/health
 ```
@@ -565,7 +627,7 @@ GET /database/health
 
 ---
 
-### 16. 服务健康检查
+### 17. 服务健康检查
 ```http
 GET /health
 ```

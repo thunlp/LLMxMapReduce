@@ -256,6 +256,65 @@ def list_tasks():
     })
 
 
+@api_bp.route('/user/tasks', methods=['GET'])
+@jwt_required_custom
+def list_user_tasks():
+    """获取当前用户的任务列表
+    
+    查询参数:
+        status: 状态过滤（可选）
+        limit: 返回数量限制（默认100）
+    
+    返回:
+        tasks: 任务列表
+    """
+    try:
+        # 获取当前用户ID
+        current_user_id = get_jwt_identity()
+        if not current_user_id:
+            return jsonify({
+                'success': False,
+                'error': '无法获取用户信息'
+            }), 401
+        
+        status = request.args.get('status')
+        limit = int(request.args.get('limit', 100))
+        
+        task_manager = get_task_manager()
+        
+        # 转换状态字符串为枚举
+        status_enum = None
+        if status:
+            try:
+                status_enum = TaskStatus(status)
+            except ValueError:
+                return jsonify({
+                    'success': False,
+                    'error': f'无效的状态值: {status}'
+                }), 400
+        
+        # 根据用户ID获取任务列表
+        tasks = task_manager.list_tasks_by_user(
+            user_id=current_user_id, 
+            status=status_enum, 
+            limit=limit
+        )
+        
+        return jsonify({
+            'success': True,
+            'tasks': tasks,
+            'count': len(tasks),
+            'user_id': current_user_id
+        })
+        
+    except Exception as e:
+        logger.exception("获取用户任务列表失败")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+
 @api_bp.route('/output/<task_id>', methods=['GET'])
 def get_task_output(task_id: str):
     """获取任务输出结果

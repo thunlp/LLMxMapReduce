@@ -66,6 +66,12 @@ class BaseTaskManager(ABC):
         pass
     
     @abstractmethod
+    def list_tasks_by_user(self, user_id: int, status: Optional[TaskStatus] = None, 
+                          limit: int = 100) -> List[Dict[str, Any]]:
+        """根据用户ID获取任务列表"""
+        pass
+    
+    @abstractmethod
     def delete_task(self, task_id: str) -> bool:
         """删除任务"""
         pass
@@ -355,6 +361,38 @@ class PostgreSQLTaskManager(BaseTaskManager):
             
         except Exception as e:
             logger.error(f"获取任务列表失败: {str(e)}")
+            return []
+    
+    @with_app_context
+    def list_tasks_by_user(self, user_id: int, status: Optional[TaskStatus] = None, 
+                          limit: int = 100) -> List[Dict[str, Any]]:
+        """
+        根据用户ID获取任务列表
+        
+        Args:
+            user_id: 用户ID
+            status: 状态筛选（可选）
+            limit: 返回数量限制
+            
+        Returns:
+            任务列表
+        """
+        try:
+            from src.common_service.models import Task
+            
+            query = Task.query.filter(Task.user_id == user_id)
+            
+            # 状态筛选
+            if status:
+                query = query.filter(Task.status == status.value)
+            
+            # 按创建时间倒序排序并限制数量
+            tasks = query.order_by(Task.created_at.desc()).limit(limit).all()
+            
+            return [task.to_dict() for task in tasks]
+            
+        except Exception as e:
+            logger.error(f"根据用户ID获取任务列表失败: user_id={user_id}, error: {str(e)}")
             return []
     
     @with_app_context
@@ -669,6 +707,52 @@ class RedisTaskManager(BaseTaskManager):
             
         except RedisError as e:
             logger.error(f"获取任务列表失败: {str(e)}")
+            return []
+    
+    def list_tasks_by_user(self, user_id: int, status: Optional[TaskStatus] = None, 
+                          limit: int = 100) -> List[Dict[str, Any]]:
+        """
+        根据用户ID获取任务列表
+        
+        Args:
+            user_id: 用户ID
+            status: 状态筛选（可选）
+            limit: 返回数量限制
+            
+        Returns:
+            任务列表
+        """
+        try:
+            # 获取所有任务键
+            pattern = f"{self.key_prefix}*"
+            keys = self.redis_client.keys(pattern)
+            
+            tasks = []
+            for key in keys:
+                task_id = key.replace(self.key_prefix, '')
+                task = self.get_task(task_id)
+                if task:
+                    # 用户ID筛选
+                    task_user_id = task.get('params', {}).get('user_id')
+                    if task_user_id != user_id:
+                        continue
+                    
+                    # 状态筛选
+                    if status and task.get('status') != status.value:
+                        continue
+                    
+                    tasks.append(task)
+                    
+                    # 达到限制数量就停止
+                    if len(tasks) >= limit:
+                        break
+            
+            # 按创建时间倒序排序
+            tasks.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+            return tasks
+            
+        except RedisError as e:
+            logger.error(f"根据用户ID获取任务列表失败: user_id={user_id}, error: {str(e)}")
             return []
     
     def delete_task(self, task_id: str) -> bool:
