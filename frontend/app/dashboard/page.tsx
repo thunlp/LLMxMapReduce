@@ -264,28 +264,12 @@ function HistoryCard({ item }: HistoryItemProps) {
           <p className="text-sm text-muted-foreground">
             {item.language === "zh" ? "NLP transformer deeplearning" : "NLP transformer deeplearning"}
           </p>
-
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Button variant="ghost" size="sm" className="h-8 px-2">
-              <Globe className="h-4 w-4 mr-1" />
-              {item.language === "zh" ? "Arxiv检索" : "Arxiv Search"}
-            </Button>
-
-            <Button variant="ghost" size="sm" className="h-8 px-2">
-              {item.language === "zh" ? "快速版" : "Quick Version"}
-            </Button>
-          </div>
         </div>
 
         <div className="flex items-center justify-between px-5 py-3 border-t">
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="icon" className="h-8 w-8">
               <ThumbsUp className="h-4 w-4" />
-            </Button>
-            <span className="text-sm">0</span>
-
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <MessageSquare className="h-4 w-4" />
             </Button>
             <span className="text-sm">0</span>
           </div>
