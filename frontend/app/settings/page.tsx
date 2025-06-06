@@ -16,7 +16,7 @@ import { useTheme } from "next-themes"
 import { Badge } from "@/components/ui/badge"
 import { Loader2, Gift, CreditCard, Sparkles } from "lucide-react"
 import { getUserInfo, redeemCode } from "@/lib/api"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 export default function SettingsPage() {
   const searchParams = useSearchParams()
@@ -34,7 +34,7 @@ export default function SettingsPage() {
     browser: true,
   })
   const { theme, setTheme } = useTheme()
-  const { toast } = useToast()
+
 
   // 兑换码套餐配置
   const codePackages = [
@@ -99,33 +99,23 @@ export default function SettingsPage() {
 
   const handleSaveProfile = () => {
     // Here you would implement the profile update logic
-    toast({
-      title: "个人资料已更新",
-    })
+    toast.success("个人资料已更新")
   }
 
   const handleSaveNotifications = () => {
     // Here you would implement the notification settings update logic
-    toast({
-      title: "通知设置已更新",
-    })
+    toast.success("通知设置已更新")
   }
 
   const handleRedeemCode = async () => {
     if (!redeemCodeInput.trim()) {
-      toast({
-        title: "请输入兑换码",
-        variant: "destructive",
-      })
+      toast.error("请输入兑换码")
       return
     }
 
     const token = localStorage.getItem('token')
     if (!token) {
-      toast({
-        title: "请先登录",
-        variant: "destructive",
-      })
+      toast.error("请先登录")
       return
     }
 
@@ -135,8 +125,7 @@ export default function SettingsPage() {
       const response = await redeemCode(token, redeemCodeInput.trim())
       
       if (response.success) {
-        toast({
-          title: "兑换成功",
+        toast.success("兑换成功", {
           description: `获得 ${response.data.added_uses} 次使用次数`,
         })
         
@@ -146,17 +135,32 @@ export default function SettingsPage() {
         // 清空输入框
         setRedeemCodeInput("")
       } else {
-        toast({
-          title: "兑换失败",
-          description: response.message,
-          variant: "destructive",
+        // 根据后端返回的错误信息给出具体提示
+        const errorMessage = response.message || "兑换失败"
+        toast.error("兑换失败", {
+          description: errorMessage,
         })
       }
     } catch (error) {
-      toast({
-        title: "兑换失败",
-        description: error instanceof Error ? error.message : "请稍后重试",
-        variant: "destructive",
+      // 处理网络错误或其他异常
+      let errorMessage = "网络错误，请稍后重试"
+      
+      if (error instanceof Error) {
+        // 如果是后端返回的具体错误信息，直接显示
+        errorMessage = error.message
+        
+        // 针对常见错误给出更友好的提示
+        if (error.message.includes("已被使用") || error.message.includes("已使用")) {
+          errorMessage = "该兑换码已被使用，请检查兑换码是否正确"
+        } else if (error.message.includes("无效") || error.message.includes("不存在")) {
+          errorMessage = "兑换码无效，请检查兑换码是否正确"
+        } else if (error.message.includes("过期")) {
+          errorMessage = "兑换码已过期，请联系客服获取新的兑换码"
+        }
+      }
+      
+      toast.error("兑换失败", {
+        description: errorMessage,
       })
     } finally {
       setIsRedeeming(false)
@@ -166,8 +170,7 @@ export default function SettingsPage() {
   const handlePurchaseCode = (packageId: string) => {
     // 这里未来会实现购买兑换码的逻辑
     const selectedPackage = codePackages.find(pkg => pkg.id === packageId)
-    toast({
-      title: "功能开发中",
+    toast.info("功能开发中", {
       description: `${selectedPackage?.name} 购买功能即将上线`,
     })
   }

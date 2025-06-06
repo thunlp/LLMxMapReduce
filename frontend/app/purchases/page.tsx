@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Gift, ShoppingBag, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { redeemCode, getRedemptionHistory, getUserInfo } from "@/lib/api"
-import { useToast } from "@/hooks/use-toast"
+import { toast } from "sonner"
 
 interface RedemptionRecord {
   id: number;
@@ -27,7 +27,7 @@ export default function PurchasesPage() {
   const [redemptionCode, setRedemptionCode] = useState("")
   const [isRedeeming, setIsRedeeming] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const { toast } = useToast()
+
 
   // 获取用户信息和兑换历史
   useEffect(() => {
@@ -53,10 +53,8 @@ export default function PurchasesPage() {
         }
       } catch (error) {
         console.error('获取数据失败:', error)
-        toast({
-          title: "获取数据失败",
+        toast.error("获取数据失败", {
           description: error instanceof Error ? error.message : "请刷新页面重试",
-          variant: "destructive",
         })
       } finally {
         setIsLoading(false)
@@ -71,19 +69,13 @@ export default function PurchasesPage() {
     e.preventDefault()
     
     if (!redemptionCode.trim()) {
-      toast({
-        title: "请输入兑换码",
-        variant: "destructive",
-      })
+      toast.error("请输入兑换码")
       return
     }
 
     const token = localStorage.getItem('token')
     if (!token) {
-      toast({
-        title: "请先登录",
-        variant: "destructive",
-      })
+      toast.error("请先登录")
       return
     }
 
@@ -93,8 +85,7 @@ export default function PurchasesPage() {
       const response = await redeemCode(token, redemptionCode.trim())
       
       if (response.success) {
-        toast({
-          title: "兑换成功",
+        toast.success("兑换成功", {
           description: `获得 ${response.data.added_uses} 次使用次数`,
         })
         
@@ -110,17 +101,32 @@ export default function PurchasesPage() {
         // 清空输入框
         setRedemptionCode("")
       } else {
-        toast({
-          title: "兑换失败",
-          description: response.message,
-          variant: "destructive",
+        // 根据后端返回的错误信息给出具体提示
+        const errorMessage = response.message || "兑换失败"
+        toast.error("兑换失败", {
+          description: errorMessage,
         })
       }
     } catch (error) {
-      toast({
-        title: "兑换失败",
-        description: error instanceof Error ? error.message : "请稍后重试",
-        variant: "destructive",
+      // 处理网络错误或其他异常
+      let errorMessage = "网络错误，请稍后重试"
+      
+      if (error instanceof Error) {
+        // 如果是后端返回的具体错误信息，直接显示
+        errorMessage = error.message
+        
+        // 针对常见错误给出更友好的提示
+        if (error.message.includes("已被使用") || error.message.includes("已使用")) {
+          errorMessage = "该兑换码已被使用，请检查兑换码是否正确"
+        } else if (error.message.includes("无效") || error.message.includes("不存在")) {
+          errorMessage = "兑换码无效，请检查兑换码是否正确"
+        } else if (error.message.includes("过期")) {
+          errorMessage = "兑换码已过期，请联系客服获取新的兑换码"
+        }
+      }
+      
+      toast.error("兑换失败", {
+        description: errorMessage,
       })
     } finally {
       setIsRedeeming(false)

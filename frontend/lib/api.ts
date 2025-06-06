@@ -45,7 +45,31 @@ interface RedemptionHistory {
   }>;
 }
 
-const API_BASE_URL = 'http://localhost:8080/api/v1';
+// 新增：用户任务列表响应接口
+interface UserTask {
+  id: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  params: {
+    topic: string;
+    user_id: number;
+  };
+  execution_seconds?: number;
+  start_time?: string;
+  end_time?: string;
+}
+
+// 实际API返回的格式（直接包含success字段）
+interface UserTasksResponse {
+  success: boolean;
+  tasks: UserTask[];
+  count: number;
+  user_id: number;
+  message?: string;
+}
+
+const API_BASE_URL = 'http://localhost:5000';
 
 // 发送验证码
 export async function sendVerificationCode(phone: string): Promise<ApiResponse> {
@@ -100,7 +124,7 @@ export async function getUserInfo(token: string): Promise<ApiResponse<UserInfoRe
 
 // 提交任务
 export async function submitTask(token: string, topic: string, description?: string): Promise<ApiResponse<TaskSubmitResponse>> {
-  const response = await fetch(`${API_BASE_URL}/task/submit`, {
+  const response = await fetch(`${API_BASE_URL}/api/task/submit`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -132,8 +156,20 @@ export async function redeemCode(token: string, code: string): Promise<ApiRespon
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || '兑换失败');
+    try {
+      const errorData = await response.json();
+      // 优先使用后端返回的具体错误信息
+      throw new Error(errorData.message || '兑换失败');
+    } catch (parseError) {
+      // 如果无法解析错误响应，根据状态码给出提示
+      if (response.status === 400) {
+        throw new Error('兑换码无效或已被使用');
+      } else if (response.status === 404) {
+        throw new Error('用户不存在');
+      } else {
+        throw new Error('兑换失败，请稍后重试');
+      }
+    }
   }
 
   return response.json();
@@ -151,6 +187,31 @@ export async function getRedemptionHistory(token: string): Promise<ApiResponse<R
 
   if (!response.ok) {
     throw new Error('获取兑换历史失败');
+  }
+
+  return response.json();
+}
+
+// 获取用户任务列表
+export async function getUserTasks(
+  token: string, 
+  status?: string, 
+  limit: number = 100
+): Promise<UserTasksResponse> {
+  const params = new URLSearchParams();
+  if (status) params.append('status', status);
+  params.append('limit', limit.toString());
+
+  const response = await fetch(`${API_BASE_URL}/api/user/tasks?${params.toString()}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('获取任务列表失败');
   }
 
   return response.json();

@@ -14,6 +14,7 @@ from src.task_manager import TaskStatus, get_task_manager
 from src.pipeline_processor import PipelineTaskManager
 from src.database.mongo_manager import get_mongo_manager
 from src.common_service.helpers import jwt_required_custom
+from src.common_service.models import db, User
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ def submit_task():
         if not pipeline_task_manager:
             return jsonify({
                 'success': False,
-                'error': 'Pipeline管理器未初始化'
+                'message': 'Pipeline管理器未初始化'
             }), 500
         
         # 获取当前用户ID
@@ -61,15 +62,29 @@ def submit_task():
         if not current_user_id:
             return jsonify({
                 'success': False,
-                'error': '无法获取用户信息'
+                'message': '无法获取用户信息'
             }), 401
+        
+        # 检查用户剩余使用次数
+        user = User.query.filter_by(id=current_user_id).first()
+        if not user:
+            return jsonify({
+                'success': False,
+                'message': '用户不存在'
+            }), 404
+        
+        if user.remaining_uses <= 0:
+            return jsonify({
+                'success': False,
+                'message': '剩余使用次数不足，请充值或兑换获取更多使用次数'
+            }), 403
         
         # 获取请求参数
         params = request.json
         if not params:
             return jsonify({
                 'success': False,
-                'error': '请求参数不能为空'
+                'message': '请求参数不能为空'
             }), 400
         
         # 添加用户ID到参数中
@@ -77,8 +92,19 @@ def submit_task():
         
         logger.info(f"收到Pipeline请求: {params}")
         
-        # 提交任务
-        task_id = pipeline_task_manager.submit_task(params)
+        try:
+            # 提交任务
+            task_id = pipeline_task_manager.submit_task(params)
+        except Exception as e:
+            # 任务提交失败，不扣减使用次数
+            logger.error(f"任务提交失败: {e}")
+            raise e
+        
+        # 任务提交成功后，扣减用户剩余使用次数
+        user.remaining_uses -= 1
+        db.session.commit()
+        
+        logger.info(f"任务 {task_id} 提交成功，用户 {current_user_id} 剩余使用次数: {user.remaining_uses}")
         
         # 获取任务信息
         task_manager = get_task_manager()
@@ -90,14 +116,15 @@ def submit_task():
             'message': '任务已提交',
             'output_file': task['params'].get('output_file'),
             'original_topic': task.get('original_topic'),
-            'unique_survey_title': task.get('expected_survey_title')
+            'unique_survey_title': task.get('expected_survey_title'),
+            'remaining_uses': user.remaining_uses
         })
         
     except Exception as e:
         logger.exception("启动Pipeline失败")
         return jsonify({
             'success': False,
-            'error': str(e)
+            'message': str(e)
         }), 500
 
 
@@ -117,7 +144,7 @@ def get_task_status(task_id: str):
     if not task:
         return jsonify({
             'success': False,
-            'error': '任务不存在'
+            'message': '任务不存在'
         }), 404
     
     return jsonify({
@@ -142,7 +169,7 @@ def get_pipeline_status(task_id: str):
     if not task:
         return jsonify({
             'success': False,
-            'error': '任务不存在'
+            'message': '任务不存在'
         }), 404
     
     # 获取全局pipeline状态
@@ -243,13 +270,14 @@ def list_tasks():
         except ValueError:
             return jsonify({
                 'success': False,
-                'error': f'无效的状态值: {status}'
+                'message': f'无效的状态值: {status}'
             }), 400
     
     tasks = task_manager.list_tasks(status=status_enum, limit=limit)
     
     return jsonify({
         'success': True,
+        'message': '任务列表获取成功',
         'tasks': tasks,
         'count': len(tasks),
         'global_pipeline_mode': True
@@ -274,7 +302,7 @@ def list_user_tasks():
         if not current_user_id:
             return jsonify({
                 'success': False,
-                'error': '无法获取用户信息'
+                'message': '无法获取用户信息'
             }), 401
         
         status = request.args.get('status')
@@ -302,6 +330,7 @@ def list_user_tasks():
         
         return jsonify({
             'success': True,
+            'message': '用户任务列表获取成功',
             'tasks': tasks,
             'count': len(tasks),
             'user_id': current_user_id
@@ -311,7 +340,7 @@ def list_user_tasks():
         logger.exception("获取用户任务列表失败")
         return jsonify({
             'success': False,
-            'error': str(e)
+            'message': str(e)
         }), 500
 
 
@@ -332,13 +361,13 @@ def get_task_output(task_id: str):
     if not task:
         return jsonify({
             'success': False,
-            'error': '任务不存在'
+            'message': '任务不存在'
         }), 404
     
     if task['status'] != TaskStatus.COMPLETED.value:
         return jsonify({
             'success': False,
-            'error': f"任务尚未完成，当前状态：{task['status']}"
+            'message': f"任务尚未完成，当前状态：{task['status']}"
         }), 400
     
     # 优先从数据库获取
@@ -379,12 +408,12 @@ def get_task_output(task_id: str):
         except Exception as e:
             return jsonify({
                 'success': False,
-                'error': f"读取输出文件失败: {str(e)}"
+                'message': f"读取输出文件失败: {str(e)}"
             }), 500
     
     return jsonify({
         'success': False,
-        'error': '输出结果不存在（数据库和文件都无法找到）'
+        'message': '输出结果不存在（数据库和文件都无法找到）'
     }), 404
 
 
@@ -397,19 +426,20 @@ def get_database_stats():
         if not mongo_manager:
             return jsonify({
                 'success': False,
-                'error': '数据库不可用'
+                'message': '数据库不可用'
             }), 503
         
         stats = mongo_manager.get_stats()
         return jsonify({
             'success': True,
+            'message': '数据库统计信息获取成功',
             'stats': stats
         })
     except Exception as e:
         logger.error(f"获取数据库统计信息失败: {str(e)}")
         return jsonify({
             'success': False,
-            'error': str(e)
+            'message': str(e)
         }), 500
 
 
@@ -468,7 +498,7 @@ def delete_task(task_id: str):
     else:
         return jsonify({
             'success': False,
-            'error': '删除任务失败'
+            'message': '删除任务失败'
         }), 400
 
 
@@ -501,4 +531,45 @@ def health_check():
                 'required': False
             }
         }
-    }), 200 if all_healthy else 503 
+    }), 200 if all_healthy else 503
+
+
+@api_bp.route('/user/remaining_uses', methods=['GET'])
+@jwt_required_custom
+def get_user_remaining_uses():
+    """获取用户剩余使用次数
+    
+    返回:
+        remaining_uses: 剩余使用次数
+        user_id: 用户ID
+    """
+    try:
+        # 获取当前用户ID
+        current_user_id = get_jwt_identity()
+        if not current_user_id:
+            return jsonify({
+                'success': False,
+                'message': '无法获取用户信息'
+            }), 401
+        
+        # 查询用户信息
+        user = User.query.filter_by(id=current_user_id).first()
+        if not user:
+            return jsonify({
+                'success': False,
+                'message': '用户不存在'
+            }), 404
+        
+        return jsonify({
+            'success': True,
+            'remaining_uses': user.remaining_uses,
+            'user_id': current_user_id,
+            'phone': user.phone
+        })
+        
+    except Exception as e:
+        logger.exception("获取用户剩余使用次数失败")
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500 

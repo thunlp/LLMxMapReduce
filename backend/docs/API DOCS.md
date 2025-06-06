@@ -3,7 +3,7 @@
 ## 概述
 任务管理系统API提供RESTful接口，支持用户认证、任务管理、兑换码系统等功能。
 
-**Base URL**: `https://api.example.com/api/v1`
+**Base URL**: `https://api.example.com`
 
 **认证方式**: JWT Bearer Token
 
@@ -121,7 +121,7 @@ Authorization: Bearer <token>
 
 ### 4. 提交任务
 ```http
-POST /task/submit
+POST /api/task/submit
 ```
 
 提交新的研究任务到Pipeline处理队列。
@@ -168,7 +168,7 @@ Content-Type: application/json
 
 ### 5. 获取任务状态
 ```http
-GET /task/{task_id}
+GET /api/task/{task_id}
 ```
 
 获取指定任务的详细状态信息。
@@ -211,7 +211,7 @@ GET /task/{task_id}
 
 ### 6. 获取Pipeline状态
 ```http
-GET /task/{task_id}/pipeline_status
+GET /api/task/{task_id}/pipeline_status
 ```
 
 获取指定任务相关的Pipeline详细状态。
@@ -254,7 +254,7 @@ GET /task/{task_id}/pipeline_status
 
 ### 7. 获取全局Pipeline状态
 ```http
-GET /global_pipeline_status
+GET /api/global_pipeline_status
 ```
 
 获取系统全局Pipeline状态和统计信息。
@@ -285,7 +285,7 @@ GET /global_pipeline_status
 
 ### 8. 获取任务列表
 ```http
-GET /tasks
+GET /api/tasks
 ```
 
 获取任务列表，支持状态过滤和数量限制。
@@ -296,7 +296,7 @@ GET /tasks
 
 **示例请求**:
 ```http
-GET /tasks?status=completed&limit=20
+GET /api/tasks?status=completed&limit=20
 ```
 
 **响应示例**:
@@ -326,7 +326,7 @@ GET /tasks?status=completed&limit=20
 
 ### 9. 获取用户任务列表
 ```http
-GET /user/tasks
+GET /api/user/tasks
 ```
 
 获取当前登录用户创建的任务列表，支持状态过滤和数量限制。
@@ -342,7 +342,7 @@ Authorization: Bearer <token>
 
 **示例请求**:
 ```http
-GET /user/tasks?status=completed&limit=10
+GET /api/user/tasks?status=completed&limit=10
 ```
 
 **响应示例**:
@@ -388,7 +388,7 @@ GET /user/tasks?status=completed&limit=10
 
 ### 10. 获取任务输出结果
 ```http
-GET /output/{task_id}
+GET /api/output/{task_id}
 ```
 
 获取已完成任务的输出结果，优先从数据库获取，备选从文件获取。
@@ -428,7 +428,7 @@ GET /output/{task_id}
 
 ### 11. 删除任务
 ```http
-DELETE /task/{task_id}
+DELETE /api/task/{task_id}
 ```
 
 删除指定的任务。
@@ -572,7 +572,7 @@ Authorization: Bearer <token>
 
 ### 15. 数据库统计信息
 ```http
-GET /database/stats
+GET /api/database/stats
 ```
 
 获取数据库统计信息。
@@ -602,7 +602,7 @@ GET /database/stats
 
 ### 16. 数据库健康检查
 ```http
-GET /database/health
+GET /api/database/health
 ```
 
 检查数据库连接状态。
@@ -629,7 +629,7 @@ GET /database/health
 
 ### 17. 服务健康检查
 ```http
-GET /health
+GET /api/health
 ```
 
 检查整个服务的健康状态。
