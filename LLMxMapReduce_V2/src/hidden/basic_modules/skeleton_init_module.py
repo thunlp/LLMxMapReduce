@@ -32,11 +32,7 @@ class SkeletonInitModule(Module):
         dataset = Dataset(split_digests(survey, self.batch_size))
         logger.info(f"Outline start: single Outline count {len(dataset)}")
         outlines = self.outline_neuron(dataset)
-        if len(outlines) >= 1:
-            survey = self.concat_neuron(survey, outlines)
-        elif len(outlines) == 1:
-            final_outline = outlines[0].raw_skeleton
-            survey = survey.skeleton.parse_raw_skeleton(survey.title, final_outline)
+        survey = self.concat_neuron(survey, outlines)
         survey.skeleton_batch_size = self.batch_size
         logger.info(f"Outline finished: Survey {survey.title}.")
         return survey
