@@ -3,6 +3,7 @@
 <a href='https://surveygo.modelbest.cn/'><img src='https://img.shields.io/badge/Demo-Page-pink'></a> <a href='https://arxiv.org/abs/2410.09342'><img src='https://img.shields.io/badge/V1-Paper-Green'></a> <a href='https://arxiv.org/abs/2504.05732'><img src='https://img.shields.io/badge/V2-Paper-blue'></a> <a href='https://huggingface.co/datasets/R0k1e/SurveyEval'><img src='https://img.shields.io/badge/SurveyEval-Benchmark-yellow'></a> <a href='README_zh.md'><img src='https://img.shields.io/badge/Chinese-Readme-red'></a>
 
 # 🎉 News
+- [x] **`2025.09.13`** Release the code for LLMxMapReduce-V3.
 - [x] **`2025.04.22`** Release [SurveyGO](https://surveygo.modelbest.cn/), an online writting system driven by LLMxMapReduce-V2.
 - [x] **`2025.04.09`** Release the paper of LLMxMapReduce-V2 in [arXiv](https://arxiv.org/abs/2504.05732).
 - [x] **`2025.02.21`** Add support for both OpenAI API and OpenAI-compatible APIs (e.g., vLLM).
@@ -14,6 +15,7 @@
 
 * [**LLMxMapReduce-V1**](https://github.com/thunlp/LLMxMapReduce/blob/main/LLMxMapReduce_V1): Utilizes a structured information protocol and in-context confidence calibration to enhance long-sequence understanding, enabling [MiniCPM3-4B](https://github.com/OpenBMB/MiniCPM) to outperform 70B-scale models in long-context evaluations.
 * [**LLMxMapReduce-V2**](https://github.com/thunlp/LLMxMapReduce/tree/main/LLMxMapReduce_V2): Introduces an entropy-driven convolutional test-time scaling mechanism to improve the integration of extremely large volumes of information, powering the online [SurveyGO](https://surveygo.modelbest.cn/) system.
+* [**LLMxMapReduce-V3**](https://github.com/thunlp/LLMxMapReduce/blob/main/LLMxMapReduce_V3): Introduces an interactive, modular, and self-organized multi-agent system for academic survey generation.
 
 # 📖 Introduction
 
