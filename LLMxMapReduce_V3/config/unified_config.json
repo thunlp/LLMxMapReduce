@@ -1,0 +1,225 @@
+{
+    "api_keys": {
+        "openai": {
+            "api_key": "",
+            "base_url": ""
+        },
+        "search_engines": {
+            "serpapi_key": "",
+            "bing_subscription_key": "",
+            "google_custom_search": {
+                "api_key": "",
+                "search_engine_id": ""
+            }
+        }
+    },
+    "models": {
+        "default_model": "gemini-2.5-flash",
+        "default_infer_type": "OpenAI",
+        "content_analysis_model": "gemini-2.5-flash",
+        "similarity_model": "gemini-2.5-flash",
+        "page_refine_model": "gemini-2.5-flash",
+        "host_llm_model": "gemini-2.5-flash",
+        "abstract_generation_model": "gemini-2.5-flash"
+    },
+    "search_settings": {
+        "default_engine": "google",
+        "default_query_count": 30,
+        "default_each_query_result": 7,
+        "default_total_urls": 200,
+        "default_top_n": 70,
+        "default_similarity_threshold": 30,
+        "default_min_length": 100,
+        "default_max_length": 20000
+    },
+    "analyse_settings": {
+        "max_interaction_rounds": 3,
+        "max_context_messages": 10,
+        "llm_host_max_rounds": 10
+    },
+    "timeout_settings": {
+        "llm_request_timeout": 30,
+        "web_search_timeout": 0,
+        "crawling_timeout": 0,
+        "mcp_tool_timeout": 0,
+        "single_url_crawl_timeout": 60,
+        "content_analysis_timeout": 30,
+        "similarity_scoring_timeout": 30,
+        "abstract_generation_timeout": 30,
+        "abstract_tasks_wait_timeout": 300
+    },
+    "crawling_settings": {
+        "max_concurrent_crawls": 10,
+        "page_timeout": 60,
+        "retry_attempts": 3,
+        "cache_mode": "BYPASS"
+    },
+    "mcp_settings": {
+        "server_startup_timeout": 0,
+        "session_timeout": 0,
+        "tool_call_timeout": 0,
+        "query_cache_dir": "query_cache",
+        "url_cache_dir": "url_cache"
+    },
+    "mcp_server_config": {
+        "command": "python",
+        "args": ["-m", "src.search.llm_search_mcp_server"],
+        "env": {
+            "PYTHONPATH": ".",
+            "OPENAI_API_KEY": "",
+            "OPENAI_API_BASE": "",
+            "OPENAI_BASE_URL": "",
+            "GOOGLE_API_KEY": "",
+            "SERP_API_KEY": "",
+            "SERPAPI_KEY": "",
+            "BING_SEARCH_V7_SUBSCRIPTION_KEY": ""
+        }
+    },
+    "prompts": {
+        "query_generation": "You are a professional search query optimization expert. Please generate multiple high-quality search queries for the given research topic.\n\n## Input Information\nTopic: {topic}\nDescription: {description}\n\n## Query Generation Principles\n1. **Multi-angle Coverage**: Generate queries from different perspectives and levels\n2. **Keyword Optimization**: Use precise academic and professional terminology\n3. **Query Diversity**: Include different types of queries (conceptual, specific, comparative, etc.)\n4. **Search Engine Friendly**: Optimize queries for best search results\n\n## Output Format\n**IMPORTANT: You MUST output the query list in the following JSON format exactly:**\n```json\n{\"query1\";\"query2\";\"query3\";\"query4\";\"query5\";}\n```\n\n**CRITICAL: The output must be valid JSON format with semicolon separators as shown above. Do not use any other format.**\n\nPlease generate 30 high-quality search queries.",
+        "relevance_analysis": "You are a search result relevance analysis expert. Please analyze the relevance of the given URL list to the research topic.\n\n## Analysis Task\nTopic: {topic}\nURL List: {urls}\n\n## Analysis Dimensions\n1. **Content Relevance**: Degree of match between URL content and topic\n2. **Authority**: Credibility and professionalism of the source\n3. **Timeliness**: Freshness and currency of information\n4. **Depth**: Level of detail and depth of content\n\n## Output Requirements\n**IMPORTANT: Provide relevance scores (0-100) for each URL and sort by relevance. Output must be in valid JSON format.**\n\nPlease provide relevance scores (0-100) for each URL and sort them by relevance.",
+        "page_refine": "Analyze and process the following webpage content related to '{topic}'. Output the main text, removing image links, URLs, advertisements, meaningless repetitive characters, etc. Do NOT summarize the content - preserve all information relevant to the topic.\n\nOriginal webpage content:\n{raw_content}\n\n[Output Requirements]\n**IMPORTANT: You MUST use the exact format below:**\n- Title: <TITLE>Your Title</TITLE>\n- Filtered Text: <CONTENT>Filtered Text Content</CONTENT>\n\n**CRITICAL: The output must use the exact XML tags <TITLE> and <CONTENT> as specified above.**",
+        "similarity_scoring": "Please evaluate the quality score of the retrieved content based on the given topic and content found on the internet.\n\nTopic: {topic}\nRetrieved Content: {content}\n\nPlease score the retrieved content based on the following dimensions. Be as strict and critical as possible in your scoring.\n\n1. **Content Relevance to Topic**: Consider whether the content can be viewed as a sub-component that expands on the topic.\n2. **Content Quality for Writing**: Consider text length (very short texts have relatively low reference value), presence of garbled text, and overall text quality.\n\nPlease comprehensively consider the above two dimensions, first provide the reasoning for scoring, then perform the scoring. You need to score each dimension with a range of 0-100, where 0 means completely irrelevant and 100 means completely relevant. After completing the scoring for each dimension, calculate the final average score.\n\n**CRITICAL: The score MUST be wrapped in <SCORE></SCORE> tags. For example: <SCORE>78</SCORE>**\n\nResponse Example:\nReasoning: ...\nSimilarity Score: <SCORE>89</SCORE>\n\n**IMPORTANT: You MUST use the exact <SCORE></SCORE> format for the final score.**",
+        "llm_host_system": "You are an intelligent task processing assistant that can use multiple tools to complete user tasks.\n\nAvailable Tools:\n{tools_description}\n\n**CRITICAL: You MUST respond strictly in JSON format without adding any other text!**\n\nDecision Format (choose one of three):\n\n1. Call Tool:\n{{\"action\": \"call_tool\", \"tool_name\": \"tool_name\", \"arguments\": {{parameter_dictionary}}}}\n\n2. Complete Task:\n{{\"action\": \"complete\", \"result\": \"detailed_description_of_final_result\"}}\n\n3. Request More Information:\n{{\"action\": \"request_info\", \"message\": \"description_of_needed_information\"}}\n\n**SPECIAL ATTENTION:**\n- When the entire process is complete, you MUST return {{\"action\": \"complete\", \"result\": \"...\"}}\n- If unable to continue or encountering unsolvable problems, return {{\"action\": \"complete\", \"result\": \"reason_why_task_cannot_be_completed\"}}\n- Strictly follow JSON format, do not add markdown code blocks or other formats\n- You can only choose one action at a time\n\n**ABSOLUTELY CRITICAL: Your response must be valid JSON format only. No explanations, no markdown, no additional text.**\n\nDecision Principles:\n- Execute in logical order: generate queries → web search → crawl content\n- Make full use of previous tool call results and returned information\n- Avoid repeatedly calling the same tool\n- End promptly after completing the main task",
+        "analyse_topic_expansion": "You are a professional academic research analysis expert. The user will provide you with a research topic, and you should expand this topic to provide a detailed research description.\n\nPlease analyze from multiple perspectives and generate a professional and comprehensive description that will be used for subsequent literature search.\n\nReturn only the expanded topic description, no other content.",
+        "abstract_generation": "You are a professional academic abstract writer. Please generate a concise and informative abstract for the given content.\n\nContent: {content}\n\nRequirements:\n1. The abstract should be 150-300 words\n2. Summarize the main points, methodology, and key findings\n3. Use clear and professional academic language\n4. Focus on the most important information\n5. Do not include references or citations\n\nPlease provide only the abstract text, no additional formatting or explanations."
+    },
+    "tools": [
+        {
+            "name": "generate_search_queries",
+            "description": "基于LLM生成优化的搜索查询。需要提供研究主题，返回生成的查询数量和保存文件路径，不返回具体查询内容。",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "topic": {
+                        "type": "string",
+                        "description": "研究主题"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "主题的可选描述或上下文"
+                    }
+                },
+                "required": ["topic"]
+            }
+        },
+        {
+            "name": "web_search",
+            "description": "执行网络搜索并收集URL。需要提供主题，返回搜索到的URL数量和保存文件路径，不返回具体URL列表。",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "topic": {
+                        "type": "string",
+                        "description": "用于相关性过滤的主要主题"
+                    },
+                    "top_n": {
+                        "type": "integer",
+                        "description": "返回的最相关URL数量",
+                        "default": 200
+                    }
+                },
+                "required": ["topic"]
+            }
+        },
+        {
+            "name": "crawl_urls",
+            "description": "爬取URL内容并进行智能处理。需要提供研究主题，返回爬取的URL成功数量、最终结果数量和保存文件路径，不返回具体文章内容。",
+            "inputSchema": {
+                "type": "object",
+                "properties": {
+                    "topic": {
+                        "type": "string",
+                        "description": "研究主题，用于内容过滤和相似度评分"
+                    },
+                    "top_n": {
+                        "type": "integer",
+                        "description": "返回的最高质量结果数量",
+                        "default": 70
+                    }
+                },
+                "required": ["topic"]
+            }
+        }
+    ],
+    "prompt_language": "en",
+    "encode": {},
+    "hidden": {
+        "group": {
+            "neuron": {
+                "model": "gemini-2.0-flash",
+                "infer_type": "OpenAI"
+            }
+        },
+        "skeleton": {
+            "single": {
+                "model": "gemini-2.0-flash",
+                "infer_type": "OpenAI"
+            },
+            "concat": {
+                "model": "gemini-2.5-flash",
+                "infer_type": "OpenAI"
+            }
+        },
+        "digest": {
+            "single": {
+                "model": "gemini-2.0-flash",
+                "infer_type": "OpenAI"
+            },
+            "merge": {
+                "model": "gemini-2.0-flash",
+                "infer_type": "OpenAI"
+            }
+        },
+        "skeleton_refinement": {
+            "cluster": {
+                    "model": "gemini-2.0-flash",
+                    "infer_type": "OpenAI"
+            },
+            "convolution": {
+                "modify": {
+                    "model": "gemini-2.5-flash",
+                    "infer_type": "OpenAI"
+                },
+                "convolution_kernel": {
+                    "model": "gemini-2.0-flash",
+                    "infer_type": "OpenAI"
+                },
+                "eval": {
+                    "model": "gemini-2.0-flash",
+                    "infer_type": "OpenAI",
+                    "max_score": 10
+                }
+            },
+            "refine": {
+                "modify": {
+                    "model": "gemini-2.5-flash",
+                    "infer_type": "OpenAI"
+                },
+                "refine": {
+                    "model": "gemini-2.5-flash",
+                    "infer_type": "OpenAI"
+                },
+                "eval": {
+                    "model": "gemini-2.0-flash",
+                    "infer_type": "OpenAI",
+                    "max_score": 18
+                }
+            }
+        }
+    },
+    "decode": {
+        "orchestra": {
+            "model": "gemini-2.5-flash",
+            "infer_type": "OpenAI"
+        },
+        "polish": {
+            "model": "o3-mini",
+            "infer_type": "OpenAI"
+        },
+        "chart": {
+            "model": "gemini-2.5-flash",
+            "infer_type": "OpenAI"
+        }
+    }
+}
