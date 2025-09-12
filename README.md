@@ -27,7 +27,7 @@ Long-form generation is crucial for a wide range of practical applications, typi
 </div>
 
 # ⚡️ Getting Started
-The following steps are about LLMxMapReduce-V2. If you want to use LLMxMapReduce-V1, you need to refer to [here](LLMxMapReduce_V1/README.md).
+The following steps are about LLMxMapReduce-V2. If you want to use LLMxMapReduce-V1, you need to refer to [here](LLMxMapReduce_V1/README.md). If you want to use LLMxMapReduce-V3, you need to refer to [here](LLMxMapReduce_V3/README.md). 
 
 To get started, ensure all dependencies listed in requirements.txt are installed. You can do this by running:
 ```bash

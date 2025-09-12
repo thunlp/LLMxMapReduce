@@ -3,6 +3,7 @@
 <a href='https://surveygo.modelbest.cn/'><img src='https://img.shields.io/badge/Demo-Page-pink'></a> <a href='https://arxiv.org/abs/2410.09342'><img src='https://img.shields.io/badge/V1-Paper-Green'></a> <a href='https://arxiv.org/abs/2504.05732'><img src='https://img.shields.io/badge/V2-Paper-blue'></a> <a href='https://huggingface.co/datasets/R0k1e/SurveyEval'><img src='https://img.shields.io/badge/SurveyEval-Benchmark-yellow'></a> <a href='README.md'><img src='https://img.shields.io/badge/English-Readme-red'></a>
 
 # 🎉 新闻
+- [x] **`2025.09.13`** 发布 LLMxMapReduce-V3 代码。
 - [x] **`2025.04.22`** 发布 [SurveyGO](https://surveygo.modelbest.cn/)，一个由 LLMxMapReduce-V2 驱动的在线写作系统。
 - [x] **`2025.04.09`** 在 [arXiv](https://arxiv.org/abs/2504.05732) 上发布 LLMxMapReduce-V2 论文。
 - [x] **`2025.02.21`** 增加对 OpenAI API 和 OpenAI 兼容 API（如 vLLM）的支持。
@@ -14,6 +15,7 @@
 
 * [**LLMxMapReduce-V1**](https://github.com/thunlp/LLMxMapReduce/blob/main/LLMxMapReduce_V1)：利用结构化信息协议和上下文置信度校准来增强长序列理解，使 [MiniCPM3-4B](https://github.com/OpenBMB/MiniCPM) 在长文本评估中的表现超过 70B 规模的模型。
 * [**LLMxMapReduce-V2**](https://github.com/thunlp/LLMxMapReduce/tree/main/LLMxMapReduce_V2)：引入了熵驱动的卷积测试时扩展机制，以改善极大量信息的整合，为在线 [SurveyGO](https://surveygo.modelbest.cn/) 系统提供支持。
+* [**LLMxMapReduce-V3**](https://github.com/thunlp/LLMxMapReduce/blob/main/LLMxMapReduce_V3)：在 LLMxMapReduce-V2 基础上引入多智能体架构，将大纲初始化、摘要构建和大纲优化等功能实现为独立的 MCP 服务器，并通过聚合形成分层结构。高层规划智能体依据 MCP 工具描述和执行历史动态编排工作流程，从而支持 human-in-the-loop 交互，提升用户对研究过程的控制与定制化能力。
 
 # 📖 简介
 长文本生成对于广泛的实际应用至关重要，通常分为短到长和长到长生成两类。虽然短到长生成已受到广泛关注，但从极长资源生成长文本的研究仍相对不足。长到长生成的主要挑战在于有效整合和分析来自大量输入的相关信息，这对当前的大语言模型（LLM）来说仍然困难。在本文中，我们提出 LLMxMapReduce-V2，这是一种新颖的测试时扩展策略，旨在增强 LLM 处理极长输入的能力。受卷积神经网络的启发，该网络能够迭代地将局部特征整合为更高层次的全局表示，LLMxMapReduce-V2 使用堆叠的卷积扩展层来逐步扩大对输入材料的理解。定量和定性实验结果表明，我们的方法大大提高了 LLM 处理长输入和生成连贯、信息丰富的长文章的能力，优于多个代表性基线。
@@ -23,7 +25,7 @@
 </div>
 
 # ⚡️ 开始使用
-以下步骤适用于 $\text{LLM}\times\text{MapReduce}$-V2。如果您想使用 $\text{LLM}\times\text{MapReduce}$-V1，请参考[此处](LLMxMapReduce_V1/README.md)。
+以下步骤适用于 $\text{LLM}\times\text{MapReduce}$-V2。如果您想使用 $\text{LLM}\times\text{MapReduce}$-V1，请参考[此处](LLMxMapReduce_V1/README.md)。如果您想使用 $\text{LLM}\times\text{MapReduce}$-V3，请参考[此处](LLMxMapReduce_V3/README.md)。
 
 首先，请确保安装了 requirements.txt 中列出的所有依赖项。您可以通过运行以下命令完成安装：
 ```bash
