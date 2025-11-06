@@ -23,7 +23,7 @@ class LocalRequest:
     @retry(
         wait=wait_random_exponential(multiplier=2, max=60),
         stop=stop_after_attempt(30),
-        retry=retry_if_exception_type((JSONDecodeError, HTTPError))
+        retry=retry_if_exception_type((JSONDecodeError, HTTPError)) # 如果不是这几个错就不retry了
     )
     def completion(self, messages, **kwargs):
         try:

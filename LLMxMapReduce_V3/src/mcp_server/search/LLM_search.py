@@ -8,6 +8,7 @@ import sys
 import logging
 from tenacity import retry, stop_after_attempt, before_log, retry_if_exception_type
 
+# 添加项目根目录到路径
 project_root = os.path.join(os.path.dirname(__file__), '..', '..')
 sys.path.insert(0, project_root)
 
@@ -63,10 +64,13 @@ class LLM_search:
         each_query_result: Optional[int] = None,
         filter_date: Optional[str] = None,
         max_workers: Optional[int] = None,
+# Memory参数已移除
     ):
 
+        # 加载环境配置
         self.env_config = self._load_environment_config()
 
+        # 从配置中获取参数，如果传入参数为None则使用配置文件的值
         models_config = self.env_config.get("models", {})
         search_config = self.env_config.get("search_settings", {})
 
@@ -81,17 +85,19 @@ class LLM_search:
             infer_type=infer_type
         )
 
+        # 首先尝试从环境变量获取API密钥
         self.bing_subscription_key = os.getenv('BING_SEARCH_V7_SUBSCRIPTION_KEY')
         self.bing_endpoint = os.getenv('BING_SEARCH_V7_ENDPOINT', "https://api.bing.microsoft.com/v7.0/search")
         self.serpapi_key = os.getenv("SERPAPI_KEY") or os.getenv("SERP_API_KEY")
 
+        # 如果环境变量中没有找到，尝试从配置文件中获取
         if not self.serpapi_key and not self.bing_subscription_key:
             api_keys = self.env_config.get("api_keys", {})
             search_engines = api_keys.get("search_engines", {})
 
             if search_engines.get("serpapi_key"):
                 self.serpapi_key = search_engines["serpapi_key"]
-                os.environ["SERPAPI_KEY"] = self.serpapi_key
+                os.environ["SERPAPI_KEY"] = self.serpapi_key  # 同时设置环境变量
                 logger.info("✅ SERPAPI_KEY loaded from config file")
 
             if search_engines.get("bing_subscription_key"):
@@ -107,8 +113,11 @@ class LLM_search:
             raise ValueError("No valid search engine key provided, please check your environment variables, SERPAPI_KEY or BING_SEARCH_V7_SUBSCRIPTION_KEY.")
 
     def _load_environment_config(self):
+        """加载环境配置文件"""
         try:
+            # 尝试多个可能的配置文件路径
             config_paths = [
+                "new/config/environment_config.json",
                 "config/environment_config.json",
                 os.path.join(os.path.dirname(__file__), "..", "..", "config", "environment_config.json")
             ]
@@ -118,6 +127,7 @@ class LLM_search:
                     with open(config_path, 'r', encoding='utf-8') as f:
                         return json.load(f)
 
+            # 如果没有找到配置文件，抛出错误
             logger.error("Environment config file not found! Please ensure config/unified_config.json exists")
             raise FileNotFoundError("Configuration file config/unified_config.json is required but not found")
         except Exception as e:
@@ -190,6 +200,7 @@ class LLM_search:
         Returns:
             list: List of optimized search queries
         """
+        # 如果没有指定query_count，从配置中获取
         if query_count is None:
             query_count = self.env_config.get("search_settings", {}).get("default_query_count", 30)
 
@@ -231,7 +242,7 @@ class LLM_search:
             else:
                 raise ValueError(response.json())
 
-            print(f"Search Result : {results}")
+            print(f"查询结果 : {results}")  # 使用 f-string 格式化字符串
             if "webPages" not in results or "value" not in results["webPages"]:
                 raise Exception(f"No results found for query: '{query}'")
 
@@ -465,14 +476,20 @@ class LLM_search:
         return filtered_urls
 
     def get_conversation_history(self, limit: Optional[int] = None) -> List[Dict]:
+        """获取当前模型的对话历史"""
         return self.request_pool.get_conversation_history(limit)
 
     def clear_conversation_history(self):
+        """清除当前模型的对话历史"""
         self.request_pool.clear_conversation_history()
         logger.info(f"Cleared conversation history for LLM_search model: {self.model}")
 
     def get_memory_statistics(self) -> Dict:
+        """获取内存使用统计"""
         return self.request_pool.get_memory_statistics()
 
     def export_conversation_history(self, output_file: str) -> bool:
+        """导出对话历史到文件"""
         return self.request_pool.export_conversation_history(output_file)
+
+# Memory功能已移除

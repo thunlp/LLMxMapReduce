@@ -2,6 +2,7 @@ import json
 import os
 import re
 import gevent
+import sys
 from async_d import Node
 from async_d import Sequential
 from gevent.fileobject import FileObject
@@ -13,9 +14,36 @@ from src.data_structure.content import ContentNode
 from .orchestra_module import OrchestraModule
 from .figure_module import FigureModule
 from src.utils.process_str import str2list, remove_illegal_bibkeys
+from multiprocessing.connection import Connection
+import datetime
 
 logger = logging.getLogger(__name__)
 
+log_dir = os.path.join(os.path.dirname(__file__), f'../../../output/{datetime.datetime.now().strftime("%Y%m%d")}/logs')
+os.makedirs(log_dir, exist_ok=True)
+
+def setup_logger(log_file=None, level=logging.INFO):
+    logger = logging.getLogger("decode_pipeline")
+    logger.setLevel(level)
+
+    if not logger.handlers:
+        formatter = logging.Formatter(
+            "[%(asctime)s] [%(levelname)s] [%(module)s:%(lineno)d] %(message)s",
+            "%Y-%m-%d %H:%M:%S"
+        )
+
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
+
+        if log_file:
+            file_handler = logging.FileHandler(log_file, mode="a", encoding="utf-8")
+            file_handler.setFormatter(formatter)
+            logger.addHandler(file_handler)
+
+    return logger
+
+logger = setup_logger(os.path.join(log_dir, 'writing_server.log'))
 
 class DecodePipeline(Sequential):
     def __init__(self, config, output_file, worker_num=10):
@@ -68,10 +96,14 @@ class DecodePipeline(Sequential):
         )
         self.unpack_task = gevent.spawn(self._get_data_from_registered_survey)
 
+
     def register_survey(self, survey: Survey):
         survey.init_content()
         with self.dict_semaphore:
             self.executing_survey[survey.survey_label] = (survey, iter(survey.content))
+
+        global logger
+        logger = setup_logger(title=survey.survey_label)
         logger.info(f"Register survey: {survey.survey_label}")
 
     def _get_data_from_registered_survey(self):

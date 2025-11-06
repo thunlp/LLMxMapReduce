@@ -7,7 +7,7 @@ from typing import List
 from src.base_method.module import Module
 from src.base_method.data import Dataset
 from src.data_structure import Survey
-from src.hidden.convolution_block.neurons import (
+from src.mcp_server.skeleton.convolution_block.neurons import (
     SelfRefineNeuron,
     ModifyOutlineNeuron,
     EvalOutlineNeuron,

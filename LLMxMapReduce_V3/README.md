@@ -58,9 +58,5 @@ Supports OpenAI plus search engines (SerpAPI, Bing, Google):
 ```
 ### Start Survey Writing
 ```bash
-bash scripts/start.sh "Your Topic" "Your Description"
-```
-When a .jsonl file appears in output/date/topic, stop with Ctrl+C and convert to Markdown:
-```bash
-python scripts/output_to_md.py
+bash start.sh "Your Topic" "Your Description"
 ```

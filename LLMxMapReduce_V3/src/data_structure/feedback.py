@@ -45,7 +45,7 @@ class Feedback:
             "content": self.content,
             "score": self.score,
             "eval_detail": self.eval_detail,
-            "digests": [json.loads(digest.to_json()) for digest in self.digests]
+            "digests": [json.loads(digest.to_json()) for digest in self.digests]  # 使用 Digest 的 to_json()
         }
         
         data = {k: v for k, v in data.items() if v is not None}
@@ -75,5 +75,5 @@ class Feedback:
             return instance
             
         except Exception as e:
-            logger.error(f"JSON Deserialization failed: {e}")
-            raise ValueError("Invalid JSON format") from e
+            logger.error(f"JSON 反序列化失败: {e}")
+            raise ValueError("无效的 JSON 格式") from e

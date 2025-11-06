@@ -71,7 +71,7 @@ class MultiKeyDict:
         }
         """
         return {
-            "|".join(sorted(keys)): value
+            "|".join(sorted(keys)): value  # 将 frozenset 转换为排序后的字符串
             for keys, value in self._data.items()
         }
     

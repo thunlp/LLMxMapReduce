@@ -7,7 +7,7 @@ from typing import List
 from src.base_method.module import Module
 from src.base_method.data import Dataset
 from src.data_structure import Feedback, Skeleton, Survey
-from src.hidden.convolution_block.neurons import (
+from src.mcp_server.skeleton.convolution_block.neurons import (
     ModifyOutlineNeuron,
     EvalOutlineNeuron,
     ConvolutionKernelNeuron,
@@ -29,7 +29,7 @@ async def list_resources() -> List[Resource]:
         Resource(
             uri="convolution://processor/prompts",
             name="Convolution Processing Prompts",
-            description="Convolution prompts",
+            description="卷积处理的提示词模板",
             mimeType="application/json"
         )
     ]
@@ -47,41 +47,41 @@ async def list_tools() -> List[Tool]:
     return [
         Tool(
             name="convolution_layer_module",
-            description="Convolution layer tool for processing surveys and refining the survey outline through multiple convolution layers.",
+            description="对综述大纲进行卷积处理",
             input_schema={
                 "type": "object",
                 "properties": {
                     "config": {
                         "type": "object",
-                        "description": "The model configuration parameters needed for the convolution layer processing.",
+                        "description": "卷积处理的配置参数，包括卷积层数、感受野、结果数量和top_k等",
                             },
                     "convolution_layer": {
                         "type": "integer",
-                        "description": "The number of convolution layers."
+                        "description": "卷积层数"
                     },
                     "receptive_field": {
                         "type": "integer",
-                        "description": "The size of the receptive field."
+                        "description": "感受野大小"
                     },
                     "result_num": {
                         "type": "integer",
-                        "description": "The number of results to keep after each convolution layer."
+                        "description": "每层卷积后保留的结果数量"
                     },
                     "top_k": {
                         "type": "integer",
-                        "description": "The top_k results to keep after each convolution layer."
+                        "description": "每层卷积后保留的top_k个结果"
                     },
                     "survey": {
                         "type": "object",
-                        "description": "The survey data structure."
+                        "description": "待处理的综述对象，该工具的作用为对综述大纲进行卷积处理",
                     },
                     "utilise_results":{
                         "type": "object",
-                        "description": "The list of utilized results, including processed feedback information.",
+                        "description": "已利用的结果列表，包含已处理的反馈信息",
                     },
                     "origin_outline": {
                         "type": "object",
-                        "description": "The original outline."
+                        "description": "原始大纲"
                     }
                 },
                 "required": ["config", "convolution_layer", "receptive_field", "result_num", "top_k", "survey", "utilise_results", "origin_outline"]
@@ -300,7 +300,7 @@ class ConvolutionLayerModule(Module):
 
     def _prune_top_k(self, results, scores, top_k):
         assert len(results) == len(scores)
-
+        # 将score和outline降序排列，获取前top_k 个结果，同分项随机选择
         sorted_indices = np.argsort(scores)[::-1]
         sorted_suggestions = [results[i] for i in sorted_indices]
         sorted_scores = [scores[i] for i in sorted_indices]
@@ -311,6 +311,7 @@ class ConvolutionLayerModule(Module):
                 results[score] = []
             results[score].append(outline)
 
+        # 获取前top_k个结果
         result = []
         for score in sorted(results.keys(), reverse=True):
             group = results[score]

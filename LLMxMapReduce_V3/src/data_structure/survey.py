@@ -137,7 +137,8 @@ class Survey:
         for digest in digest_list:
             self.digests[digest.bibkeys] = digest
         return self
-
+    
+    # 为了方便将数据类进行网络传输，需要将该类的内容转为json，添加了json化和反json化方法
     def to_json(self) -> str:
         """将Survey对象转换为JSON字符串"""
         
@@ -171,35 +172,43 @@ class Survey:
     
     @classmethod
     def from_json(cls, json_str: str) -> 'Survey':
+        """从JSON字符串恢复Survey对象"""
         survey_dict = json.loads(json_str)
         
+        # 处理papers
         papers = {}
         for paper in survey_dict['papers']:
             if paper.get("txt", ""):
                 bibkey = proc_title_to_str(paper["title"])
                 papers[bibkey] = paper
-
+        
+        # 重建Skeleton对象
         skeleton_data = survey_dict.get('skeleton')
         skeleton = Skeleton.from_json(json.dumps(skeleton_data)) if skeleton_data else None
-
+        
+        # 重建Digest对象列表
         digest_list = []
         for digest_data in survey_dict.get('digests', []):
             digest = Digest.from_json(json.dumps(digest_data), outline=skeleton)
             digest_list.append(digest)
-
+        
+        # 创建MultiKeyDict
         digests = MultiKeyDict()
         for digest in digest_list:
             digests[digest.bibkeys] = digest
-
+        
+        # 准备初始化数据
         init_data = {
             'title': survey_dict['title'],
-            'outline': [survey_dict['origin_outline']], 
+            'outline': [survey_dict['origin_outline']],  # 构造原始格式
             'txt': survey_dict['origin_content'],
             'papers': list(papers.values())
         }
-
+        
+        # 创建Survey实例
         instance = cls(init_data)
-
+        
+        # 恢复其他属性
         instance.ref_str = survey_dict['ref_str']
         instance.skeleton = skeleton
         instance.block_cycle_count = survey_dict['block_cycle_count']
@@ -218,7 +227,8 @@ class Survey:
         instance.start_time = survey_dict['start_time']
         instance.cost_time = survey_dict['cost_time']
         instance.digests = digests
-    
+        
+        # 重建Content对象
         content_data = survey_dict.get('content')
         if content_data and skeleton and digests:
             instance.content = Content.from_json(json.dumps(content_data), outline=skeleton, digests=digests)

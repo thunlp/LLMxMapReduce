@@ -9,6 +9,10 @@ import logging
 from pathlib import Path
 from datetime import datetime
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -21,7 +25,7 @@ async def run_llm_analyse(topic: str, description: str = None):
     print("=" * 70)
 
     try:
-        from src.search.analyse_llm_host import AnalyseLLMHostInterface
+        from src.mcp_host.analyse_llm_host import AnalyseLLMHostInterface
 
         # Create analysis interface
         base_dir = f"output/{datetime.now().strftime('%Y%m%d')}/{topic}/search"
@@ -44,7 +48,9 @@ async def run_llm_analyse(topic: str, description: str = None):
             print(f"  Phase 1: Topic Expansion (LLM-based)")
             print(f"  Phase 2: Intelligent Tool Selection & Execution")
             print(f"  Phase 3: Literature Search & Content Crawling")
-            print(f"  Phase 4: Result Processing & Saving")
+            print(f"  Phase 4: References grouping")
+            print(f"  Phase 5: Skeleton(Outline) Generation")
+            print(f"  Phase 6: Final Report Generation")
 
             start_time = datetime.now()
 
@@ -182,39 +188,6 @@ async def run_llm_analyse(topic: str, description: str = None):
         traceback.print_exc()
         return None
 
-async def run_simple_llm_host_test(task: str):
-    """Run simple LLMHost test"""
-    print("\n🧪 Running Simple LLMHost Test")
-    print("=" * 60)
-
-    try:
-        from src.search.llm_host import LLMHost
-
-        async with LLMHost() as host:
-            print("✅ LLMHost Connection Successful")
-            print(f"📋 Available Tools: {len(host.available_tools)} tools")
-
-            print(f"🎯 Test Task: {task}")
-
-            start_time = datetime.now()
-            result = await host.process_task(task, "This is a test task")
-            end_time = datetime.now()
-
-            duration = (end_time - start_time).total_seconds()
-
-            print(f"\n✅ Task Completed! Duration: {duration:.1f} seconds")
-            print(f"  - Status: {result.get('status', 'unknown')}")
-            print(f"  - Rounds Used: {result.get('rounds_used', 0)}")
-            print(f"  - Operations: {len(result.get('operation_history', []))}")
-
-            return result
-
-    except Exception as e:
-        print(f"\n❌ LLMHost Test Failed: {e}")
-        import traceback
-        traceback.print_exc()
-        return None
-
 def print_usage():
     """Print usage instructions"""
     print("🔧 LLMHost Analysis Process Runner")
@@ -230,7 +203,7 @@ def print_usage():
     print("")
     print("Features:")
     print("  - Complete analysis pipeline: Topic expansion + Intelligent tool selection")
-    print("  - LLM autonomous decision-making for search, crawling, and other tools")
+    print("  - LLM autonomous decision-making for search, crawling, skeleton generation, writing and other tools")
     print("  - Detailed process logging and result statistics")
     print("  - Enhanced performance metrics and error handling")
     print("  - Unified configuration management")
@@ -239,15 +212,6 @@ async def main():
     if len(sys.argv) < 2:
         print_usage()
         return 1
-
-    if sys.argv[1] == "--test":
-        if len(sys.argv) < 3:
-            task = "Test LLMHost Basic Functionality"
-        else:
-            task = sys.argv[2]
-
-        result = await run_simple_llm_host_test(task)
-        return 0 if result else 1
 
     # Parse arguments
     topic = None

@@ -8,7 +8,7 @@ from src.data_structure import Survey
 from .convolution_module import ConvolutionLayerModule
 from .refine_module import SelfRefineModule
 from src.prompts import DIGEST_BASE_PROMPT
-from src.hidden.convolution_block.neurons import (
+from src.mcp_server.skeleton.convolution_block.neurons import (
     FeedbackClusterNeuron,
 )
 import asyncio
@@ -24,17 +24,19 @@ logger = logging.getLogger(__name__)
 
 @app.list_resources()
 async def list_resources() -> List[Resource]:
+    """列出可用的资源"""
     return [
         Resource(
             uri="skeleton_refine://processor/prompts",
             name="Skeleton Refine Prompts",
-            description="Skeleton refinement prompts",
+            description="修改综述大纲的提示词模板",
             mimeType="application/json"
         )
     ]
 
 @app.read_resource()
 async def read_resource(uri: str) -> str:
+    """读取资源内容"""
     if uri == "skeleton_refine://processor/prompts":
         prompts = {"skeleton_refine": DIGEST_BASE_PROMPT}
         return json.dumps(prompts, ensure_ascii=False, indent=2)
@@ -43,24 +45,25 @@ async def read_resource(uri: str) -> str:
     
 @app.list_tools()
 async def list_tools() -> List[Tool]:
+    """列出可用的工具"""
     return [
         Tool(
             name="skeleton_refine",
-            description="Skeleton refine tool for processing surveys and refining the survey skeleton using a convolution-like approach on the references.",
+            description="综述大纲修改",
             input_schema={
                 "type": "object",
                 "properties": {
                     "survey": {
                         "type": "object",
-                        "description": "The survey data structure.",
+                        "description": "待处理的综述对象，该工具的作用为对survey对象中skeleton进行修改",
                     },
-                    "config": {"type": "object", "description": "The model configuration parameters needed for summary generation."},
-                    "convolution_layer": {"type": "object", "description": "The number of iterations when summarizing references using a convolution-like approach."},
-                    "convolution_kernel_size": {"type":"object", "description": "The number of references processed in each iteration when summarizing references using a convolution-like approach."},
-                    "convolution_result_num": {"type":"object", "description": "The number of results when summarizing references using a convolution-like approach."},
-                    "top_k": {"type": "object","description": "The top_k results to keep after each convolution layer."},
-                    "self_refine_count": {"type": "object", "description": "The number of self-refinements after the outline generation."},
-                    "self_refine_best_of": {"type": "object", "description": "The number of samples to consider during self-refinement."},
+                    "config": {"type": "object", "description": "生成摘要时需要的模型配置参数"},
+                    "convolution_layer": {"type": "object", "description": "用类似于卷积的方法对参考文献进行信息总结时迭代的次数"},
+                    "convolution_kernel_size": {"type":"object", "description": "用类似于卷积的方法对参考文献进行信息总结时单次处理的参考文献数量"},
+                    "convolution_result_num": {"type":"object", "description": "用类似于卷积的方法对参考文献进行信息总结时的结果数目"},
+                    "top_k": {"type": "object","description": "用类似于卷积的方法对参考文献进行信息总结时最终选取的结果数目"},
+                    "self_refine_count": {"type": "object", "description": "大纲生成后自我修改的轮数"},
+                    "self_refine_best_of": {"type": "object", "description": "大纲生成后自我修正时对结果采样的数量"},
                 "required": ["survey", "config","convolution_layer", "convolution_kernel_size", "convolution_result_num", "top_k", "self_refine_count", "self_refine_best_of"]
                 }
             }
@@ -70,7 +73,7 @@ async def list_tools() -> List[Tool]:
 @app.call_tool()
 async def call_tool(
     tool_name: str, params_dict: str):
-    
+    """调用指定的工具"""
     if tool_name == "skeleton_refine":
         survey = Survey.from_json(params_dict["survey"])
         config = params_dict["config"]

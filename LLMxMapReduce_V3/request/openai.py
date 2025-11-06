@@ -9,28 +9,24 @@ from tenacity import (
     retry_if_exception_type
 )
 import logging
-import json
 logger = logging.getLogger(__name__)
 
 @track_completion_calls
 class OpenAIRequest:
     _calls_count = 0
     _token_usage_history = []
-    config_file = "config/unified_config.json"
-    with open(config_file, "r") as f:
-        config = json.load(f)
 
     def __init__(self, model):
         self.client = OpenAI(
-            api_key=self.config["api_keys"]["openai"]["api_key"],
-            base_url=self.config["api_keys"]["openai"]["base_url"],
+            api_key=os.environ.get("OPENAI_API_KEY", ""),
+            base_url=os.environ.get("OPENAI_BASE_URL", ""),
         )
         self.model = model
 
     @retry(
         wait=wait_random_exponential(multiplier=2, max=60),
         stop=stop_after_attempt(100),
-        retry=retry_if_exception_type((RateLimitError, InternalServerError, APIError))
+        retry=retry_if_exception_type((RateLimitError, InternalServerError, APIError)) # 如果不是这几个错就不retry了
         )
     def completion(self, messages, **kwargs):
         try:
@@ -45,7 +41,7 @@ class OpenAIRequest:
             answer = response.choices[0].message.content
 
             token_usage = response.usage
-            # OpenAIRequest._token_usage_history.append(token_usage)
+
             OpenAIRequest._token_usage_history.append({
                 "model": self.model,
                 "completion_tokens": token_usage.completion_tokens,

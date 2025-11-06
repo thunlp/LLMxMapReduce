@@ -21,7 +21,20 @@ from mcp.types import Resource, Tool, TextContent
 import mcp.server.stdio
 import json
 import traceback
+import os
+import datetime
+import sys
 
+log_dir = os.path.join(os.path.dirname(__file__), f'../../../output/{datetime.datetime.now().strftime("%Y%m%d")}/logs')
+os.makedirs(log_dir, exist_ok=True)
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(os.path.join(log_dir, 'group_server.log'), encoding='utf-8'),
+        logging.StreamHandler(sys.stderr)
+    ]
+)
 logger = logging.getLogger(__name__)
 
 app = Server("group-processor")
@@ -34,7 +47,7 @@ async def list_resources() -> List[Resource]:
         Resource(
             uri="group://processor/prompts",
             name="Group Processing Prompts",
-            description="References grouping prompts",
+            description="Prompt templates for data grouping processing",
             mimeType="application/json"
         )
     ]
@@ -52,17 +65,17 @@ async def list_tools() -> List[Tool]:
     return [
         Tool(
             name="group_papers",
-            description="Papers grouping tool for processing surveys and grouping papers within the survey.",
-            input_schema={
+            description="Perform grouping processing on papers",
+            inputSchema={
                 "type": "object",
                 "properties": {
                     "survey": {
                         "type": "object",
-                        "description": "The survey data structure.",
+                        "description": "The survey object to be processed. The function of this tool is to group the papers in the survey object",
                     },
-                    "config": {"type": "object", "description": "The model configuration parameters needed for grouping."},
+                    "config": {"type": "object", "description": "Model configuration parameters required for grouping"},
+                },
                 "required": ["survey", "config"]
-                }
             }
         )
     ]
@@ -72,6 +85,7 @@ async def call_tool(
     tool_name: str, params_dict: str):
     survey = Survey.from_json(params_dict["survey"])
     config = params_dict["config"]
+
     try:
         group_module = GroupModule(config["hidden"]["group"], mode="llm", digest_batch=3)
         group_survey_dict = group_module.forward(survey)

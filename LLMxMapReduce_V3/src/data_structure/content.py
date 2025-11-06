@@ -183,7 +183,7 @@ class ContentNode(TreeNode):
                 outline_node_dict, 
                 digest_dict
             )
-            node.add_son(son_node) 
+            node.add_son(son_node)  # 使用add_son方法自动设置father和root
         
         return node
 

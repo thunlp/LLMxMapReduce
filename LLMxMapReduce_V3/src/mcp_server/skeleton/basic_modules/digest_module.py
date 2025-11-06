@@ -35,17 +35,19 @@ request_wrapper = None
 
 @app.list_resources()
 async def list_resources() -> List[Resource]:
+    """列出可用的资源"""
     return [
         Resource(
             uri="digest://processor/prompts",
             name="Digest Processing Prompts",
-            description="Given a survey outline and a paper content, generate the digest for the paper according to the outline.",
+            description="参考文献摘要生成的提示词模板",
             mimeType="application/json"
         )
     ]
 
 @app.read_resource()
 async def read_resource(uri: str) -> str:
+    """读取资源内容"""
     if uri == "digest://processor/prompts":
         prompts = {"digest_generation": SINGLE_DIGEST_PROMPT}
         return json.dumps(prompts, ensure_ascii=False, indent=2)
@@ -54,18 +56,19 @@ async def read_resource(uri: str) -> str:
     
 @app.list_tools()
 async def list_tools() -> List[Tool]:
+    """列出可用的工具"""
     return [
         Tool(
             name="digest_generation",
-            description="Digest generation tool for processing surveys and generating digests for papers within the survey.",
+            description="参考文献摘要生成",
             input_schema={
                 "type": "object",
                 "properties": {
                     "survey": {
                         "type": "object",
-                        "description": "The survey data structure.",
+                        "description": "待处理的综述对象，该工具的作用为对survey对象中papers进行摘要生成",
                     },
-                    "config": {"type": "object", "description": "The model configuration parameters needed for generating digests."},
+                    "config": {"type": "object", "description": "生成摘要时需要的模型配置参数"},
                 "required": ["survey", "config"]
                 }
             }
@@ -75,6 +78,7 @@ async def list_tools() -> List[Tool]:
 @app.call_tool()
 async def call_tool(
     tool_name: str, params_dict: str):
+    """调用指定的工具"""
     survey = Survey.from_json(params_dict["survey"])
     config = params_dict["config"]
     try:

@@ -10,7 +10,7 @@ import json
 import logging
 import os
 from typing import Any, Dict, List, Optional
-
+import traceback
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 from mcp.types import TextContent
@@ -45,10 +45,9 @@ class MCPClient:
     async def connect(self):
         try:
             if self._connected:
-                logger.warning("Already connected to MCP server")
+                logger.warning("Already connected!")
                 return
 
-            logger.info("Connecting to MCP Server...")
 
             env_vars = self.server_config.get("env", {})
 
@@ -101,18 +100,20 @@ class MCPClient:
 
             if self.session:
                 try:
-                    logger.debug("Clearing session reference")
-                    self.session = None
+                    await self.session.__aexit__(None, None, None)
                 except Exception as e:
-                    logger.warning(f"Error clearing session: {e}")
+                    logger.warning(f"Error closing MCP session: {e}")
+                finally:
                     self.session = None
+
             if self.stdio_context:
                 try:
-                    logger.debug("Clearing stdio context reference")
-                    self.stdio_context = None
+                    await self.stdio_context.__aexit__(None, None, None)
                 except Exception as e:
-                    logger.warning(f"Error clearing stdio context: {e}")
+                    logger.warning(f"Error closing stdio context: {e}")
+                finally:
                     self.stdio_context = None
+
             self._connected = False
             logger.info("MCP client disconnected successfully")
 
@@ -148,7 +149,7 @@ class MCPClient:
             if not self._connected or not self.session:
                 raise RuntimeError("Not connected to MCP server")
 
-            logger.debug(f"Calling tool: {tool_name} with arguments: {arguments}")
+            # logger.debug(f"Calling tool: {tool_name} with arguments: {arguments}")
 
             result = await self.session.call_tool(tool_name, arguments)
 
@@ -161,6 +162,7 @@ class MCPClient:
 
         except Exception as e:
             logger.error(f"Error calling tool {tool_name}: {e}")
+            logger.error(traceback.format_exc())
             raise
 
     async def list_resources(self) -> List[Dict[str, Any]]:
@@ -221,7 +223,7 @@ async def create_mcp_client_from_config(config_path: str = "config/llm_search_mc
         with open(config_path, 'r', encoding='utf-8') as f:
             config = json.load(f)
 
-        server_config = config["mcpServers"][server_name]
+        server_config = config["mcp_server_config"][server_name]
         return await create_mcp_client(server_config)
 
     except Exception as e:

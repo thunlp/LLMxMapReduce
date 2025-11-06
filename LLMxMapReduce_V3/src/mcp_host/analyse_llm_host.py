@@ -1,22 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Analysis Module: Use a 
-"""
-
 import os
 import json
 import logging
 import asyncio
 import time
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any, Optional
 from pathlib import Path
-from datetime import datetime
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
-from request.wrapper import RequestWrapper
-from .llm_host import LLMHost
-    
+from src.mcp_host.host import LLM_Host
+import traceback
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -26,7 +21,6 @@ logger = logging.getLogger(__name__)
 
 class AnalyseLLMHostInterface:
 
-    
     def __init__(self,
                  base_dir: str = "new/test",
                  config_path: Optional[str] = None):
@@ -56,8 +50,7 @@ class AnalyseLLMHostInterface:
             self.llm_infer_type = "OpenAI"
 
         self.conversation_history = []
-
-        self.llm_host = LLMHost()
+        self.llm_host = LLM_Host()
 
         self.logger = logging.getLogger(__name__)
 
@@ -67,8 +60,6 @@ class AnalyseLLMHostInterface:
                     handler.stream.reconfigure(encoding='utf-8')
                 except:
                     pass
-        self._init_llm_components()
-
         self._load_config()
 
     async def cleanup(self):
@@ -116,6 +107,7 @@ class AnalyseLLMHostInterface:
             }
         except Exception as e:
             logger.error(f"Failed to load environment config: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
             self.env_config = {
                 "models": {
                     "default_model": "gemini-2.5-flash",
@@ -136,58 +128,41 @@ class AnalyseLLMHostInterface:
             openai_config = api_keys.get("openai", {})
             if openai_config.get("api_key"):
                 os.environ["OPENAI_API_KEY"] = openai_config["api_key"]
-                logger.info("✅ OPENAI_API_KEY 已设置")
+                logger.info("✅ OPENAI_API_KEY configured")
             if openai_config.get("base_url"):
                 os.environ["OPENAI_BASE_URL"] = openai_config["base_url"]
-                logger.info("✅ OPENAI_BASE_URL 已设置")
+                logger.info("✅ OPENAI_BASE_URL configured")
             search_engines = api_keys.get("search_engines", {})
             if search_engines.get("serpapi_key"):
                 os.environ["SERPAPI_KEY"] = search_engines["serpapi_key"]
-                logger.info(f"✅ SERPAPI_KEY 已设置: {search_engines['serpapi_key'][:10]}...")
+                logger.info(f"✅ SERPAPI_KEY configured: {search_engines['serpapi_key'][:10]}...")
 
             if search_engines.get("bing_subscription_key"):
                 os.environ["BING_SEARCH_V7_SUBSCRIPTION_KEY"] = search_engines["bing_subscription_key"]
-                logger.info("✅ BING_SEARCH_V7_SUBSCRIPTION_KEY 已设置")
+                logger.info("✅ BING_SEARCH_V7_SUBSCRIPTION_KEY configured")
 
         except Exception as e:
             logger.error(f"Failed to set environment variables: {e}")
 
         logger.info(f"AnalyseLLMHostInterface initialized:")
         logger.info(f"  - Base directory: {self.base_dir}")
-        logger.info(f"  - Max interaction rounds: {self.max_interaction_rounds}")
-        logger.info(f"  - LLM model: {self.llm_model}")
         logger.info(f"  - Using LLMHost for intelligent task processing")
-
-    def _init_llm_components(self):
-        try:
-            self.llm_wrapper = RequestWrapper(
-                model=self.llm_model,
-                infer_type=self.llm_infer_type
-            )
-            logger.info("LLM wrapper initialized successfully")
-        except Exception as e:
-            logger.error(f"Failed to initialize LLM wrapper: {e}")
-            raise
 
     async def analyse(self, topic: str, description: Optional[str] = None) -> Dict[str, Any]:
         logger.info(f"Starting intelligent task analysis for topic: '{topic}'")
         self.conversation_history.clear()
 
         try:
-            # Topic Expansion
-            logger.info("=== Topic Expansion ===")
-            user_msg_1 = f"Topic：{topic}。Description：{description or '无'}"
-            expanded_topic = await self._llm_interaction_round_1(user_msg_1)
-            logger.info(f"Topic Expansion finished: {expanded_topic[:100]}...")
-
-            # Search Agent
             logger.info("=== Search Resourses ===")
             task_description = f"Execute literature search task:{topic}"
-            context = f"Expanded topic description:{expanded_topic}"
+            context_segments = [f"Topic: {topic}"]
+            if description:
+                context_segments.append(f"Description: {description}")
+            context = "\n".join(context_segments)
 
             result = await self.llm_host.process_task(task_description, context)
 
-            logger.info(f"✅ Intelligent analysis completed successfully")
+            logger.info("✅ Intelligent analysis completed successfully")
             logger.info(f"Status: {result.get('status', 'unknown')}")
             logger.info(f"Rounds used: {result.get('rounds_used', 0)}")
 
@@ -198,30 +173,6 @@ class AnalyseLLMHostInterface:
             import traceback
             logger.error(f"Traceback: {traceback.format_exc()}")
             raise
-
-    async def _llm_interaction_round_1(self, user_message: str) -> str:
-        self.conversation_history.append({
-            "role": "user",
-            "content": user_message
-        })
-        system_prompt = """You are a professional academic research analysis expert. The user will provide you with a research topic. Please expand this topic and provide a detailed research description.
-
-Analyze the topic from multiple perspectives and generate a professional and comprehensive description. This description will be used for subsequent literature search.
-
-Only return the expanded topic description, without any additional content."""
-
-        messages = [
-            {"role": "system", "content": system_prompt}
-        ] + self.conversation_history
-
-        response = await self.llm_wrapper.async_request(messages)
-
-        self.conversation_history.append({
-            "role": "assistant",
-            "content": response
-        })
-
-        return response
 
     def _load_config(self):
         try:

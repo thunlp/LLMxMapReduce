@@ -177,9 +177,11 @@ class Skeleton:
     def survey_title(self):
         return self.root.title
 
+    # 为了方便将数据类进行网络传输，需要将该类的内容转为json，添加了json化和反json化方法
     def to_json(self) -> str:
-
+        """将Skeleton对象转换为JSON字符串"""
         def serialize_node(node: SkeletonNode) -> Dict[str, Any]:
+            # 序列化SkeletonNode对象
             return {
                 'title': node.title,
                 'description': node.description,
@@ -188,9 +190,10 @@ class Skeleton:
                 'block_cycle_count': node.block_cycle_count,
                 # 'digest_dict': node.digest_dict.to_dict() if isinstance(node.digest_dict, MultiKeyDict) else node.digest_dict,  # 使用MultiKeyDict的to_dict方法
                 'digest_dict': node.digest_dict.to_dict() if isinstance(node.digest_dict, MultiKeyDict) else {},
-                'sons': [serialize_node(son) for son in node.son]
+                'sons': [serialize_node(son) for son in node.son]  # 递归序列化子节点
             }
 
+        # 构建Skeleton对象的字典表示
         skeleton_dict = {
             'is_compress_over': self.is_compress_over,
             'references': list(self.references),
@@ -201,29 +204,35 @@ class Skeleton:
             'eval_detail': self.eval_detail
         }
 
+        # 转换为JSON字符串
         return json.dumps(skeleton_dict, ensure_ascii=False, indent=2)
 
     @classmethod
     def from_json(cls, json_str: str) -> 'Skeleton':
-
+        """从JSON字符串恢复Skeleton对象"""
         def deserialize_node(node_dict: Dict[str, Any]) -> SkeletonNode:
+            # 反序列化SkeletonNode对象
             node = SkeletonNode(title=node_dict['title'])
             node.description = node_dict['description']
             node.construction = node_dict['construction']
             node.analysis = node_dict['analysis']
             node.block_cycle_count = node_dict['block_cycle_count']
             
+            # 使用MultiKeyDict的from_dict方法恢复digest_dict
             node.digest_dict = MultiKeyDict()
             node.digest_dict = node.digest_dict.from_dict(node_dict['digest_dict'])
-
+            
+            # 递归反序列化子节点
             for son_dict in node_dict.get('sons', []):
                 son_node = deserialize_node(son_dict)
                 node.add_son(son_node)
             
             return node
 
+        # 解析JSON字符串
         skeleton_dict = json.loads(json_str)
         
+        # 创建Skeleton对象
         skeleton = cls(references_keys=skeleton_dict['references'])
         skeleton.is_compress_over = skeleton_dict['is_compress_over']
         skeleton.raw_skeleton = skeleton_dict['raw_skeleton']
@@ -231,6 +240,7 @@ class Skeleton:
         skeleton.eval_score = skeleton_dict['eval_score']
         skeleton.eval_detail = skeleton_dict['eval_detail']
         
+        # 反序列化根节点
         if skeleton_dict['root']:
             skeleton.root = deserialize_node(skeleton_dict['root'])
         

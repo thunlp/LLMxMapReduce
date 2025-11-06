@@ -3,7 +3,9 @@ import logging
 from typing import Protocol
 from importlib import import_module
 logger = logging.getLogger(__name__)
-import json
+
+from dotenv import load_dotenv
+load_dotenv('/home/linsiyu/LLMxMapReduce-v3-fast/LLMxMapReduce/LLMxMapReduce_V3/.env')
 
 class PromptsProtocol(Protocol):
     """Protocol defining all required prompts for the survey writing system"""
@@ -53,7 +55,7 @@ class PromptManager:
     _instance = None
     _initialized = False
     DEFAULT_LANGUAGE = "en"
-    config_file = "config/unified_config.json"
+    ENV_VAR_NAME = "PROMPT_LANGUAGE"
 
     def __new__(cls):
         if cls._instance is None:
@@ -62,10 +64,8 @@ class PromptManager:
 
     def __init__(self):
         if not PromptManager._initialized:
-            with open(self.config_file, 'r') as f:
-                config = json.load(f)
-            self.language = config.get("prompt_language", self.DEFAULT_LANGUAGE)
-            
+            # 从环境变量读取语言设置,如果未设置则使用默认值
+            self.language = os.getenv(self.ENV_VAR_NAME, self.DEFAULT_LANGUAGE)
             self._load_prompts()
             PromptManager._initialized = True
 
@@ -78,7 +78,7 @@ class PromptManager:
             logger.warning(
                 f"Unsupported language: {self.language}, falling back to {self.DEFAULT_LANGUAGE}"
             )
-
+            # 如果指定语言不可用,回退到默认语言
             self.language = self.DEFAULT_LANGUAGE
             module = import_module(
                 f".prompts_{self.DEFAULT_LANGUAGE}", package="src.prompts"
@@ -90,7 +90,10 @@ class PromptManager:
         return self._prompts
 
 
+# 创建默认实例
 _default_manager = PromptManager()
 
+
+# 不再需要 init_prompts 函数,因为语言设置现在从环境变量获取
 def __getattr__(name: str):
     return getattr(_default_manager.prompts, name)

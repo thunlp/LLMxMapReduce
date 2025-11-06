@@ -31,7 +31,7 @@ async def list_resources() -> List[Resource]:
         Resource(
             uri="skeleton://processor/prompts",
             name="Skeleton Processing Prompts",
-            description="Initialization prompts for survey outlines",
+            description="初始化综述大纲的提示词模板",
             mimeType="application/json"
         )
     ]
@@ -49,15 +49,15 @@ async def list_tools() -> List[Tool]:
     return [
         Tool(
             name="skeleton_init",
-            description="Initialize skeleton tool for processing surveys and generating an initial outline based on the survey title and grouped references.",
+            description="初始化综述大纲",
             input_schema={
                 "type": "object",
                 "properties": {
                     "survey": {
                         "type": "object",
-                        "description": "The survey data structure.",
+                        "description": "待处理的综述对象，该工具的作用为根据综述题目、分组后的参考文献信息，为该篇综述初步写一个大纲",
                     },
-                    "config": {"type": "object", "description": "The model configuration parameters needed for initializing the outline."},
+                    "config": {"type": "object", "description": "大纲初始化时需要的模型配置参数"},
                 "required": ["survey", "config"]
                 }
             }

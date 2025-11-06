@@ -1,11 +1,11 @@
 {
     "api_keys": {
         "openai": {
-            "api_key": "",
-            "base_url": ""
+            "api_key": "your_openai_api_key",
+            "base_url": "your_openai_api_base_url"
         },
         "search_engines": {
-            "serpapi_key": "",
+            "serpapi_key": "your_serpapi_key",
             "bing_subscription_key": "",
             "google_custom_search": {
                 "api_key": "",
@@ -20,7 +20,8 @@
         "similarity_model": "gemini-2.5-flash",
         "page_refine_model": "gemini-2.5-flash",
         "host_llm_model": "gemini-2.5-flash",
-        "abstract_generation_model": "gemini-2.5-flash"
+        "abstract_generation_model": "gemini-2.5-flash",
+        "human_interaction_model": "gemini-2.5-flash"
     },
     "search_settings": {
         "default_engine": "google",
@@ -35,7 +36,7 @@
     "analyse_settings": {
         "max_interaction_rounds": 3,
         "max_context_messages": 10,
-        "llm_host_max_rounds": 10
+        "llm_host_max_rounds": 20
     },
     "timeout_settings": {
         "llm_request_timeout": 30,
@@ -57,88 +58,122 @@
     "mcp_settings": {
         "server_startup_timeout": 0,
         "session_timeout": 0,
-        "tool_call_timeout": 0,
-        "query_cache_dir": "query_cache",
-        "url_cache_dir": "url_cache"
+        "tool_call_timeout": 0
     },
     "mcp_server_config": {
-        "command": "python",
-        "args": ["-m", "src.search.llm_search_mcp_server"],
-        "env": {
-            "PYTHONPATH": ".",
-            "OPENAI_API_KEY": "",
-            "OPENAI_API_BASE": "",
-            "OPENAI_BASE_URL": "",
-            "GOOGLE_API_KEY": "",
-            "SERP_API_KEY": "",
-            "SERPAPI_KEY": "",
-            "BING_SEARCH_V7_SUBSCRIPTION_KEY": ""
+        "search_server":{
+            "command": "uv",
+            "args": ["run", "python", "-m", "src.mcp_server.search.llm_search_mcp_server"],
+            "env": {"PYTHONPATH": "."}
+        }, 
+        "group_server": {
+            "command": "uv",
+            "args": ["run", "python", "-m", "src.mcp_server.skeleton.group_server"],
+            "env": {"PYTHONPATH": "."}
+        },
+        "skeleton_init_server": {
+            "command": "uv",
+            "args": ["run", "python", "-m", "src.mcp_server.skeleton.skeleton_init_server"],
+            "env": {"PYTHONPATH": "."}
+        },
+        "digest_server": {
+            "command": "uv",
+            "args": ["run", "python", "-m", "src.mcp_server.skeleton.digest_server"],
+            "env": {"PYTHONPATH": "."}
+        },
+        "skeleton_refine_server": {
+            "command": "uv",
+            "args": ["run", "python", "-m", "src.mcp_server.skeleton.skeleton_refine_server"],
+            "env": {"PYTHONPATH": "."}
+        },
+        "writing_server": {
+            "command": "uv",
+            "args": ["run", "python", "-m", "src.mcp_server.writing.writing_server"],
+            "env": {"PYTHONPATH": "."}
         }
+    },
+    "human_interaction_settings": {
+        "server_startup_timeout": 0,
+        "session_timeout": 0,
+        "tool_call_timeout": 0,
+        "history_dir": "src/human/human_interaction_history"
     },
     "prompts": {
         "query_generation": "You are a professional search query optimization expert. Please generate multiple high-quality search queries for the given research topic.\n\n## Input Information\nTopic: {topic}\nDescription: {description}\n\n## Query Generation Principles\n1. **Multi-angle Coverage**: Generate queries from different perspectives and levels\n2. **Keyword Optimization**: Use precise academic and professional terminology\n3. **Query Diversity**: Include different types of queries (conceptual, specific, comparative, etc.)\n4. **Search Engine Friendly**: Optimize queries for best search results\n\n## Output Format\n**IMPORTANT: You MUST output the query list in the following JSON format exactly:**\n```json\n{\"query1\";\"query2\";\"query3\";\"query4\";\"query5\";}\n```\n\n**CRITICAL: The output must be valid JSON format with semicolon separators as shown above. Do not use any other format.**\n\nPlease generate 30 high-quality search queries.",
+        "query_generation_with_abstract": "You are an industry research expert responsible for writing a comprehensive report on the topic of {topic}. The report should comply with the following requirements: {abstract}. To gather the necessary information, you need to conduct online research. Please generate {query_count} search queries to help you retrieve relevant data and insights for the report. Break down vague concepts in the current query into more specific sub-concepts for more precise searches. For example, \"foreign\" can be further broken down into specific countries or regions that are representative within the report's domain. The output content must be quoted by ```markdown\\n```.\n\nOutput format:\n```markdown\nquery_content;\nquery_content;\n```",
+        "query_generation_without_abstract": "You are an industry research expert responsible for writing a comprehensive report on the topic of {topic}. To gather the necessary information, you need to conduct online research. Please generate {query_count} search queries to help you retrieve relevant data and insights for the report. Break down vague concepts in the current query into more specific sub-concepts for more precise searches. For example, \"foreign\" can be further broken down into specific countries or regions that are representative within the report's domain. The output content must be quoted by ```markdown\\n```.\n\nOutput format:\n```markdown\nquery_content;\nquery_content;\n```",
+        "query_refine": "The queries you just decomposed are: {queries}\nPlease strictly check your output queries once: Are all queries closely related to the report topic? Are the fields targeted by each query non-repetitive? Can each query be further decomposed into representative specific technologies, companies, individuals, etc. in the industry? Especially for the last question, you can decompose broad concepts into several representative specific technical terms, company names, expert names, etc. If there are any of the above issues, please discuss your analysis and supplement or modify the queries, but queries without problems can be retained without deletion.\n\nIf these queries need modification, please output your answer in the following format:\n\n\"AI's judgment: \"{\"your modification opinion\"}\"\nThis round's output queries: query_1,query_2,...,query_n\"\n\nWhere \"This round's output queries:\" is followed by your modified queries.\n\nIf these queries no longer need modification, please output your answer in the following format:\n\n\"AI's judgment: No modification needed.\nThis round's output queries: query_1,query_2,...,query_n\"\n\nWhere \"This round's output queries:\" is followed by these unmodified queries.",
+        "query_refine_stop_flag": "No modification needed",
+        "snippet_filter": "Please judge the relevance between the following topic and the web snippet retrieved from the internet.\n\nTopic: {topic}\nWeb snippet: {snippet}\n\nPlease comprehensively consider the above two dimensions, first give the reason for scoring, then score. The scoring range is 0-100. 0 means completely irrelevant, 100 means completely relevant. Please be as strict as possible in your scoring.\n\nNote that the score needs to be wrapped with <SCORE></SCORE>. For example <SCORE>78</SCORE>\n\nAnswer example:\nReason: ...\nRelevance score: <SCORE>89</SCORE>",
         "relevance_analysis": "You are a search result relevance analysis expert. Please analyze the relevance of the given URL list to the research topic.\n\n## Analysis Task\nTopic: {topic}\nURL List: {urls}\n\n## Analysis Dimensions\n1. **Content Relevance**: Degree of match between URL content and topic\n2. **Authority**: Credibility and professionalism of the source\n3. **Timeliness**: Freshness and currency of information\n4. **Depth**: Level of detail and depth of content\n\n## Output Requirements\n**IMPORTANT: Provide relevance scores (0-100) for each URL and sort by relevance. Output must be in valid JSON format.**\n\nPlease provide relevance scores (0-100) for each URL and sort them by relevance.",
         "page_refine": "Analyze and process the following webpage content related to '{topic}'. Output the main text, removing image links, URLs, advertisements, meaningless repetitive characters, etc. Do NOT summarize the content - preserve all information relevant to the topic.\n\nOriginal webpage content:\n{raw_content}\n\n[Output Requirements]\n**IMPORTANT: You MUST use the exact format below:**\n- Title: <TITLE>Your Title</TITLE>\n- Filtered Text: <CONTENT>Filtered Text Content</CONTENT>\n\n**CRITICAL: The output must use the exact XML tags <TITLE> and <CONTENT> as specified above.**",
         "similarity_scoring": "Please evaluate the quality score of the retrieved content based on the given topic and content found on the internet.\n\nTopic: {topic}\nRetrieved Content: {content}\n\nPlease score the retrieved content based on the following dimensions. Be as strict and critical as possible in your scoring.\n\n1. **Content Relevance to Topic**: Consider whether the content can be viewed as a sub-component that expands on the topic.\n2. **Content Quality for Writing**: Consider text length (very short texts have relatively low reference value), presence of garbled text, and overall text quality.\n\nPlease comprehensively consider the above two dimensions, first provide the reasoning for scoring, then perform the scoring. You need to score each dimension with a range of 0-100, where 0 means completely irrelevant and 100 means completely relevant. After completing the scoring for each dimension, calculate the final average score.\n\n**CRITICAL: The score MUST be wrapped in <SCORE></SCORE> tags. For example: <SCORE>78</SCORE>**\n\nResponse Example:\nReasoning: ...\nSimilarity Score: <SCORE>89</SCORE>\n\n**IMPORTANT: You MUST use the exact <SCORE></SCORE> format for the final score.**",
-        "llm_host_system": "You are an intelligent task processing assistant that can use multiple tools to complete user tasks.\n\nAvailable Tools:\n{tools_description}\n\n**CRITICAL: You MUST respond strictly in JSON format without adding any other text!**\n\nDecision Format (choose one of three):\n\n1. Call Tool:\n{{\"action\": \"call_tool\", \"tool_name\": \"tool_name\", \"arguments\": {{parameter_dictionary}}}}\n\n2. Complete Task:\n{{\"action\": \"complete\", \"result\": \"detailed_description_of_final_result\"}}\n\n3. Request More Information:\n{{\"action\": \"request_info\", \"message\": \"description_of_needed_information\"}}\n\n**SPECIAL ATTENTION:**\n- When the entire process is complete, you MUST return {{\"action\": \"complete\", \"result\": \"...\"}}\n- If unable to continue or encountering unsolvable problems, return {{\"action\": \"complete\", \"result\": \"reason_why_task_cannot_be_completed\"}}\n- Strictly follow JSON format, do not add markdown code blocks or other formats\n- You can only choose one action at a time\n\n**ABSOLUTELY CRITICAL: Your response must be valid JSON format only. No explanations, no markdown, no additional text.**\n\nDecision Principles:\n- Execute in logical order: generate queries → web search → crawl content\n- Make full use of previous tool call results and returned information\n- Avoid repeatedly calling the same tool\n- End promptly after completing the main task",
-        "analyse_topic_expansion": "You are a professional academic research analysis expert. The user will provide you with a research topic, and you should expand this topic to provide a detailed research description.\n\nPlease analyze from multiple perspectives and generate a professional and comprehensive description that will be used for subsequent literature search.\n\nReturn only the expanded topic description, no other content.",
-        "abstract_generation": "You are a professional academic abstract writer. Please generate a concise and informative abstract for the given content.\n\nContent: {content}\n\nRequirements:\n1. The abstract should be 150-300 words\n2. Summarize the main points, methodology, and key findings\n3. Use clear and professional academic language\n4. Focus on the most important information\n5. Do not include references or citations\n\nPlease provide only the abstract text, no additional formatting or explanations."
+        "llm_host_system": "You are an intelligent task processing assistant and an advanced AI survey system builder. Your primary goal is to guide the Large Language Model (LLM) host to systematically and flexibly utilize a set of provided tools to generate a high-quality survey\n\nYour system is structured into five sequential client-server pairs, with the final step being conditional:\n1.  **Search Server:** Searches the internet for relevant references.\n2.  **Group Server:** Categorizes and groups the retrieved references.\n3.  **Skeleton Init Server:** Drafts an initial review outline (skeleton).\n4.  **Digest Server:** Writes a concise abstract/digest for each reference.\n5.  **Skeleton Refine Server (Optional):** Modifies and refines the initial outline(skeleton).\n6.  **Writing Server:** Writes the whole survey based on the given outline(skeleton).\n\nAvailable Servers and Tools:\n1.  **Search Server**: \n{search_server_tools}\n2.  **Group Server**: \n{group_server_tools}\n3.  **Skeleton Init Server**: \n{skeleton_init_server_tools}\n4.  **Digest Server:**: \n{digest_server_tools}\n5.  **Skeleton Refine Server**:\n{skeleton_refine_server_tools}\n6.  **Writing Server**:\n{writing_server_tools}\n\n**Core Instruction:** The LLM host **MUST** adhere to the sequential order of steps (Search → Group → Skeleton Init→ Digest → Skeleton Refine(optional) → Writing). Please note: the skeleton refine stage should be skipped if the initial skeleton is good enough after digest stage, because the skeleton refine may consume a long time. \n\n**Refinement Decision Point:** **After the Digest Server step is complete**, the LLM host **MUST** use the `interaction` action to present the initial outline to the user and ask for confirmation to proceed to the **Skeleton Refine Server**. If the user approves, proceed to step 5; otherwise, proceed to step 6.\n\n**Flexibility and Interaction Mandate:**\n1.  **Iterative Tool Use:** Within each server step, tools assigned to the current server **can be called multiple times** (iteratively) **as needed** to ensure the best possible intermediate result before moving to the next sequential server. Repetitive calls are not mandatory but are allowed if the result requires refinement or expansion.\n2.  **Resource Allocation:** Only use the tools designated for the current server step.\n\n**CRITICAL: You MUST respond strictly in JSON format without adding any other text! **\n**CRITICAL: You must output the raw JSON object (starting with **{{** and ending with **}}**) and nothing else. DO NOT include any extra characters, explanatory text, prefixes (like json or ```), suffixes, or leading/trailing newline characters. The output must be directly parseable by a standard JSON library. **\n\nDecision Format (choose one of four):\n\n1. Call Tool:\nIf Search stage:\n{{\"action\": \"call_tool\", \"server_name\": \"server_name\", \"tool_name\": \"tool_name\", \"arguments\": {{parameter_dictionary}}}}\n\nIf Group / Skeleton Init / Digest / Skeleton Refine / Writing stage:\n{{\"action\": \"call_tool\", \"server_name\": \"server_name\", \"tool_name\": \"tool_name\"}}\n\n2. Complete Task:\n{{\"action\": \"complete\", \"result\": \"detailed_description_of_final_result\"}}\n\n3. Request More Information:\n{{\"action\": \"request_info\", \"message\": \"description_of_needed_information\"}}\n\n4. Interaction:\n{{\"action\": \"interaction\", \"message\": \"message_to_user_requesting_interaction_or_feedback\"}}\n\n**SPECIAL ATTENTION:**\n- When the entire process is complete, you MUST return {{\"action\": \"complete\", \"result\": \"...\"}}\n- If unable to continue or encountering unsolvable problems, return {{\"action\": \"complete\", \"result\": \"reason_why_task_cannot_be_completed\"}}\n- Strictly follow JSON format, do not add markdown code blocks or other formats\n- You can only choose one action at a time\n**Ensure ALL brackets and quotes are correctly nested and balanced.**\n**DO NOT output arguments in Group / Skeleton Init / Digest / Skeleton Refine / Writing stage!!!**\n\n**ABSOLUTELY CRITICAL: Your response must be valid JSON format only. No explanations, no markdown, no additional text.**\n\nDecision Principles:\n- Execute in logical order and fully utilize previous results.\n- Avoid repeatedly calling the same tool without purpose.\n- End promptly after completing the main task or when instructed by the user via interaction.",
+        "analyse_topic_expansion": "You are a professional academic research analysis expert. The user will provide you with a research topic, and you should provide a detailed research description according to the topic.\n\nPlease analyze from multiple perspectives and generate a professional and comprehensive description that will be used for subsequent literature search.\n\nReturn only the expanded topic description, no other content.",
+        "abstract_generation": "You are a professional academic abstract writer. Please generate a concise and informative abstract for the given content.\n\nContent: {content}\n\nRequirements:\n1. The abstract should be 150-300 words\n2. Summarize the main points, methodology, and key findings\n3. Use clear and professional academic language\n4. Focus on the most important information\n5. Do not include references or citations\n\nPlease provide only the abstract text, no additional formatting or explanations.",
+        "interaction": "You are tasked with two core tasks: first, judging user satisfaction and revising the provided input (if needed) based on the user's feedback; second, outputting the result in a strict JSON format.  \n\n## 1. First Task: Satisfaction Judgment & Content Revision\n- Step 1: Analyze the user's feedback to determine if they are satisfied with the original input.\n- Step 2: If the user is satisfied: Do not modify the input. Use the original input *exactly* as the value for the \"modified_output\" field.\n- Step 3: If the user is not satisfied: Revise the input's content to fully address the feedback. **Critical Rule**: Preserve the original input's format *exactly* during revision, including all Markdown elements (headings, lists, bold/italic, links) and string structures (line breaks, spacing, special characters). Only modify content—do not alter formatting.\n\n## 2. Second Task: Strict JSON Output\n- The final result must be output in the following JSON format *without any extra content* (no comments, no explanations). Ensure the JSON syntax is valid.\n- Set the \"interaction_finished\" field value based on satisfaction: Fill in **1** if the user is satisfied, and fill in **0** if the user is not satisfied.\n- The \"modified_output\" field must contain the correct content: Use the original input if satisfied, or the revised content if not satisfied.\n- Required JSON format:\n{{\"interaction_finished\": 1 or 0,\"modified_output\": \"original input (if satisfied) or revised content (if not satisfied)\"}}\n\nThe provided input:\n{provided_input}\n\nThe user feedback:\n{user_feedback}"
     },
     "tools": [
         {
             "name": "generate_search_queries",
-            "description": "基于LLM生成优化的搜索查询。需要提供研究主题，返回生成的查询数量和保存文件路径，不返回具体查询内容。",
+            "description": "Generate optimized search queries via LLM. Requires a research topic and returns the number of queries generated plus the save path, without returning the raw query list.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "topic": {
                         "type": "string",
-                        "description": "研究主题"
+                        "description": "Research topic"
                     },
                     "description": {
                         "type": "string",
-                        "description": "主题的可选描述或上下文"
+                        "description": "Optional topic description or context"
                     }
                 },
-                "required": ["topic"]
+                "required": [
+                    "topic"
+                ]
             }
         },
         {
             "name": "web_search",
-            "description": "执行网络搜索并收集URL。需要提供主题，返回搜索到的URL数量和保存文件路径，不返回具体URL列表。",
+            "description": "Perform a web search and collect URLs. Requires a topic and returns the number of URLs plus the save path, without the raw URL list.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "topic": {
                         "type": "string",
-                        "description": "用于相关性过滤的主要主题"
+                        "description": "Primary topic used for relevance filtering"
                     },
                     "top_n": {
                         "type": "integer",
-                        "description": "返回的最相关URL数量",
+                        "description": "Number of most relevant URLs to return",
                         "default": 200
                     }
                 },
-                "required": ["topic"]
+                "required": [
+                    "topic"
+                ]
             }
         },
         {
             "name": "crawl_urls",
-            "description": "爬取URL内容并进行智能处理。需要提供研究主题，返回爬取的URL成功数量、最终结果数量和保存文件路径，不返回具体文章内容。",
+            "description": "Crawl URLs and process the content intelligently. Requires a research topic and returns the number of successful crawls, the final result count, and the save path, without returning raw article content.",
             "inputSchema": {
                 "type": "object",
                 "properties": {
                     "topic": {
                         "type": "string",
-                        "description": "研究主题，用于内容过滤和相似度评分"
+                        "description": "Research topic for content filtering and similarity scoring"
                     },
                     "top_n": {
                         "type": "integer",
-                        "description": "返回的最高质量结果数量",
+                        "description": "Number of highest-quality results to return",
                         "default": 70
                     }
                 },
-                "required": ["topic"]
+                "required": [
+                    "topic"
+                ]
             }
         }
     ],
@@ -221,5 +256,6 @@
             "model": "gemini-2.5-flash",
             "infer_type": "OpenAI"
         }
-    }
+    },
+    "additional_mcp_servers": []
 }
